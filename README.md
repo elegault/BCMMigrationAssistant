@@ -1,6 +1,5 @@
 # BCM Migration Assistant
-Tool to migrate data from Microsoft Outlook Business Contact Manager to Outlook Customer Manager (Office 365)
-Business Contact Manager (BCM) Migration Tool automates migration of business contacts, accounts, and opportunities to Outlook Customer Manager. 
+This tool to migrate data from Microsoft Outlook Business Contact Manager (BCM) to Outlook Customer Manager (Office 365) automates migration of business contacts, accounts, and opportunities to Outlook Customer Manager (OCM). 
  
 Key features of the BCM Migration Tool:
  
