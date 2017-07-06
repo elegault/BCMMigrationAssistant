@@ -10,7 +10,7 @@ Key features of the BCM Migration Tool:
  
 To start the migration, please use the following steps:
  
-## 1.	Install BCM Migration Assistant tool
+## 1.	Install the BCM Migration Assistant tool
 From the BCM machine (or the machine that host the SQL database for BCM), download and install tool from https://www.ericlegaultconsulting.com/BCM_Migration_Tool/publish.htm
 
 ![install](https://www.ericlegaultconsulting.com/BCM_Migration_Tool/git_images/install.png)
