@@ -1,0 +1,367 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="BCMtool_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Graphics\BCMtool_icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="rightbutton" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Graphics\rightbutton.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Deal_Stages" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Graphics\Deal Stages.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="trash" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Graphics\trash.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="upbutton" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Graphics\upbutton.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="plusbutton" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Graphics\plusbutton.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="downbutton" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Graphics\downbutton.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="BCM_CustomFields_Accounts" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Scripts\BCM_CustomFields_Accounts.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
+  </data>
+  <data name="BCM_CustomFields_Contacts" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Scripts\BCM_CustomFields_Contacts.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
+  </data>
+  <data name="BCM_CustomFields_Opportunities" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Scripts\BCM_CustomFields_Opportunities.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
+  </data>
+  <data name="BCM_UserFields" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Scripts\BCM_UserFields.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
+  </data>
+  <data name="StartXrmSessionXMLRequest" xml:space="preserve">
+    <value>&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:m="http://schemas.microsoft.com/exchange/services/2006/messages" xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"&gt;
+  &lt;soap:Header&gt;
+    &lt;RequestServerVersion Version="V2016_04_13" xmlns="http://schemas.microsoft.com/exchange/services/2006/types" /&gt;
+  &lt;/soap:Header&gt;
+  &lt;soap:Body&gt;
+    &lt;m:StartXrmSession&gt;
+      &lt;m:FailOnError&gt;true&lt;/m:FailOnError&gt;
+      &lt;m:ForcePersonaBackfill&gt;false&lt;/m:ForcePersonaBackfill&gt;
+    &lt;/m:StartXrmSession&gt;
+  &lt;/soap:Body&gt;
+&lt;/soap:Envelope&gt;</value>
+  </data>
+  <data name="FindPeopleRequest" xml:space="preserve">
+    <value>&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types" xmlns:m="http://schemas.microsoft.com/exchange/services/2006/messages"&gt;
+  &lt;soap:Header&gt;
+    &lt;RequestServerVersion Version="V2016_02_10" xmlns="http://schemas.microsoft.com/exchange/services/2006/types" /&gt;
+  &lt;/soap:Header&gt;
+  &lt;soap:Body&gt;
+    &lt;m:FindPeople&gt;
+      &lt;m:IndexedPageItemView BasePoint="Beginning" MaxEntriesReturned="100" Offset="{OFFSET}" /&gt;
+      &lt;m:ParentFolderId&gt;
+        &lt;t:DistinguishedFolderId Id="contacts" /&gt;
+      &lt;/m:ParentFolderId&gt;
+    &lt;/m:FindPeople&gt;
+  &lt;/soap:Body&gt;
+&lt;/soap:Envelope&gt;</value>
+  </data>
+  <data name="TestAccountCreateJSON" xml:space="preserve">
+    <value>{"Id":null,"DisplayName":"Alpha Corp","BusinessAddress":{"Street":"","City":"","State":"","CountryOrRegion":"","PostalCode":""},"BusinessHomePage":"www.alpha.com","BusinessPhones":[],"EmailAddresses":[],"Manager":null,"Profession":null,"TickerSymbol":null,"Notes":null,"XrmContactType":0,"XrmCompanySize":0,"XrmId":null}</value>
+  </data>
+  <data name="BCM_Activities" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Scripts\BCM_Activities.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
+  </data>
+  <data name="BCM_Opportunity_Core" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Scripts\BCM_Opportunity_Core.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
+  </data>
+  <data name="GetPersonaRequest" xml:space="preserve">
+    <value>&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+               xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types"&gt;
+	&lt;soap:Header&gt;
+		&lt;t:RequestServerVersion Version="V2016_02_10"/&gt;
+	&lt;/soap:Header&gt;
+	&lt;soap:Body xmlns="http://schemas.microsoft.com/exchange/services/2006/messages"&gt;
+		&lt;GetPersona&gt;
+			&lt;PersonaId Id="{ID}"/&gt;
+			&lt;AdditionalProperties&gt;
+				&lt;ExtendedFieldURI PropertySetId="1a417774-4779-47c1-9851-e42057495fca" PropertyName="ItemLinkId" PropertyType="String" /&gt;
+			&lt;/AdditionalProperties&gt;
+		&lt;/GetPersona&gt;
+	&lt;/soap:Body&gt;
+&lt;/soap:Envelope&gt;</value>
+  </data>
+  <data name="CreateXrmGraphRelationshipRequest" xml:space="preserve">
+    <value>&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:m="http://schemas.microsoft.com/exchange/services/2006/messages" xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"&gt;
+  &lt;soap:Header&gt;
+    &lt;t:RequestServerVersion Version="V2016_04_13" /&gt;
+  &lt;/soap:Header&gt;
+  &lt;soap:Body&gt;
+    &lt;m:CreateXrmGraphRelationship&gt;
+      &lt;m:FromEntityId&gt;{FROMENTITYID}&lt;/m:FromEntityId&gt;
+      &lt;m:FromEntityType&gt;{FROMENTITYTYPE}&lt;/m:FromEntityType&gt;
+      &lt;m:ToEntityId&gt;{TOENTITYID}&lt;/m:ToEntityId&gt;
+      &lt;m:ToEntityType&gt;{TOENTITYTYPE}&lt;/m:ToEntityType&gt;
+      &lt;m:LinkType&gt;{LINKTYPE}&lt;/m:LinkType&gt;
+    &lt;/m:CreateXrmGraphRelationship&gt;
+  &lt;/soap:Body&gt;
+&lt;/soap:Envelope&gt;</value>
+  </data>
+  <data name="DeleteXrmGraphRelationshipRequest" xml:space="preserve">
+    <value>&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:m="http://schemas.microsoft.com/exchange/services/2006/messages" xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"&gt;
+  &lt;soap:Header&gt;
+    &lt;t:RequestServerVersion Version="V2016_04_13" /&gt;
+  &lt;/soap:Header&gt;
+  &lt;soap:Body&gt;
+    &lt;m:DeleteXrmGraphRelationship&gt;
+      &lt;m:FromEntityId&gt;{FROMENTITYID}&lt;/m:FromEntityId&gt;
+      &lt;m:FromEntityType&gt;{FROMENTITYTYPE}&lt;/m:FromEntityType&gt;
+      &lt;m:ToEntityId&gt;{TOENTITYID}&lt;/m:ToEntityId&gt;
+      &lt;m:ToEntityType&gt;{FROMENTITYTYPE}&lt;/m:ToEntityType&gt;
+      &lt;m:LinkType&gt;{LINKTYPE}&lt;/m:LinkType&gt;
+    &lt;/m:DeleteXrmGraphRelationship&gt;
+  &lt;/soap:Body&gt;
+&lt;/soap:Envelope&gt;</value>
+  </data>
+  <data name="FindPeopleRequest2" xml:space="preserve">
+    <value>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+               xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types"
+               xmlns:m="http://schemas.microsoft.com/exchange/services/2006/messages"&gt;
+  &lt;soap:Header&gt;
+    &lt;t:RequestServerVersion Version="V2016_02_10" /&gt;
+  &lt;/soap:Header&gt;
+  &lt;soap:Body &gt;
+    &lt;m:FindPeople&gt;
+      &lt;m:PersonaShape&gt;
+        &lt;t:BaseShape&gt;Default&lt;/t:BaseShape&gt;
+        &lt;t:AdditionalProperties&gt;
+          &lt;t:FieldURI FieldURI="persona:PersonaType"/&gt;
+          &lt;t:FieldURI FieldURI="persona:DisplayName"/&gt;
+          &lt;t:FieldURI FieldURI="persona:CompanyName"/&gt;
+          &lt;t:FieldURI FieldURI="persona:EmailAddress"/&gt;
+          &lt;t:FieldURI FieldURI="persona:Attributions"/&gt;
+          &lt;t:FieldURI FieldURI="persona:ItemLinkIds"/&gt;
+          &lt;t:FieldURI FieldURI="persona:InlineLinks"/&gt;
+          &lt;t:FieldURI FieldURI="persona:HasActiveDeals"/&gt;
+          &lt;t:FieldURI FieldURI="persona:IsBusinessContact"/&gt;
+          &lt;t:FieldURI FieldURI="persona:SourceMailboxGuids"/&gt;
+          &lt;t:FieldURI FieldURI="persona:LastContactedDate"/&gt;
+          &lt;t:FieldURI FieldURI="persona:LastModifiedTime"/&gt;
+          &lt;t:ExtendedFieldURI PropertySetId="{1a417774-4779-47c1-9851-e42057495fca}" PropertyName="b197364e-b9e3-4164-94c3-dafe946f2432" PropertyType="String" xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types" /&gt;
+          &lt;t:ExtendedFieldURI PropertySetId="{1a417774-4779-47c1-9851-e42057495fca}" PropertyName="f3f4097a-5fbc-4ceb-9db3-3407c1cba186" PropertyType="String" xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types" /&gt;
+          &lt;t:ExtendedFieldURI PropertySetId="{1a417774-4779-47c1-9851-e42057495fca}" PropertyName="72b5fafb-7d51-4823-ba88-d696187930ca" PropertyType="String" xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types" /&gt;
+          &lt;t:ExtendedFieldURI PropertySetId="{1a417774-4779-47c1-9851-e42057495fca}" PropertyName="b37f8f39-c763-408d-9d67-87a5cd7302b0" PropertyType="String" xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types" /&gt;
+          &lt;t:ExtendedFieldURI PropertySetId="{1a417774-4779-47c1-9851-e42057495fca}" PropertyName="a9924a1d-0b15-4b3b-a3c1-b867bc2dcfd3" PropertyType="String" xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types" /&gt;
+          &lt;t:ExtendedFieldURI PropertySetId="{1a417774-4779-47c1-9851-e42057495fca}" PropertyName="34876a79-557d-4de1-9f3e-6c13926bd4a5" PropertyType="String" xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types" /&gt;
+          &lt;t:ExtendedFieldURI PropertySetId="{1a417774-4779-47c1-9851-e42057495fca}" PropertyName="75bd3c4e-ac92-4611-851e-8493c7487265" PropertyType="String" xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types" /&gt;
+          &lt;t:ExtendedFieldURI PropertySetId="{1a417774-4779-47c1-9851-e42057495fca}" PropertyName="cb7a2460-b9df-4a7d-80bc-cd7f92e948b5" PropertyType="String" xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types" /&gt;
+          &lt;t:ExtendedFieldURI PropertySetId="{1a417774-4779-47c1-9851-e42057495fca}" PropertyName="181516ca-72af-451d-86dd-a602fd899de2" PropertyType="String" xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types" /&gt;
+          &lt;t:ExtendedFieldURI PropertySetId="{1a417774-4779-47c1-9851-e42057495fca}" PropertyName="e1749ae8-db63-4eb9-a68d-1ccab51ca598" PropertyType="String" xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types" /&gt;
+          &lt;t:ExtendedFieldURI PropertySetId="{1a417774-4779-47c1-9851-e42057495fca}" PropertyName="bd338b81-07c7-4594-9b94-a4355357fcf8" PropertyType="String" xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types" /&gt;
+          &lt;t:ExtendedFieldURI PropertySetId="{1a417774-4779-47c1-9851-e42057495fca}" PropertyName="d6ce965b-5bc0-41bd-86b8-26a3a915a31b" PropertyType="String" xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types" /&gt;
+          &lt;t:ExtendedFieldURI PropertySetId="{1a417774-4779-47c1-9851-e42057495fca}" PropertyName="4241feef-f040-4873-9700-b5f9ce912174" PropertyType="String" xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types" /&gt;
+          &lt;t:ExtendedFieldURI PropertySetId="{1a417774-4779-47c1-9851-e42057495fca}" PropertyName="57970142-ac4b-4b25-9f48-1de50af6b43c" PropertyType="String" xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types" /&gt;
+          &lt;t:ExtendedFieldURI PropertySetId="{1a417774-4779-47c1-9851-e42057495fca}" PropertyName="d39e55e0-fb12-480a-b87a-abcfdc59b3c8" PropertyType="String" xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types" /&gt;
+          &lt;t:ExtendedFieldURI PropertySetId="{1a417774-4779-47c1-9851-e42057495fca}" PropertyName="8fc1a34a-a63a-442f-b90c-df8c120cbd3e" PropertyType="String" xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types" /&gt;
+          &lt;t:ExtendedFieldURI PropertySetId="{1a417774-4779-47c1-9851-e42057495fca}" PropertyName="230ede6e-d706-4e8b-ad76-4c2e69267f1f" PropertyType="String" xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types" /&gt;
+          &lt;t:ExtendedFieldURI PropertySetId="{1a417774-4779-47c1-9851-e42057495fca}" PropertyName="f93a026a-3d0f-40d4-9b43-ba43a60aebb9" PropertyType="String" xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types" /&gt;
+          &lt;t:ExtendedFieldURI PropertySetId="{1a417774-4779-47c1-9851-e42057495fca}" PropertyName="673a04b7-1b94-4af7-95c4-3b43afe1d3ad" PropertyType="String" xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types" /&gt;
+          &lt;t:ExtendedFieldURI PropertySetId="{1a417774-4779-47c1-9851-e42057495fca}" PropertyName="c6923817-3e85-4d42-89c8-a75526dc60fd" PropertyType="String" xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types" /&gt;
+          &lt;t:ExtendedFieldURI PropertySetId="{1a417774-4779-47c1-9851-e42057495fca}" PropertyName="7e4d69a3-c6ec-429f-bb00-d18bb04f9fe0" PropertyType="String" xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types" /&gt;
+          &lt;t:ExtendedFieldURI PropertySetId="{1a417774-4779-47c1-9851-e42057495fca}" PropertyName="78d7fa2e-589a-4bbc-a16a-dd598248c91a" PropertyType="String" xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types" /&gt;
+          &lt;t:ExtendedFieldURI PropertySetId="{1a417774-4779-47c1-9851-e42057495fca}" PropertyName="aa620765-4139-483a-8839-acd8dec67eab" PropertyType="String" xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types" /&gt;
+          &lt;t:ExtendedFieldURI PropertySetId="{1a417774-4779-47c1-9851-e42057495fca}" PropertyName="aa396d13-75fb-4e3b-99ef-6b5bc8f2d606" PropertyType="SystemTime" xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types" /&gt;
+          &lt;t:ExtendedFieldURI PropertySetId="{1a417774-4779-47c1-9851-e42057495fca}" PropertyName="cd844060-7f6a-47dc-89bc-c761d4f2dfd5" PropertyType="Double" xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types" /&gt;
+          &lt;t:ExtendedFieldURI PropertySetId="{1a417774-4779-47c1-9851-e42057495fca}" PropertyName="XrmSharingSourceUser" PropertyType="String" xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types" /&gt;
+          &lt;t:ExtendedFieldURI PropertySetId="{1a417774-4779-47c1-9851-e42057495fca}" PropertyName="XrmSharingSourceUserDisplayName" PropertyType="String" xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types" /&gt;
+          &lt;t:ExtendedFieldURI PropertySetId="{bdba944b-fc2b-47a1-8ba4-cafc4ae13ea2}" PropertyName="BusinessType" PropertyType="String" xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types" /&gt;
+          &lt;t:ExtendedFieldURI DistinguishedPropertySetId="Address" PropertyId="32866" PropertyType="String" /&gt;
+          &lt;t:ExtendedFieldURI DistinguishedPropertySetId="Address" PropertyName="CustomerStatus" PropertyType="Integer" /&gt;
+          &lt;t:ExtendedFieldURI DistinguishedPropertySetId="Address" PropertyName="CustomerBit" PropertyType="Boolean" /&gt;
+          &lt;t:ExtendedFieldURI PropertyTag="0x3a2e" PropertyType="String" /&gt;
+          &lt;t:ExtendedFieldURI PropertyTag="0x3a24" PropertyType="String" /&gt;
+          &lt;t:ExtendedFieldURI PropertyTag="0x3a08" PropertyType="String" /&gt;
+          &lt;t:ExtendedFieldURI PropertyTag="0x3a25" PropertyType="String" /&gt;
+          &lt;t:ExtendedFieldURI PropertyTag="0x3a09" PropertyType="String" /&gt;
+          &lt;t:ExtendedFieldURI PropertyTag="0x3a1c" PropertyType="String" /&gt;
+          &lt;t:ExtendedFieldURI PropertyTag="0x3a23" PropertyType="String" /&gt;
+          &lt;t:ExtendedFieldURI PropertyTag="0x3a1f" PropertyType="String" /&gt;
+          &lt;t:ExtendedFieldURI PropertyTag="0x3a21" PropertyType="String" /&gt;
+          &lt;t:ExtendedFieldURI PropertyTag="0x3a1d" PropertyType="String" /&gt;
+          &lt;t:ExtendedFieldURI PropertyTag="0x3a5d" PropertyType="String" /&gt;
+          &lt;t:ExtendedFieldURI PropertyTag="0x3a59" PropertyType="String" /&gt;
+          &lt;t:ExtendedFieldURI PropertyTag="0x3a5c" PropertyType="String" /&gt;
+          &lt;t:ExtendedFieldURI PropertyTag="0x3a5b" PropertyType="String" /&gt;
+          &lt;t:ExtendedFieldURI PropertyTag="0x3a5a" PropertyType="String" /&gt;
+          &lt;t:ExtendedFieldURI PropertySetId="1a417774-4779-47c1-9851-e42057495fca" PropertyName="XrmContactId" PropertyType="CLSID" /&gt;
+          &lt;t:ExtendedFieldURI PropertySetId="1a417774-4779-47c1-9851-e42057495fca" PropertyName="XrmIdsOfRepairedContacts" PropertyType="String" /&gt;
+        &lt;/t:AdditionalProperties&gt;
+      &lt;/m:PersonaShape&gt;
+      &lt;m:IndexedPageItemView BasePoint="Beginning" MaxEntriesReturned="100" Offset="{0}"/&gt;
+      &lt;m:ParentFolderId&gt;
+        &lt;t:FolderId Id="{1}" /&gt;
+      &lt;/m:ParentFolderId&gt;
+    &lt;/m:FindPeople&gt;
+  &lt;/soap:Body&gt;
+&lt;/soap:Envelope&gt;</value>
+  </data>
+  <data name="ShareContactsRequest" xml:space="preserve">
+    <value>&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types"&gt;
+  &lt;soap:Header&gt;
+    &lt;t:RequestServerVersion Version="V2016_04_13" /&gt;
+  &lt;/soap:Header&gt;
+  &lt;soap:Body&gt;
+    &lt;MoveItem xmlns="http://schemas.microsoft.com/exchange/services/2006/messages"
+    xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types"&gt;
+      &lt;ToFolderId&gt;
+        &lt;t:FolderId Id="{0}"/&gt;
+      &lt;/ToFolderId&gt;
+      &lt;ItemIds&gt;
+        &lt;t:ItemId Id="{1}"/&gt;
+      &lt;/ItemIds&gt;
+    &lt;/MoveItem&gt;
+  &lt;/soap:Body&gt;
+&lt;/soap:Envelope&gt;</value>
+  </data>
+  <data name="WizardStep1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Graphics\WizardStep1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="WizardStep2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Graphics\WizardStep2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="WizardStep3" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Graphics\WizardStep3.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Settings_Blue" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Graphics\Settings_Blue.PNG;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Settings_Gray" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Graphics\Settings_Gray.PNG;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="rightbuttonred" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Graphics\rightbuttonred.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+</root>

@@ -1,0 +1,911 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{4E9945D0-F43F-4FB0-B175-A7F075EE3620}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>BCM_Migration_Tool</RootNamespace>
+    <AssemblyName>BCM Migration Assistant</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
+    <SccAuxPath>
+    </SccAuxPath>
+    <SccProvider>
+    </SccProvider>
+    <IsWebBootstrapper>true</IsWebBootstrapper>
+    <PublishUrl>ftp://waws-prod-ch1-003.ftp.azurewebsites.windows.net/site/wwwroot/BCM_Migration_Tool/</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Web</InstallFrom>
+    <UpdateEnabled>true</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <InstallUrl>https://www.ericlegaultconsulting.com/BCM_Migration_Tool/</InstallUrl>
+    <SupportUrl>http://www.ericlegaultconsulting.com</SupportUrl>
+    <ProductName>BCM Migration Assistant</ProductName>
+    <PublisherName>Eric Legault Consulting Inc.</PublisherName>
+    <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
+    <WebPage>publish.htm</WebPage>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.13.0</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <CreateDesktopShortcut>true</CreateDesktopShortcut>
+    <PublishWizardCompleted>true</PublishWizardCompleted>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignManifests>true</SignManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestCertificateThumbprint>EE3FC153AD63D954E8869D50F4D41D2AD1947516</ManifestCertificateThumbprint>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestKeyFile>Eric Legault Consulting Inc Authenticode Code Signing.p12</ManifestKeyFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestTimestampUrl>http://timestamp.digicert.com</ManifestTimestampUrl>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>BCMMigrationTool.pfx</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <GenerateManifests>true</GenerateManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>BCMtool.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.IdentityModel.Clients.ActiveDirectory, Version=2.14.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.IdentityModel.Clients.ActiveDirectory.2.14.201151115\lib\net45\Microsoft.IdentityModel.Clients.ActiveDirectory.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.IdentityModel.Clients.ActiveDirectory.WindowsForms, Version=2.14.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.IdentityModel.Clients.ActiveDirectory.2.14.201151115\lib\net45\Microsoft.IdentityModel.Clients.ActiveDirectory.WindowsForms.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AccountCatIMAPIView.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="AccountExportView.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="AccountIMAPIView.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="AccountProjectIMAPIView.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="AccountsDeletedTable.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="AccountsFullView.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Configure.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\Configure.Designer.cs">
+      <DependentUpon>Configure.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Objects\AccountsHelper.cs" />
+    <Compile Include="AccountsUnionView.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="AccountsUpdatesTable.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ActivitiesAdditionalPropertyBag.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ActivitiesOpportunityView.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ActivitiesTable.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ActivityAttachment.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ActivityCategoriesTable.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ActivityCategoriesView.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ActivityCatIMAPIView.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ActivityComputedPropertiesView.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ActivityContact.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ActivityDatesView.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ActivityFullView.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ActivityIMAPIView.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ActivityoidCatIMAPIView.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ActivityoidIMAPIView.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ActivityOpportunityDatesView.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ActivityParentsView.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ActivityPerUserTable.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ActivityTypesTable.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="AddIrisEntityClone_Result.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="AssociatedMessage.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Attachment.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="AttachmentIMAPIView.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="BCMAccountsView.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="BCMContactsView.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="BCMModel.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>BCMModel.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="BCMModel.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="BCMModel.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>BCMModel.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="CampaignCatIMAPIView.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="CampaignComputedPropertiesView.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="CampaignExportView.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="CampaignGUIDExportView.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="CampaignIMAPIView.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="CampaignQueryTable.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="CampaignRecipient.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="CampaignsToExportForEntityView.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="CampaignTable.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ChangeQueue.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="CheckDuplicates_Result.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ClientPollWithTrim_Result.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ClientPoll_Result.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ContactAdditionalPropertyBag.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ContactAttachment.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ContactCategoriesTable.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ContactCategoriesView.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ContactCatIMAPIView.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ContactDetailsTable.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ContactExportView.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ContactFullView.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ContactIMAPIView.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ContactMainTable.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ContactMainView.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ContactoidCatIMAPIView.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ContactoidIMAPIView.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ContactParentsView.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ContactPerUserTable.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ContactPicklistValuesView.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ContactProjectIMAPIView.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ContactsComputedPropertiesView.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ContactsDeletedTable.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Objects\ActivitiesHelper.cs" />
+    <Compile Include="Objects\Businessaddress.cs" />
+    <Compile Include="Objects\ContactsHelper.cs" />
+    <Compile Include="ContactsUnionView.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ContactsUpdatesTable.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Accounts.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\Accounts.Designer.cs">
+      <DependentUpon>Accounts.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\BusinessContacts.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\BusinessContacts.Designer.cs">
+      <DependentUpon>BusinessContacts.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Connect.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\Connect.Designer.cs">
+      <DependentUpon>Connect.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\MapNavigationBar.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\MapNavigationBar.Designer.cs">
+      <DependentUpon>MapNavigationBar.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Interfaces\IFieldMapper.cs" />
+    <Compile Include="Objects\ConnectEventArgs.cs" />
+    <Compile Include="Controls\Map.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\Map.Designer.cs">
+      <DependentUpon>Map.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\FieldMapping.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\FieldMapping.Designer.cs">
+      <DependentUpon>FieldMapping.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Migrate.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\Migrate.Designer.cs">
+      <DependentUpon>Migrate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Opportunities.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\Opportunities.Designer.cs">
+      <DependentUpon>Opportunities.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ReadOnlyFieldMapping.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\ReadOnlyFieldMapping.Designer.cs">
+      <DependentUpon>ReadOnlyFieldMapping.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DataTypesTable.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Objects\DealsHelper.cs" />
+    <Compile Include="Objects\FindPeopleResponse.cs" />
+    <Compile Include="Objects\GetPersonaRequest.cs" />
+    <Compile Include="Objects\GetPersonaResponse.cs" />
+    <Compile Include="Objects\GraphUser.cs" />
+    <Compile Include="Objects\Inlinelinks.cs" />
+    <Compile Include="Objects\MigrationHelper.cs" />
+    <Compile Include="Objects\OCMActivity.cs" />
+    <Compile Include="Objects\OCMCompany2.cs" />
+    <Compile Include="Objects\OCMContact2.cs" />
+    <Compile Include="Objects\OCMDeal.cs" />
+    <Compile Include="Objects\OCMDeal2.cs" />
+    <Compile Include="Objects\OCMDealTemplate.cs" />
+    <Compile Include="DefaultStoreSyncState.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="EAAInvalidOptinEmailView.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="EAAOptinEmailTable.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="EAAOptinEmailView.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="EAAProjectSubject.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="EAAResolveEmailAddresses_Result.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="EAAResolveSubjects_Result.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="EAASubject.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="EntityReference.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="EntitySubTypesTable.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="EntityTypesTable.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="EntityUserField.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Objects\FieldMappings.cs" />
+    <Compile Include="FindActivitiesForContact_Result.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="FindChildrenContacts_Result.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="FindLinksByLinkToOriginal_Result.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="FolderPropertiesTable.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="FormLayout.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="FormLayoutExportView.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GetActivityParent_Result.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GetAllProjectEAA_Result.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GetAllProjectTemplates_Result.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GetAssociationsForActivity_Result.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GetAssociationsForLinkGUID_Result.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GetAssociationsForLinkToOriginal_Result.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GetBulkOptinEmailInfo_Result.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GetContactLinksForProject_Result.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GetContactOptinEmail_Result.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GetContactParentData_Result.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GetOptinEmailInfo_Result.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GetOptinEmailList_Result.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GetProjectStats_Result.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GetProjectTemplateTasksForProjectTemplate_Result.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GetProjectTemplateTask_Result.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GetProjectTemplate_Result.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GetUserFieldAttachments_Result.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GetUserFieldLinks_Result.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Objects\HelperBase.cs" />
+    <Compile Include="HistoryExportView.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ir_CheckDuplicateActivitiesForImport_Result.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ir_CheckDuplicatesForImport_Result.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ir_DBOUser_Result.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ir_GetAccountsUpdatesRecord_Result.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ir_GetActivityProperties_Result.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ir_GetAssociatedMessageProperties_Result.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ir_GetAttachmentProperties_Result.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ir_GetCampaignProperties_Result.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ir_GetCampaignRecipients_Result.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ir_GetContactProperties_Result.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ir_GetContactsUpdatesRecord_Result.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ir_GetDBVersion_Result.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ir_GetFolderProps_Result.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ir_GetProductList_Result.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ir_GetProjectTaskProperties_Result.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ir_GetUpdateableProductList_Result.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ir_GetUserProperties_Result.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ir_NeglectedAccounts_Result.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ir_NeglectedContacts_Result.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="LeadScoringField.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MigrationAssistant.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MigrationAssistant.Designer.cs">
+      <DependentUpon>MigrationAssistant.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NamePropSetIDMapping.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\NavigationBar.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\NavigationBar.Designer.cs">
+      <DependentUpon>NavigationBar.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NumberSequence_Result.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Objects\FieldMapperWrapper.cs" />
+    <Compile Include="Objects\FieldMappingEventArgs.cs" />
+    <Compile Include="Objects\OCMCompany.cs" />
+    <Compile Include="Objects\OCMCompanyTemplate.cs" />
+    <Compile Include="Objects\OCMContact.cs" />
+    <Compile Include="Objects\Relationship.cs" />
+    <Compile Include="Objects\SingleValueExtendedProperty1.cs" />
+    <Compile Include="Objects\StartXRMSessionResponse.cs" />
+    <Compile Include="OldMessageStoreID.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="OpportunityCatIMAPIView.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="OpportunityCatIMAPIViewForActivity.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="OpportunityDatesView.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="OpportunityExportView.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="OpportunityFullView.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="OpportunityIMAPIView.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="OpportunityIMAPIViewForActivity.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="OpportunityPicklistValuesView.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="OpportunityProductsFullView.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="OpportunityProductsTable.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="OrgTable.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Picklist.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PicklistsMasterList.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PollDBForMirroringChanges_Result.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ProductsMasterList.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="ProjectCatIMAPIView.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ProjectCatIMAPIViewForActivity.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ProjectComputedPropertiesView.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ProjectContact.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ProjectExportView.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ProjectIMAPIView.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ProjectIMAPIViewForActivity.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ProjectTaskCatIMAPIView.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ProjectTaskCatIMAPIViewForActivity.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ProjectTaskComputedPropertiesView.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ProjectTaskIMAPIView.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ProjectTaskIMAPIViewForActivity.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ProjectTaskTable.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ProjectTemplateExportView.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ProjectTemplateTable.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ProjectTemplateTaskExportView.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ProjectTemplateTaskTable.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="PublicHardDeletedAccountsView.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PublicHardDeletedContactsView.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ReportExportView.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ReportTable.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RetrieveLatestChanges_Result.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="SalesActivityField.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="sp_RptGetAllReports_Result.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="sp_RptGetReportobject_Result.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="SyncSupport.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="UnpackRowsetIds_Result.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="UserField.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="UserFieldDataType.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="UserFieldDefinition.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="UserFieldTableId.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Objects\UserModel.cs" />
+    <Compile Include="UserPropertiesTable.cs">
+      <DependentUpon>BCMModel.tt</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="Controls\Accounts.resx">
+      <DependentUpon>Accounts.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\BusinessContacts.resx">
+      <DependentUpon>BusinessContacts.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Configure.resx">
+      <DependentUpon>Configure.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Connect.resx">
+      <DependentUpon>Connect.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\FieldMapping.resx">
+      <DependentUpon>FieldMapping.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Map.resx">
+      <DependentUpon>Map.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\MapNavigationBar.resx">
+      <DependentUpon>MapNavigationBar.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Migrate.resx">
+      <DependentUpon>Migrate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Opportunities.resx">
+      <DependentUpon>Opportunities.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\ReadOnlyFieldMapping.resx">
+      <DependentUpon>ReadOnlyFieldMapping.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MigrationAssistant.resx">
+      <DependentUpon>MigrationAssistant.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\NavigationBar.resx">
+      <DependentUpon>NavigationBar.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\licenses.licx" />
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EntityDeploy Include="BCMModel.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>BCMModel.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <None Include="BCMMigrationTool.pfx" />
+    <None Include="BCMModel.edmx.diagram">
+      <DependentUpon>BCMModel.edmx</DependentUpon>
+    </None>
+    <None Include="ClassDiagram1.cd" />
+    <None Include="Eric Legault Consulting Inc Authenticode Code Signing.p12" />
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="BCMModel.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>BCMModel.edmx</DependentUpon>
+      <LastGenOutput>BCMModel.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="BCMModel.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>BCMModel.edmx</DependentUpon>
+      <LastGenOutput>BCMModel.cs</LastGenOutput>
+    </Content>
+    <None Include="Graphics\WizardStep1.png" />
+    <None Include="Graphics\WizardStep2.png" />
+    <None Include="Graphics\WizardStep3.png" />
+    <None Include="Graphics\Settings_Blue.PNG" />
+    <None Include="Graphics\Settings_Gray.PNG" />
+    <None Include="Graphics\rightbuttonred.png" />
+    <Content Include="BCMtool.ico" />
+    <Content Include="Scripts\BCM_Accounts_Core.sql" />
+    <Content Include="Scripts\BCM_Activities.sql" />
+    <Content Include="Scripts\BCM_BusinessContacts_Core.sql" />
+    <Content Include="Scripts\BCM_CustomFields.sql" />
+    <Content Include="Scripts\BCM_CustomFields_Accounts.sql" />
+    <Content Include="Scripts\BCM_CustomFields_Contacts.sql" />
+    <Content Include="Scripts\BCM_CustomFields_Opportunities.sql" />
+    <Content Include="Scripts\BCM_Opportunity_Core.sql" />
+    <Content Include="Scripts\BCM_SalesStage.sql" />
+    <Content Include="Scripts\BCM_UserFields.sql" />
+    <None Include="Graphics\downbutton.png" />
+    <None Include="Graphics\plusbutton.png" />
+    <None Include="Graphics\upbutton.png" />
+    <None Include="Graphics\trash.png" />
+    <None Include="Graphics\rightbutton.png" />
+    <None Include="Graphics\BCMtool_icon.png" />
+    <None Include="Graphics\Deal Stages.png" />
+    <None Include="Resources\DealStages.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.6.1">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.6.1 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="TracerX-Logger\TracerX-Logger.csproj">
+      <Project>{54a86033-aacb-4a87-ad47-355548e42936}</Project>
+      <Name>TracerX-Logger</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

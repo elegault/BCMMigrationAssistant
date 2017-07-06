@@ -1,0 +1,42 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="BCM_Migration_Tool.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="ClientID" Type="System.String" Scope="User">
+      <Value Profile="(Default)">2d3abf0e-e7f0-4609-90a3-8976cdeb453f</Value>
+    </Setting>
+    <Setting Name="AADInstance" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">https://login.microsoftonline.com/common</Value>
+    </Setting>
+    <Setting Name="Domain" Type="System.String" Scope="User">
+      <Value Profile="(Default)">ericlegaultconsultinginc.onmicrosoft.com</Value>
+    </Setting>
+    <Setting Name="V2EndPoint" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">https://outlook.office.com/api/v2.0/me</Value>
+    </Setting>
+    <Setting Name="BetaEndPoint" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">https://outlook.office.com/api/beta/Me</Value>
+    </Setting>
+    <Setting Name="EWSEndPoint" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">https://outlook.office365.com/EWS/Exchange.asmx</Value>
+    </Setting>
+    <Setting Name="RedirectURI" Type="System.String" Scope="User">
+      <Value Profile="(Default)">https://bcm-migration-tool</Value>
+    </Setting>
+    <Setting Name="DBInstance" Type="System.String" Scope="User">
+      <Value Profile="(Default)">.\MSSMLBIZ</Value>
+    </Setting>
+    <Setting Name="BCMDBName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">MSSmallBusiness</Value>
+    </Setting>
+    <Setting Name="DBUser" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="DBAuthMode" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Windows Authentication</Value>
+    </Setting>
+    <Setting Name="LoginMode" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Refresh</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

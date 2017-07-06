@@ -1,0 +1,8 @@
+C:\Professional\Projects\Hexigo\Hexigo 3.0\TracerX-Logger\bin\Release\TracerX-Logger.xml
+C:\Professional\Projects\Hexigo\Hexigo 3.0\TracerX-Logger\bin\Release\TracerX-Logger.dll
+C:\Professional\Projects\Hexigo\Hexigo 3.0\TracerX-Logger\bin\Release\TracerX-Logger.pdb
+C:\Professional\Projects\Hexigo\Hexigo 3.0\TracerX-Logger\obj\x86\Release\TracerX.Properties.Resources.resources
+C:\Professional\Projects\Hexigo\Hexigo 3.0\TracerX-Logger\obj\x86\Release\TracerX-Logger.csproj.GenerateResource.Cache
+C:\Professional\Projects\Hexigo\Hexigo 3.0\TracerX-Logger\obj\x86\Release\TracerX-Logger.dll
+C:\Professional\Projects\Hexigo\Hexigo 3.0\TracerX-Logger\obj\x86\Release\TracerX-Logger.pdb
+C:\Professional\Projects\Hexigo\Hexigo 3.0\TracerX-Logger\obj\x86\Release\TracerX-Logger.csprojResolveAssemblyReference.cache

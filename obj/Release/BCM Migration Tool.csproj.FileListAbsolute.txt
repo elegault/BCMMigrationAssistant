@@ -1,0 +1,37 @@
+C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Tool\bin\Release\EntityFramework.dll
+C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Tool\bin\Release\EntityFramework.SqlServer.dll
+C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Tool\bin\Release\Microsoft.IdentityModel.Clients.ActiveDirectory.dll
+C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Tool\bin\Release\Microsoft.IdentityModel.Clients.ActiveDirectory.WindowsForms.dll
+C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Tool\bin\Release\Newtonsoft.Json.dll
+C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Tool\bin\Release\EntityFramework.xml
+C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Tool\bin\Release\EntityFramework.SqlServer.xml
+C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Tool\bin\Release\Microsoft.IdentityModel.Clients.ActiveDirectory.xml
+C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Tool\bin\Release\Newtonsoft.Json.xml
+C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Tool\obj\Release\BCM Migration Tool.csprojResolveAssemblyReference.cache
+C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Tool\obj\Release\BCM_Migration_Tool.Controls.Accounts.resources
+C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Tool\obj\Release\BCM_Migration_Tool.Controls.BusinessContacts.resources
+C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Tool\obj\Release\BCM_Migration_Tool.Controls.Connect.resources
+C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Tool\obj\Release\BCM_Migration_Tool.Controls.FieldMapping.resources
+C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Tool\obj\Release\BCM_Migration_Tool.Controls.Map.resources
+C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Tool\obj\Release\BCM_Migration_Tool.Controls.MapNavigationBar.resources
+C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Tool\obj\Release\BCM_Migration_Tool.Controls.Migrate.resources
+C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Tool\obj\Release\BCM_Migration_Tool.Controls.Opportunities.resources
+C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Tool\obj\Release\BCM_Migration_Tool.Controls.ReadOnlyFieldMapping.resources
+C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Tool\obj\Release\BCM_Migration_Tool.MigrationAssistant.resources
+C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Tool\obj\Release\BCM_Migration_Tool.Controls.NavigationBar.resources
+C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Tool\obj\Release\BCM_Migration_Tool.Properties.Resources.resources
+C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Tool\obj\Release\BCM Migration Tool.csproj.GenerateResource.Cache
+C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Tool\obj\Release\BCM_Migration_Tool.Controls.Configure.resources
+C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Tool\bin\Release\TracerX-Logger.dll
+C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Tool\bin\Release\TracerX-Logger.pdb
+C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Tool\bin\Release\TracerX-Logger.xml
+C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Tool\bin\Release\BCM Migration Assistant.exe.config
+C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Tool\bin\Release\BCM Migration Assistant.exe.manifest
+C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Tool\bin\Release\BCM Migration Assistant.application
+C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Tool\bin\Release\BCM Migration Assistant.exe
+C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Tool\bin\Release\BCM Migration Assistant.pdb
+C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Tool\obj\Release\BCM Migration Assistant.exe.licenses
+C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Tool\obj\Release\BCM Migration Assistant.exe.manifest
+C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Tool\obj\Release\BCM Migration Assistant.application
+C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Tool\obj\Release\BCM Migration Assistant.exe
+C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Tool\obj\Release\BCM Migration Assistant.pdb

@@ -1,0 +1,32 @@
+{
+	"Amount": 75143.6700,
+	"AppliedHashtags": [{
+		"Application": "Outlook",
+		"CreatedBy": {
+			"Address": "eric@ericlegault.com"
+		},
+		"IsAutoTagged": false,
+		"IsInlined": false,
+		"Hashtag": "#Someinterestin21HighlevelroadbikesDeal"
+	}],
+	"CloseTime": "2016-12-17T11:24:00-06:00",
+	"Owner": "Mr. Robert E. Ahlering",
+	"OwnerId": "c30bf69f-9f87-4711-a581-f4e04a25a08f",
+	"Priority": "Normal",
+	"Probability": 1,
+	"Stage": "f427e05b-79e4-4eb4-bd54-bcb111223fe2",
+	"Status": "Open",
+	"Name": "Some interest in 21 High level road bikes",
+	"SingleValueExtendedProperties": [{
+		"PropertyId": "String {BC013BA3-3A6D-4826-B0EC-CB703A722B09} Name BCMID",
+		"Value": "38f96c90-720a-41a9-a04b-cacf66a67737"
+	},
+	{
+		"PropertyId": "String 1a417774-4779-47c1-9851-e42057495fca Name XrmSharingSourceUserDisplayName",
+		"Value": "Eric Legault"
+	},
+	{
+		"PropertyId": "String 1a417774-4779-47c1-9851-e42057495fca Name XrmSharingSourceUser",
+		"Value": "1320a731-7b00-45de-a94f-320a646be41c"
+	}]
+}

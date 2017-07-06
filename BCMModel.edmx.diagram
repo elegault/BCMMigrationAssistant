@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="391ae5c502af401c98df6b6da6eb5283" Name="Diagram1" ZoomLevel="10">
+        <EntityTypeShape EntityType="BCMSampleModel.AccountsDeletedTable" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.AccountsUpdatesTable" Width="1.5" PointX="8.75" PointY="9.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.ActivitiesAdditionalPropertyBag" Width="1.5" PointX="6" PointY="48.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.ActivitiesTable" Width="1.5" PointX="3.75" PointY="3.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.ActivityAttachment" Width="1.5" PointX="6" PointY="90.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.ActivityCategoriesTable" Width="1.5" PointX="6" PointY="12" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.ActivityContact" Width="1.5" PointX="6" PointY="76.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.ActivityPerUserTable" Width="1.5" PointX="6" PointY="17" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.ActivityTypesTable" Width="1.5" PointX="2.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.AssociatedMessage" Width="1.5" PointX="0.75" PointY="7.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.Attachment" Width="1.5" PointX="3.75" PointY="173.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.CampaignQueryTable" Width="1.5" PointX="6" PointY="22.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.CampaignRecipient" Width="1.5" PointX="6" PointY="25" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.CampaignTable" Width="1.5" PointX="6" PointY="28.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.ChangeQueue" Width="1.5" PointX="10.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.ContactAdditionalPropertyBag" Width="1.5" PointX="3" PointY="82.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.ContactAttachment" Width="1.5" PointX="6" PointY="86.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.ContactCategoriesTable" Width="1.5" PointX="3" PointY="17.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.ContactDetailsTable" Width="1.5" PointX="3" PointY="29.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.ContactMainTable" Width="1.5" PointX="0.75" PointY="74.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.ContactPerUserTable" Width="1.5" PointX="3" PointY="19.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.ContactsDeletedTable" Width="1.5" PointX="10.75" PointY="4.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.ContactsUpdatesTable" Width="1.5" PointX="10.75" PointY="10.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.DataTypesTable" Width="1.5" PointX="0.75" PointY="93.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.DefaultStoreSyncState" Width="1.5" PointX="12.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.EAAOptinEmailTable" Width="1.5" PointX="3" PointY="26.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.EAAProjectSubject" Width="1.5" PointX="3" PointY="79.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.EAASubject" Width="1.5" PointX="0.75" PointY="71.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.EntityReference" Width="1.5" PointX="6" PointY="82.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.EntityTypesTable" Width="1.5" PointX="3.75" PointY="168.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.EntityUserField" Width="1.5" PointX="3.75" PointY="60.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.FolderPropertiesTable" Width="1.5" PointX="12.75" PointY="3.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.FormLayout" Width="1.5" PointX="6" PointY="166.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.LeadScoringField" Width="1.5" PointX="3" PointY="65.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.NamePropSetIDMapping" Width="1.5" PointX="12.75" PointY="8.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.OpportunityProductsTable" Width="1.5" PointX="3" PointY="54.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.OrgTable" Width="1.5" PointX="12.75" PointY="11.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.Picklist" Width="1.5" PointX="5.75" PointY="6.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.PicklistsMasterList" Width="1.5" PointX="8" PointY="5.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.ProductsMasterList" Width="1.5" PointX="14.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.ProjectContact" Width="1.5" PointX="3" PointY="88.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.ProjectTaskTable" Width="1.5" PointX="6" PointY="35.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.ProjectTemplateTable" Width="1.5" PointX="5.75" PointY="1.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.ProjectTemplateTaskTable" Width="1.5" PointX="8" PointY="1" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.ReportTable" Width="1.5" PointX="14.75" PointY="4.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.SalesActivityField" Width="1.5" PointX="3" PointY="91.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.UserFieldDataType" Width="1.5" PointX="1.5" PointY="13.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.UserFieldDefinition" Width="1.5" PointX="1.5" PointY="60.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.UserField" Width="1.5" PointX="3" PointY="108.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.UserFieldTableId" Width="1.5" PointX="1.5" PointY="10.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.EntitySubTypesTable" Width="1.5" PointX="6" PointY="168.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.OldMessageStoreID" Width="1.5" PointX="5.75" PointY="9.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.SyncSupport" Width="1.5" PointX="14.75" PointY="8.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.UserPropertiesTable" Width="1.5" PointX="6" PointY="172.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.AccountCatIMAPIView" Width="1.5" PointX="14.75" PointY="11.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.AccountExportView" Width="1.5" PointX="16.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.AccountIMAPIView" Width="1.5" PointX="8.75" PointY="16.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.AccountProjectIMAPIView" Width="1.5" PointX="18.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.AccountsFullView" Width="1.5" PointX="18.75" PointY="5.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.AccountsUnionView" Width="1.5" PointX="10.75" PointY="18.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.ActivitiesOpportunityView" Width="1.5" PointX="20.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.ActivityCategoriesView" Width="1.5" PointX="5.75" PointY="14.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.ActivityCatIMAPIView" Width="1.5" PointX="20.75" PointY="9.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.ActivityComputedPropertiesView" Width="1.5" PointX="22.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.ActivityDatesView" Width="1.5" PointX="22.75" PointY="7.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.ActivityFullView" Width="1.5" PointX="22.75" PointY="10.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.ActivityIMAPIView" Width="1.5" PointX="16.75" PointY="22.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.ActivityoidCatIMAPIView" Width="1.5" PointX="22.75" PointY="19.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.ActivityoidIMAPIView" Width="1.5" PointX="24.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.ActivityOpportunityDatesView" Width="1.5" PointX="10.75" PointY="25.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.ActivityParentsView" Width="1.5" PointX="26.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.AttachmentIMAPIView" Width="1.5" PointX="26.75" PointY="12.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.BCMAccountsView" Width="1.5" PointX="28.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.BCMContactsView" Width="1.5" PointX="28.75" PointY="7.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.CampaignCatIMAPIView" Width="1.5" PointX="10.75" PointY="28.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.CampaignComputedPropertiesView" Width="1.5" PointX="28.75" PointY="13.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.CampaignExportView" Width="1.5" PointX="28.75" PointY="18.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.CampaignGUIDExportView" Width="1.5" PointX="28.75" PointY="29.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.CampaignIMAPIView" Width="1.5" PointX="30.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.CampaignsToExportForEntityView" Width="1.5" PointX="32.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.ContactCategoriesView" Width="1.5" PointX="32.75" PointY="3.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.ContactCatIMAPIView" Width="1.5" PointX="32.75" PointY="6.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.ContactExportView" Width="1.5" PointX="34.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.ContactFullView" Width="1.5" PointX="34.75" PointY="26.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.ContactIMAPIView" Width="1.5" PointX="36.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.ContactMainView" Width="1.5" PointX="38.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.ContactoidCatIMAPIView" Width="1.5" PointX="38.75" PointY="12.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.ContactoidIMAPIView" Width="1.5" PointX="40.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.ContactParentsView" Width="1.5" PointX="42.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.ContactPicklistValuesView" Width="1.5" PointX="5.75" PointY="41.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.ContactProjectIMAPIView" Width="1.5" PointX="42.75" PointY="12.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.ContactsComputedPropertiesView" Width="1.5" PointX="42.75" PointY="17.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.ContactsUnionView" Width="1.5" PointX="42.75" PointY="25.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.EAAInvalidOptinEmailView" Width="1.5" PointX="42.75" PointY="31.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.EAAOptinEmailView" Width="1.5" PointX="42.75" PointY="34.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.FormLayoutExportView" Width="1.5" PointX="42.75" PointY="37.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.HistoryExportView" Width="1.5" PointX="42.75" PointY="40.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.OpportunityCatIMAPIView" Width="1.5" PointX="44.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.OpportunityCatIMAPIViewForActivity" Width="1.5" PointX="46.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.OpportunityDatesView" Width="1.5" PointX="5.75" PointY="45.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.OpportunityExportView" Width="1.5" PointX="48.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.OpportunityFullView" Width="1.5" PointX="48.75" PointY="12.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.OpportunityIMAPIView" Width="1.5" PointX="48.75" PointY="19.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.OpportunityIMAPIViewForActivity" Width="1.5" PointX="50.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.OpportunityPicklistValuesView" Width="1.5" PointX="5.75" PointY="51.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.OpportunityProductsFullView" Width="1.5" PointX="52.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.ProjectCatIMAPIView" Width="1.5" PointX="52.75" PointY="9.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.ProjectCatIMAPIViewForActivity" Width="1.5" PointX="54.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.ProjectComputedPropertiesView" Width="1.5" PointX="5.75" PointY="55.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.ProjectExportView" Width="1.5" PointX="56.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.ProjectIMAPIView" Width="1.5" PointX="56.75" PointY="10.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.ProjectIMAPIViewForActivity" Width="1.5" PointX="58.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.ProjectTaskCatIMAPIView" Width="1.5" PointX="60.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.ProjectTaskCatIMAPIViewForActivity" Width="1.5" PointX="62.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.ProjectTaskComputedPropertiesView" Width="1.5" PointX="5.75" PointY="60.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.ProjectTaskIMAPIView" Width="1.5" PointX="64.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.ProjectTaskIMAPIViewForActivity" Width="1.5" PointX="66.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.ProjectTemplateExportView" Width="1.5" PointX="5.75" PointY="67.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.ProjectTemplateTaskExportView" Width="1.5" PointX="68.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.PublicHardDeletedAccountsView" Width="1.5" PointX="68.75" PointY="4.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.PublicHardDeletedContactsView" Width="1.5" PointX="68.75" PointY="11.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BCMSampleModel.ReportExportView" Width="1.5" PointX="68.75" PointY="17.75" IsExpanded="true" />
+        <AssociationConnector Association="BCMSampleModel.FK_ActivitiesAdditionalPropertyBag_ActivitiesTable" ManuallyRouted="false" />
+        <AssociationConnector Association="BCMSampleModel.FK_ActivitiesAdditionalPropertyBag_DataTypesTable" ManuallyRouted="false" />
+        <AssociationConnector Association="BCMSampleModel.FK_ActivityAttachments_ActivitiesTable" ManuallyRouted="false" />
+        <AssociationConnector Association="BCMSampleModel.FK_ActivityCategories_ActivitiesTable" ManuallyRouted="false" />
+        <AssociationConnector Association="BCMSampleModel.FK_ActivityContacts_ActivitiesTable" ManuallyRouted="false" />
+        <AssociationConnector Association="BCMSampleModel.FK_ActvityRemindersTable_ActivitiesTable" ManuallyRouted="false" />
+        <AssociationConnector Association="BCMSampleModel.FK_CampaignQueryTable_ActivitiesTable" ManuallyRouted="false" />
+        <AssociationConnector Association="BCMSampleModel.FK_CampaignRecipients_ActivitiesTable" ManuallyRouted="false" />
+        <AssociationConnector Association="BCMSampleModel.FK_CampaignTable_ActivitiesTable" ManuallyRouted="false" />
+        <AssociationConnector Association="BCMSampleModel.FK_ProjectTaskTable_ActivitiesTable" ManuallyRouted="false" />
+        <AssociationConnector Association="BCMSampleModel.FK_ActivityAttachments_Attachments" ManuallyRouted="false" />
+        <AssociationConnector Association="BCMSampleModel.FK_ActivityContacts_ContactMainTable" ManuallyRouted="false" />
+        <AssociationConnector Association="BCMSampleModel.FK_ActivityContacts_ContactMainTable2" ManuallyRouted="false" />
+        <AssociationConnector Association="BCMSampleModel.FK_ActivityContacts_ContactMainTable3" ManuallyRouted="false" />
+        <AssociationConnector Association="BCMSampleModel.FK_ContactAttachments_Attachments" ManuallyRouted="false" />
+        <AssociationConnector Association="BCMSampleModel.FK_ContactAdditionalPropertyBag_ContactMainTable" ManuallyRouted="false" />
+        <AssociationConnector Association="BCMSampleModel.FK_ContactAdditionalPropertyBag_DataTypesTable" ManuallyRouted="false" />
+        <AssociationConnector Association="BCMSampleModel.FK_ContactAttachments_ContactMainTable" ManuallyRouted="false" />
+        <AssociationConnector Association="BCMSampleModel.FK_ContactAttachments_EntityUserFields" ManuallyRouted="false" />
+        <AssociationConnector Association="BCMSampleModel.FK_ContactCategories_ContactMainTable" ManuallyRouted="false" />
+        <AssociationConnector Association="BCMSampleModel.FK_ContactDetailsTable_ContactMainTable" ManuallyRouted="false" />
+        <AssociationConnector Association="BCMSampleModel.FK_ContactMainTable_ContactMainTable2" ManuallyRouted="false" />
+        <AssociationConnector Association="BCMSampleModel.FK_ContactMainTable_ContactMainTable3" ManuallyRouted="false" />
+        <AssociationConnector Association="BCMSampleModel.FK_ContactPerUserTable_ContactMainTable" ManuallyRouted="false" />
+        <AssociationConnector Association="BCMSampleModel.FK_EAAOptinEmailTable_ContactMain" ManuallyRouted="false" />
+        <AssociationConnector Association="BCMSampleModel.FK_EAAProjectSubject_ContactMain" ManuallyRouted="false" />
+        <AssociationConnector Association="BCMSampleModel.FK_EntityReferences_ContactMain" ManuallyRouted="false" />
+        <AssociationConnector Association="BCMSampleModel.FK_EntityReferencesLink_ContactMain" ManuallyRouted="false" />
+        <AssociationConnector Association="BCMSampleModel.FK_LeadScoringFields_ContactMainTable" ManuallyRouted="false" />
+        <AssociationConnector Association="BCMSampleModel.FK_OpportunityProductsTable_ContactMainTable" ManuallyRouted="false" />
+        <AssociationConnector Association="BCMSampleModel.FK_ProjectContact_ContactMainTable_Contact" ManuallyRouted="false" />
+        <AssociationConnector Association="BCMSampleModel.FK_ProjectContact_ContactMainTable_Project" ManuallyRouted="false" />
+        <AssociationConnector Association="BCMSampleModel.FK_SalesActivityFields_ContactMainTable" ManuallyRouted="false" />
+        <AssociationConnector Association="BCMSampleModel.FK_UserFields_ContactMainTable" ManuallyRouted="false" />
+        <AssociationConnector Association="BCMSampleModel.FK_UserFieldDataTypes_DataTypesTable" ManuallyRouted="false" />
+        <AssociationConnector Association="BCMSampleModel.FK_EAAProjectSubject_EAASubject" ManuallyRouted="false" />
+        <AssociationConnector Association="BCMSampleModel.FK_EntityReferences_EntityTypesTable" ManuallyRouted="false" />
+        <AssociationConnector Association="BCMSampleModel.FK_EntityReferences_EntityUserFields" ManuallyRouted="false" />
+        <AssociationConnector Association="BCMSampleModel.FK_EntitySubTypesTable_EntityTypesTable" ManuallyRouted="false" />
+        <AssociationConnector Association="BCMSampleModel.FK_EntityUserFields_EntityTypesTable" ManuallyRouted="false" />
+        <AssociationConnector Association="BCMSampleModel.FK_FormLayout_EntityTypesTable" ManuallyRouted="false" />
+        <AssociationConnector Association="BCMSampleModel.FK_UserPropertiesTable_EntityTypesTable" ManuallyRouted="false" />
+        <AssociationConnector Association="BCMSampleModel.FK_EntityUserFields_UserFieldDefinitions" ManuallyRouted="false" />
+        <AssociationConnector Association="BCMSampleModel.FK_PicklistsMasterList_Picklists" ManuallyRouted="false" />
+        <AssociationConnector Association="BCMSampleModel.FK__ProjectTe__Templ__1B0907CE" ManuallyRouted="false" />
+        <AssociationConnector Association="BCMSampleModel.FK_UserFieldDefinitions_UserFieldDataTypes" ManuallyRouted="false" />
+        <AssociationConnector Association="BCMSampleModel.FK_UserFieldDefinitions_UserFieldTableIds" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

@@ -1,0 +1,455 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="12.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{E301635B-84D6-4A08-9856-B7D5C0BCD918}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>TracerX</RootNamespace>
+    <AssemblyName>TracerX-Viewer</AssemblyName>
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
+    <SccAuxPath>
+    </SccAuxPath>
+    <SccProvider>
+    </SccProvider>
+    <StartupObject>
+    </StartupObject>
+    <ApplicationIcon>Resources\scroll_view.ico</ApplicationIcon>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <IsWebBootstrapper>true</IsWebBootstrapper>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+    <PublishUrl>ftp://waws-prod-ch1-003.ftp.azurewebsites.windows.net/site/wwwroot/TracerX/</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Web</InstallFrom>
+    <UpdateEnabled>true</UpdateEnabled>
+    <UpdateMode>Background</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <InstallUrl>http://www.rockinsoftware.rocks/TracerX/</InstallUrl>
+    <ProductName>TracerX %28customized by Rockin%27 Software%29</ProductName>
+    <PublisherName>Rockin%27 Software</PublisherName>
+    <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
+    <WebPage>publish.htm</WebPage>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>6.3.0.0</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <CreateDesktopShortcut>true</CreateDesktopShortcut>
+    <PublishWizardCompleted>true</PublishWizardCompleted>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>
+    </DocumentationFile>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>
+    </DocumentationFile>
+    <CodeAnalysisRules>
+    </CodeAnalysisRules>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestCertificateThumbprint>31AD2CF21B0176F59C92C3ABB754755E9B2B4E70</ManifestCertificateThumbprint>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestKeyFile>Setup\Keys\EricLegault.pfx</ManifestKeyFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <GenerateManifests>true</GenerateManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignManifests>true</SignManifests>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ColoringRule.cs" />
+    <Compile Include="CrumbBar.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="CrumbBar.Designer.cs">
+      <DependentUpon>CrumbBar.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Enums-Viewer.cs" />
+    <Compile Include="FileWatcher.cs" />
+    <Compile Include="Forms\ColorRulesDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ColorRulesDialog.Designer.cs">
+      <DependentUpon>ColorRulesDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ExportCSVForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ExportCSVForm.Designer.cs">
+      <DependentUpon>ExportCSVForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\PaletteViewer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\PaletteViewer.Designer.cs">
+      <DependentUpon>PaletteViewer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="IFilterable.cs" />
+    <Compile Include="ListViewTx.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="ListViewTx.Designer.cs">
+      <DependentUpon>ListViewTx.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MethodObject.cs" />
+    <Compile Include="PathList.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PathList.Designer.cs">
+      <DependentUpon>PathList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\About.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\About.Designer.cs">
+      <DependentUpon>About.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\CallStack.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\CallStack.Designer.cs">
+      <DependentUpon>CallStack.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ColumnsDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ColumnsDlg.Designer.cs">
+      <DependentUpon>ColumnsDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FileProperties.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FileProperties.Designer.cs">
+      <DependentUpon>FileProperties.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FilterDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FilterDialog.Designer.cs">
+      <DependentUpon>FilterDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FindDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FindDialog.Designer.cs">
+      <DependentUpon>FindDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FullText.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FullText.Designer.cs">
+      <DependentUpon>FullText.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\License.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\License.Designer.cs">
+      <DependentUpon>License.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ListViewItemSorter.cs" />
+    <Compile Include="LoggerObject.cs" />
+    <Compile Include="NativeMethods.cs" />
+    <Compile Include="Forms\OptionsDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\OptionsDialog.Designer.cs">
+      <DependentUpon>OptionsDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\PasswordDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\PasswordDialog.Designer.cs">
+      <DependentUpon>PasswordDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Record.cs" />
+    <Compile Include="Forms\MainForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\MainForm.Designer.cs">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Reader.cs" />
+    <Compile Include="Row.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="Session.cs" />
+    <Compile Include="StartPage.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="StartPage.Designer.cs">
+      <DependentUpon>StartPage.cs</DependentUpon>
+    </Compile>
+    <Compile Include="StringMatcher.cs" />
+    <Compile Include="ThreadName.cs" />
+    <Compile Include="ThreadObject.cs" />
+    <Compile Include="TracerXViewerControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="TracerXViewerControl.Designer.cs">
+      <DependentUpon>TracerXViewerControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UICommand.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UICommand.Designer.cs">
+      <DependentUpon>UICommand.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UICommandProvider.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UICommandProvider.designer.cs">
+      <DependentUpon>UICommandProvider.cs</DependentUpon>
+    </Compile>
+    <Compile Include="VersionChecker.cs" />
+    <Compile Include="ReaderThreadInfo.cs" />
+    <Compile Include="ViewItem.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="NotTheLicense.txt" />
+    <Content Include="ChangeNotes.txt" />
+    <Content Include="Icons\ArrowDown.ico" />
+    <Content Include="Icons\ArrowUp.ico" />
+    <Content Include="Icons\BookmarkArrowDown.ico" />
+    <Content Include="Icons\BookmarkArrowUp.ico" />
+    <None Include="Resources\BookmarkClear.bmp" />
+    <Content Include="Icons\BookmarkLastSubline.ico" />
+    <None Include="Resources\BookmarkNext.bmp" />
+    <None Include="Resources\BookmarkPrev.bmp" />
+    <Content Include="Icons\BookmarkSubline.ico" />
+    <None Include="Resources\BookmarkToggle2.bmp" />
+    <None Include="Resources\ExpandAll.png" />
+    <Content Include="Resources\Web Link 16.png" />
+    <Content Include="Resources\AnyThreadNext.png" />
+    <Content Include="Resources\AnyThreadPrev.png" />
+    <Content Include="Resources\Bold.png" />
+    <Content Include="Resources\clockPlus.png" />
+    <Content Include="Resources\clockPrev.png" />
+    <Content Include="Resources\Close X Red 16.png" />
+    <Content Include="Resources\colors_on.png" />
+    <Content Include="Resources\colorwheel_16x16_plain.png" />
+    <Content Include="Resources\clockNext.png" />
+    <Content Include="Resources\Date and Time.png" />
+    <Content Include="Resources\FilterNot.png" />
+    <Content Include="Resources\Filter.png" />
+    <Content Include="Resources\Columns.png" />
+    <Content Include="Icons\LastSubline.ico" />
+    <Content Include="Resources\find.png" />
+    <Content Include="Resources\findNext.png" />
+    <Content Include="Resources\findPrev.png" />
+    <Content Include="Resources\OpenFolder.png" />
+    <Content Include="Resources\Options.png" />
+    <None Include="Resources\Properties.png" />
+    <Content Include="Resources\Refresh.png" />
+    <Content Include="Icons\Stop.bmp" />
+    <Content Include="Icons\Play.bmp" />
+    <Content Include="Resources\SameThreadNext.png" />
+    <Content Include="Resources\SameThreadPrev.png" />
+    <Content Include="Resources\scroll_view.ico" />
+    <Content Include="Resources\scroll_view_16x16_plain.png" />
+    <Content Include="Resources\Stopwatch.png" />
+    <Content Include="Icons\Subline.ico" />
+    <Content Include="Icons\Transparent.ico" />
+    <Content Include="Icons\Bookmark.ico" />
+    <Content Include="Icons\BookmarkMinus.ico" />
+    <Content Include="Icons\BookmarkPlus.ico" />
+    <Content Include="Icons\Minus.ico" />
+    <Content Include="Icons\Plus.ico" />
+    <None Include="Setup\Keys\EricLegault.pfx" />
+    <None Include="TracerX-Viewer_TemporaryKey.pfx" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="CrumbBar.resx">
+      <DependentUpon>CrumbBar.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ColorRulesDialog.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>ColorRulesDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ExportCSVForm.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>ExportCSVForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\PaletteViewer.resx">
+      <DependentUpon>PaletteViewer.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PathList.resx">
+      <DependentUpon>PathList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\About.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>About.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\CallStack.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>CallStack.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ColumnsDlg.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>ColumnsDlg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FileProperties.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>FileProperties.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FilterDialog.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>FilterDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FindDialog.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>FindDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FullText.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>FullText.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\License.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>License.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\MainForm.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\OptionsDialog.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>OptionsDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\PasswordDialog.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>PasswordDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="StartPage.resx">
+      <DependentUpon>StartPage.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TracerXViewerControl.resx">
+      <DependentUpon>TracerXViewerControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.5.1">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.5.1 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.0 %28x86%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_BuildVersioningStyle="None.None.YYMM.DDHHM" />
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>

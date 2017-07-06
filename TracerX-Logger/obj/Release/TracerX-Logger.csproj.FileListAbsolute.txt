@@ -1,0 +1,32 @@
+C:\Professional\Projects\Redback Conferencing\Redback Conferencing\TracerX-Logger\bin\Release\TracerX-Logger.xml
+C:\Professional\Projects\Redback Conferencing\Redback Conferencing\TracerX-Logger\bin\Release\TracerX-Logger.dll
+C:\Professional\Projects\Redback Conferencing\Redback Conferencing\TracerX-Logger\bin\Release\TracerX-Logger.pdb
+C:\Professional\Projects\Redback Conferencing\Redback Conferencing\TracerX-Logger\obj\Release\TracerX-Logger.csprojResolveAssemblyReference.cache
+C:\Professional\Projects\Redback Conferencing\Redback Conferencing\TracerX-Logger\obj\Release\TracerX.Properties.Resources.resources
+C:\Professional\Projects\Redback Conferencing\Redback Conferencing\TracerX-Logger\obj\Release\TracerX-Logger.csproj.GenerateResource.Cache
+C:\Professional\Projects\Redback Conferencing\Redback Conferencing\TracerX-Logger\obj\Release\TracerX-Logger.dll
+C:\Professional\Projects\Redback Conferencing\Redback Conferencing\TracerX-Logger\obj\Release\TracerX-Logger.pdb
+C:\Professional\Projects\Folloze\Folloze Notifications Add-in\TracerX-Logger\bin\Release\TracerX-Logger.xml
+C:\Professional\Projects\Folloze\Folloze Notifications Add-in\TracerX-Logger\bin\Release\TracerX-Logger.dll
+C:\Professional\Projects\Folloze\Folloze Notifications Add-in\TracerX-Logger\bin\Release\TracerX-Logger.pdb
+C:\Professional\Projects\Folloze\Folloze Notifications Add-in\TracerX-Logger\obj\Release\TracerX-Logger.csprojResolveAssemblyReference.cache
+C:\Professional\Projects\Folloze\Folloze Notifications Add-in\TracerX-Logger\obj\Release\TracerX.Properties.Resources.resources
+C:\Professional\Projects\Folloze\Folloze Notifications Add-in\TracerX-Logger\obj\Release\TracerX-Logger.csproj.GenerateResource.Cache
+C:\Professional\Projects\Folloze\Folloze Notifications Add-in\TracerX-Logger\obj\Release\TracerX-Logger.dll
+C:\Professional\Projects\Folloze\Folloze Notifications Add-in\TracerX-Logger\obj\Release\TracerX-Logger.pdb
+C:\Professional\Projects\RealTime Software\RealTime Outlook Add-in\TracerX-Logger\bin\Release\TracerX-Logger.xml
+C:\Professional\Projects\RealTime Software\RealTime Outlook Add-in\TracerX-Logger\bin\Release\TracerX-Logger.dll
+C:\Professional\Projects\RealTime Software\RealTime Outlook Add-in\TracerX-Logger\bin\Release\TracerX-Logger.pdb
+C:\Professional\Projects\RealTime Software\RealTime Outlook Add-in\TracerX-Logger\obj\Release\TracerX.Properties.Resources.resources
+C:\Professional\Projects\RealTime Software\RealTime Outlook Add-in\TracerX-Logger\obj\Release\TracerX-Logger.csproj.GenerateResource.Cache
+C:\Professional\Projects\RealTime Software\RealTime Outlook Add-in\TracerX-Logger\obj\Release\TracerX-Logger.dll
+C:\Professional\Projects\RealTime Software\RealTime Outlook Add-in\TracerX-Logger\obj\Release\TracerX-Logger.pdb
+C:\Professional\Projects\RealTime Software\RealTime Outlook Add-in\TracerX-Logger\obj\Release\TracerX-Logger.csprojResolveAssemblyReference.cache
+C:\Professional\Projects\Microsoft\BCM Migration Tool\TracerX-Logger\bin\Release\TracerX-Logger.xml
+C:\Professional\Projects\Microsoft\BCM Migration Tool\TracerX-Logger\bin\Release\TracerX-Logger.dll
+C:\Professional\Projects\Microsoft\BCM Migration Tool\TracerX-Logger\bin\Release\TracerX-Logger.pdb
+C:\Professional\Projects\Microsoft\BCM Migration Tool\TracerX-Logger\obj\Release\TracerX-Logger.csprojResolveAssemblyReference.cache
+C:\Professional\Projects\Microsoft\BCM Migration Tool\TracerX-Logger\obj\Release\TracerX.Properties.Resources.resources
+C:\Professional\Projects\Microsoft\BCM Migration Tool\TracerX-Logger\obj\Release\TracerX-Logger.csproj.GenerateResource.Cache
+C:\Professional\Projects\Microsoft\BCM Migration Tool\TracerX-Logger\obj\Release\TracerX-Logger.dll
+C:\Professional\Projects\Microsoft\BCM Migration Tool\TracerX-Logger\obj\Release\TracerX-Logger.pdb

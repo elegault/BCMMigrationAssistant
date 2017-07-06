@@ -1,0 +1,45 @@
+{
+	"Id": null,
+	"Amount": 0.0,
+	"AppliedHashtags": [{
+		"Id": null,
+		"Application": "Outlook",
+		"CreatedBy": {
+			"Name": null,
+			"Address": "tbxrm@microsoft.com"
+		},
+		"DeepLink": null,
+		"IsAutoTagged": false,
+		"IsInlined": false,
+		"Hashtag": "#ContosoroadbikesDeal"
+	}],
+	"CloseTime": "2016-12-15T00:00:00+00:00",
+	"CreatedBy": null,
+	"Notes": null,
+	"Owner": "Tzipi Butnaru (XRM)",
+	"OwnerId": "d00e9a56-ea54-4898-b7cb-bdc94e66c836",
+	"SourceMailbox": null,
+	"Priority": "Normal",
+	"Probability": 0,
+	"SourceMailboxGuid": null,
+	"Stage": "fc8a446b-9109-4d3c-9477-d82da215a9f8",
+	"Status": "Open",
+	"Name": "Contoso road bikes",
+	"XrmId": null,
+	"SingleValueExtendedProperties": [{
+		"PropertyId": "String {1a417774-4779-47c1-9851-e42057495fca} Name ae8b5199-c02d-4008-aa8a-decabbf04c14",
+		"Value": null
+	},
+	{
+		"PropertyId": "Double {1a417774-4779-47c1-9851-e42057495fca} Name f70a39a4-6bed-4aeb-80dd-afcad36e6991",
+		"Value": "0"
+	},
+	{
+		"PropertyId": "String {1a417774-4779-47c1-9851-e42057495fca} Name e26bbdc5-3895-44f6-a076-16407fada65e",
+		"Value": null
+	},
+	{
+		"PropertyId": "SystemTime {1a417774-4779-47c1-9851-e42057495fca} Name 3403026b-c077-450f-b18d-cd266167f604",
+		"Value": "0001-01-01T00:00:00Z"
+	}]
+}
