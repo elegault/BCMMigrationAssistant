@@ -1,19 +1,36 @@
 # BCM Migration Assistant
-This tool to migrate data from Microsoft Outlook Business Contact Manager (BCM) to Outlook Customer Manager (Office 365) automates migration of business contacts, accounts, and opportunities to Outlook Customer Manager (OCM). 
+The Business Contact Manager (BCM) Migration Assistant tool automates migration of business contacts, accounts, and opportunities to Outlook Customer Manager (OCM). 
  
 Key features of the BCM Migration Tool:
  
-*	Migrate default business contacts, accounts, and opportunity fields to the equivalent Outlook Customer manager fields
-*	Map additional BCM fields to Outlook Customer Manager custom fields
-*	Automatically migrate BCM opportunity stages and create new Outlook Customer Manager deal stages 
-*	Migrate Business Notes and Phone Log history to Outlook Customer Manager's activity timeline
+*	Migrates default business contacts, accounts, and opportunity fields to the equivalent Outlook Customer Manager fields
+*	Ability to map additional BCM fields to Outlook Customer Manager custom fields
+*	Automatically migrates BCM opportunity stages and creates new Outlook Customer Manager deal stages 
+*	Migrates Business Notes and Phone Log history to Outlook Customer Manager's activity timeline
+* Automatically links imported Contacts to Companies, and Deals to Companies and Contacts
+
+![overview](https://www.ericlegaultconsulting.com/BCM_Migration_Tool/git_images/overview.png)
+
+## FAQ
+
+Q: Do I need Outlook 2016 or the Outlook Customer Manager add-in installed to use the tool?
+
+A: No. You just need to login with the tool using an Office 365 account in a subscription that has Outlook Customer Manager enabled.
+
+Q: Do I need to run the tool on a PC with BCM installed or on the BCM server?
+
+A: No. You can run the tool on any PC that has access to the BCM database on your network while logged into Windows as an authorized BCM user.
+
+Q: Will the tool create duplicates of existing items or will it update them?
+
+A: If an OCM Company or Contact with the same Display Name value as the equivalent BCM Account or Contact Full Name field exists, they will be UPDATED. The relevant fields will be updated with non-empty values from BCM. NOTE: Existing Deals are currently NOT being updated. You may wish to subscribe to the [relevant issue](https://github.com/elegault/BCMMigrationAssistant/issues/2) to be notified when this logic changes.
  
 To start the migration, please use the following steps:
  
 ## 1.	Install the BCM Migration Assistant tool
-From the BCM machine (or the machine that host the SQL database for BCM), download and install tool from https://www.ericlegaultconsulting.com/BCM_Migration_Tool/publish.htm
+From the BCM machine (or the machine that host the SQL database for BCM), download and install the tool from https://www.ericlegaultconsulting.com/BCM_Migration_Tool/publish.htm
 
-![install](https://www.ericlegaultconsulting.com/BCM_Migration_Tool/git_images/install.png)
+![install](https://www.ericlegaultconsulting.com/BCM_Migration_Tool/git_images/install2.png)
   
 ## 2.	Connect to the BCM database 
  
@@ -21,9 +38,9 @@ By default, the tool is configured to use the  local SQL server name. If you are
  
 If the BCM database name is "OCM10\MSSmallBusiness3", then use the following value in the tool:
 
-SQL Server: OCM10\MSSMLBIZ
+**SQL Server**: OCM10\MSSMLBIZ
 
-Database Name: MSSmallBusiness3
+**Database Name**: MSSmallBusiness3
 
 ![configure](https://www.ericlegaultconsulting.com/BCM_Migration_Tool/git_images/configure.png)
 
@@ -43,7 +60,7 @@ After you are connected to the database, click the "Login to Office 365" label i
  
 For each entity type (Accounts, Business Contacts, and Opportunities), some of the default BCM fields are automatically mapped to default Outlook Customer Manager fields. 
  
-Optionally, you may map additional fields to Outlook Customer Manager custom fields (note: you will need to create the custom field before you run the tool, [refer to this page](https://support.office.com/en-us/article/Customize-Outlook-Customer-Manager-e7411d12-cc64-4793-8211-eda1aaef78a3?ui=en-US&rs=en-US&ad=US) for how to add custom fields in Outlook Customer Manager). 
+Optionally, you may map additional fields to Outlook Customer Manager custom fields (note: you will need to create the custom field before you run the tool ([refer to this page](https://techcommunity.microsoft.com/t5/Outlook-Blog/Make-Outlook-Customer-Manager-your-own/ba-p/81208) for information on how to add custom fields in Outlook Customer Manager). 
  
 For example, see below if you want to map BCM's DoNotCall field (left column) to a custom field of the same name in Outlook Customer Manager (right column):
 
