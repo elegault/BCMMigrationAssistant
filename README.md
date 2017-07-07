@@ -13,17 +13,31 @@ Key features of the BCM Migration Tool:
 
 ## FAQ
 
-Q: Do I need Outlook 2016 or the Outlook Customer Manager add-in installed to use the tool?
+**Q**: Do I need Outlook 2016 or the Outlook Customer Manager add-in installed to use the tool?
 
-A: No. You just need to login with the tool using an Office 365 account in a subscription that has Outlook Customer Manager enabled.
+**A**: No. You just need to login with the tool using an Office 365 account in a subscription that has Outlook Customer Manager enabled.
 
-Q: Do I need to run the tool on a PC with BCM installed or on the BCM server?
+**Q**: Do I need to run the tool on a PC with BCM installed or on the BCM server?
 
-A: No. You can run the tool on any PC that has access to the BCM database on your network while logged into Windows as an authorized BCM user.
+**A**: No. You can run the tool on any PC that has access to the BCM database on your network while logged into Windows as an authorized BCM user.
 
-Q: Will the tool create duplicates of existing items or will it update them?
+**Q**: Will the tool create duplicates of existing items or will it update them?
 
-A: If an OCM Company or Contact with the same Display Name value as the equivalent BCM Account or Contact Full Name field exists, they will be UPDATED. The relevant fields will be updated with non-empty values from BCM. NOTE: Existing Deals are currently NOT being updated. You may wish to subscribe to the [relevant issue](https://github.com/elegault/BCMMigrationAssistant/issues/2) to be notified when this logic changes.
+**A**: If an OCM Company or Contact exists with the same Display Name value in the equivalent BCM Account or Contact Full Name field, they will be UPDATED. The relevant fields will be updated with non-empty values from BCM
+
+**NOTE**: Existing Deals are currently NOT being updated. You may wish to subscribe to the [relevant issue](https://github.com/elegault/BCMMigrationAssistant/issues/2) to be notified when this logic changes.
+
+**Q**: What happens if I run the migration again?
+
+**A**: Previously imported items will NOT be updated, but existing items will be updated again if changes have been made in BCM.
+
+**Q**: Is the tool free?
+
+**A**: Yes. However, the tool is currently registered as an Office 365 application associated with **Eric Legault Consulting Inc./Rockin' Software** and hosted in that company's Office 365 tenant. This application will only work in its current state as long as it continues to be hosted in that tenant but there are **_no guarantees that the application will continue to work due to unforeseen circumstances with the application registration or the Office 365 subscription, or that it will continue to be available for installation from the URL published below_**. The code can always be changed to use a different application and tenant ID for a different Office 365 account, or compiled and distributed through other means.
+
+## Custom Migration Services
+
+If you would like the migration to be done for you, or customized to accommodate special business scenarios or to export to a different data format, please contact [**Rockin' Software**](https://www.rockinsoftware.rocks) by [email](mailto:eric@ericlegault.com?Subject=BCM), [web form](https://eric273.typeform.com/to/o3dYnb) or [book an appointment online](https://outlook.office365.com/owa/calendar/EricLegaultConsultingInc@ericlegault.com/bookings/).
  
 To start the migration, please use the following steps:
  
@@ -75,5 +89,3 @@ Click "Start" to begin the migration:
 
 
 Review the migration reports for any errors during the migration.
- 
-Note: the tool will skip existing records to prevent duplicates. It does not perform an update. If you make an update in BCM, you need to delete the corresponding record in Outlook Customer Manager, restart the tool and repeat the process again.
