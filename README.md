@@ -1,3 +1,5 @@
+**(You can also view this on the blog for Eric Legault Consulting Inc./Rockin' Software at http://www.ericlegaultconsulting.com/blog/?p=3044)**
+
 # BCM Migration Assistant
 The Business Contact Manager (BCM) Migration Assistant tool automates migration of business contacts, accounts, and opportunities to Outlook Customer Manager (OCM). 
  
