@@ -48,20 +48,20 @@
             // 
             this.lblDestinationField.Location = new System.Drawing.Point(237, 7);
             this.lblDestinationField.Name = "lblDestinationField";
-            this.lblDestinationField.Size = new System.Drawing.Size(195, 13);
+            this.lblDestinationField.Size = new System.Drawing.Size(195, 22);
             this.lblDestinationField.TabIndex = 5;
             // 
             // lblSourceField
             // 
             this.lblSourceField.Location = new System.Drawing.Point(3, 7);
             this.lblSourceField.Name = "lblSourceField";
-            this.lblSourceField.Size = new System.Drawing.Size(195, 13);
+            this.lblSourceField.Size = new System.Drawing.Size(195, 22);
             this.lblSourceField.TabIndex = 6;
             // 
             // ReadOnlyFieldMapping
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.Color.White;
             this.Controls.Add(this.lblSourceField);
             this.Controls.Add(this.lblDestinationField);

@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MigrationAssistant));
             this.labelApp = new System.Windows.Forms.Label();
             this.tabControl1 = new System.Windows.Forms.TabControl();
@@ -36,6 +37,7 @@
             this.tabPageMap = new System.Windows.Forms.TabPage();
             this.map1 = new BCM_Migration_Tool.Controls.Map();
             this.tabPageMigrate = new System.Windows.Forms.TabPage();
+            this.label1 = new System.Windows.Forms.Label();
             this.chkGetOnly = new System.Windows.Forms.CheckBox();
             this.cboTestMode = new System.Windows.Forms.ComboBox();
             this.chkTestMode = new System.Windows.Forms.CheckBox();
@@ -48,9 +50,8 @@
             this.lblVersion = new System.Windows.Forms.Label();
             this.lblCurrentUser = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.toolTip1 = new System.Windows.Forms.ToolTip();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.navigationBar1 = new BCM_Migration_Tool.Controls.NavigationBar();
-            this.label1 = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabPageConnect.SuspendLayout();
             this.tabPageMap.SuspendLayout();
@@ -151,6 +152,16 @@
             this.tabPageMigrate.TabIndex = 2;
             this.tabPageMigrate.Text = "Migrate";
             this.tabPageMigrate.UseVisualStyleBackColor = true;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(318, 57);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(256, 13);
+            this.label1.TabIndex = 5;
+            this.label1.Text = "THE CONTROLS ABOVE ARE FOR DEBUG TESTING";
+            this.label1.Visible = false;
             // 
             // chkGetOnly
             // 
@@ -310,20 +321,10 @@
             this.navigationBar1.Size = new System.Drawing.Size(706, 42);
             this.navigationBar1.TabIndex = 1;
             // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(318, 57);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(256, 13);
-            this.label1.TabIndex = 5;
-            this.label1.Text = "THE CONTROLS ABOVE ARE FOR DEBUG TESTING";
-            this.label1.Visible = false;
-            // 
             // MigrationAssistant
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.AutoScroll = true;
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(709, 592);
