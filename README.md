@@ -6,7 +6,7 @@ The Business Contact Manager (BCM) Migration Assistant tool automates migration 
 Key features of the BCM Migration Tool:
  
 *	Migrates default business contacts, accounts, and opportunity fields to the equivalent Outlook Customer Manager fields
-*	Ability to map additional BCM fields to Outlook Customer Manager custom fields
+*	Ability to map default and CUSTOM BCM fields to Outlook Customer Manager fields
 *	Automatically migrates BCM opportunity stages and creates new Outlook Customer Manager deal stages 
 *	Migrates Business Notes and Phone Log history to Outlook Customer Manager's activity timeline
 * Automatically links imported Contacts to Companies, and Deals to Companies and Contacts
