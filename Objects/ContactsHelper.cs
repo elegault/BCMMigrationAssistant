@@ -1287,10 +1287,17 @@ namespace BCM_Migration_Tool.Objects
                         {
                             context2.Database.Connection.ConnectionString = ConnectionString;
                             var account = context2.AccountsFullViews.SingleOrDefault(accounts => accounts.EntryGUID == contact.ParentEntryID);
-                            companyName = account.FullName;
+                            //1.0.15 Wasn't checking for null account
+                            if (account != null)
+                            {
+                                companyName = account.FullName;
+                            }
+                            else
+                            {
+                                Log.WarnFormat("No company match for contact '{0}' (ParentEntryID: {1}; ContactServiceID: {2})", contact.FullName, contact.ParentEntryID, contact.ContactServiceID);
+                            }
                         }
-                            
-                        
+                                                    
                         await ImportContactAsync(contact, companyName, importMode, ocmContact);
                         cnt += 1;                        
                     }

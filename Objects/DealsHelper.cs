@@ -342,20 +342,46 @@ namespace BCM_Migration_Tool.Objects
         //        Log.Error(ex);
         //    }
         //}
-        internal async Task<int> DeleteDeals(DeleteDealsOptions options)
+        internal async Task<int> DeleteDeals(DeleteDealsOptions options, DateTime dealCreatedOn)
         {
             int cnt = 0;
 
             try
             {
-                if (OCMDeals == null)
+                OCMDeals = null;
+                await GetOCMDealsAsync();
+                //if (OCMDeals == null)
+                //{
+                //    await GetOCMDealsAsync();
+                //}
+
+                List<Deal> dealsToDelete = null;
+//#if DEBUG
+//                int dayOfYear = 1;
+//                dealsToDelete = OCMDeals.Where(deals => deals.CreationTime.DayOfYear == 0) as List<Deal>;
+//#else
+//                dealsToDelete = OCMDeals;
+//#endif
+                if (dealCreatedOn != DateTime.MinValue)
                 {
-                    await GetOCMDealsAsync();
+                    dealsToDelete = new List<Deal>();
+                    //Why does this return null??
+                    //dealsToDelete = OCMDeals.Where(deals => deals.CreationTime.DayOfYear == dealCreatedOn.DayOfYear) as List<Deal>;
+                    foreach (var deal in OCMDeals)
+                    {
+                        if (deal.CreationTime.DayOfYear == dealCreatedOn.DayOfYear)
+                            dealsToDelete.Add(deal);
+                    }
+                }
+                else
+                {
+                    dealsToDelete = OCMDeals;
                 }
 
-                for (int i = OCMDeals.Count -1; i > 0; i--)
+                for (int i = dealsToDelete.Count -1; i >= 0; i--)
                 {
-                    Deal deal = OCMDeals[i];
+                    Deal deal = dealsToDelete[i];
+                    Debug.Print("Deleting deal '{0}'", deal.Name);
                     switch (options)
                     {
                         case DeleteDealsOptions.All:

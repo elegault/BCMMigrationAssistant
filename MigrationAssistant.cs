@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using BcmMigrationTool;
 using BCM_Migration_Tool.Controls;
 using BCM_Migration_Tool.Objects;
+using Microsoft.Exchange.WebServices.Auth.Validation;
 using Microsoft.VisualBasic;
 using TracerX;
 
@@ -57,7 +58,7 @@ namespace BCM_Migration_Tool
             chkTestMode.Visible = false;
 #endif
 #if DEBUG
-            TestDBConnection();
+            //TestDBConnection();
 #endif
         }
         #endregion
@@ -338,9 +339,8 @@ namespace BCM_Migration_Tool
                     Cursor.Current = Cursors.Default;
                     Log.InfoFormat("Connected to DB: {0}", connectionString);
 #if !DEBUG
-                    MessageBox.Show("Database connection successful!", "Connection Test Complete", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                              MessageBox.Show("Database connection successful!", "Connection Test Complete", MessageBoxButtons.OK, MessageBoxIcon.Information);                              
 #endif
-                    
                     connect1.lblConnectionString.Text = "DB connection string: " + connectionString;
                     connect1.lblLogin.Enabled = true;
                 }
@@ -386,17 +386,21 @@ namespace BCM_Migration_Tool
 
             //await dealsHelper.DeleteDeals(dealIDs);
             int cnt = 0;
+            DateTime createdOn = DateTime.MinValue;
+
+            if (configure1.chkDealCreationDate.Checked)
+                createdOn = configure1.dateTimePicker1.Value;
 
             switch (configure1.cboDeleteDealsOptions.Text)
             {
                 case "All":
-                    cnt = await dealsHelper.DeleteDeals(DealsHelper.DeleteDealsOptions.All);
+                    cnt = await dealsHelper.DeleteDeals(DealsHelper.DeleteDealsOptions.All, createdOn);
                     break;
                 case "Private":
-                    cnt = await dealsHelper.DeleteDeals(DealsHelper.DeleteDealsOptions.Private);
+                    cnt = await dealsHelper.DeleteDeals(DealsHelper.DeleteDealsOptions.Private, createdOn);
                     break;
                 case "Shared":
-                    cnt = await dealsHelper.DeleteDeals(DealsHelper.DeleteDealsOptions.Shared);
+                    cnt = await dealsHelper.DeleteDeals(DealsHelper.DeleteDealsOptions.Shared, createdOn);
                     break;
             }
 

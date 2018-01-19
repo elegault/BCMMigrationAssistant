@@ -561,8 +561,18 @@ namespace BCM_Migration_Tool.Objects
                     //Now, skip any null values (do not update existing non-empty value with an empty/null value from BCM)
 
                     if (!String.IsNullOrEmpty(company.FullName))
-                        ocmCompany.DisplayName = company.FullName; //NOTE: CompanyName could be blank; use FullName for DisplayName
-                
+                        ocmCompany.DisplayName = company.FullName; //NOTE: CompanyName could be blank; use FullName for DisplayName        
+
+                    //1.0.15 FullName can also be blank! Look to CompanyName (usually blank?) and if still empty, use FileAs   
+
+                    if (String.IsNullOrEmpty(ocmCompany.DisplayName) && !String.IsNullOrEmpty(company.CompanyName))
+                        ocmCompany.DisplayName = company.CompanyName;
+                    if (String.IsNullOrEmpty(ocmCompany.DisplayName) && !String.IsNullOrEmpty(company.FileAs))
+                        ocmCompany.DisplayName = company.FileAs;
+                    if (String.IsNullOrEmpty(ocmCompany.DisplayName) && !String.IsNullOrEmpty(company.Email1Address))
+                        ocmCompany.DisplayName = company.Email1Address;
+                    if (String.IsNullOrEmpty(ocmCompany.DisplayName))
+                        ocmCompany.DisplayName = "UNKNOWN COMPANY";
 
                     //Address data
                     if (!String.IsNullOrEmpty(company.WorkAddressStreet))
@@ -751,9 +761,6 @@ namespace BCM_Migration_Tool.Objects
                     {
                         db.Database.Connection.ConnectionString = ConnectionString;
                         var accountCount = await db.AccountsFullViews.Where(a => (!a.IsDeletedLocally) && (a.AccountActive)).CountAsync();
-                        //Debug.Print(String.Format("Accounts: {0}", accountCount));
-                        //TODO Use this in production to get all Accounts:
-                        //var allAccounts = from account in db.AccountsFullViews select account;
                         var allAccounts = from account in db.AccountsFullViews where !account.IsDeletedLocally && account.AccountActive select account;
 
                         if (TestMode)
@@ -786,13 +793,20 @@ namespace BCM_Migration_Tool.Objects
                             //Look for a Company with the same BCMID
                             OCMCompany2Value ocmCompany= null;
                             string bcmID = "";
+                            string companyNameToMatch = account.FullName;
 
                             ocmCompany = GetOCMCompany(account.EntryGUID.ToString(), UpdateKeyTypes.BCMID);
 
                             if (ocmCompany == null)
                             {
                                 //Look for matching Company on name match
-                                ocmCompany = GetOCMCompany(account.FullName, UpdateKeyTypes.Name);
+                                //1.0.15 Attempt to match on additional fields as FullName could be blank
+                                if (String.IsNullOrEmpty(companyNameToMatch) && !String.IsNullOrEmpty(account.CompanyName))
+                                    companyNameToMatch = account.CompanyName;
+                                if (String.IsNullOrEmpty(companyNameToMatch) && !String.IsNullOrEmpty(account.FileAs))
+                                    companyNameToMatch = account.FileAs;
+
+                                ocmCompany = GetOCMCompany(companyNameToMatch, UpdateKeyTypes.Name);
                             }
 
                             if (ocmCompany != null)
@@ -806,7 +820,6 @@ namespace BCM_Migration_Tool.Objects
                                     Log.DebugFormat("Company '{0}' previously imported; skipping", ocmCompany.DisplayName);
                                     OnCreateItemComplete(null, new HelperEventArgs(String.Format("Company '{0}' previously imported; skipping", ocmCompany.DisplayName), false));
                                     continue;
-                                    //importMode = ImportModes.UpdatePreviouslyImportedItem;
                                 }
                                 else
                                 {
@@ -816,7 +829,20 @@ namespace BCM_Migration_Tool.Objects
                             }
                             else
                             {
+                                //1.0.15 If a match still wasn't found, create the Company using the Email1Address field - or call it UNKNOWN COMPANY - but throw an error anyway
+                                if (String.IsNullOrEmpty(companyNameToMatch) && !String.IsNullOrEmpty(account.Email1Address))
+                                {
+                                    companyNameToMatch = account.Email1Address;
+                                    OnError(null, new HelperEventArgs(String.Format("Could not find a company name for Account with EntryGUID {0} (ContactServiceID: {1}). Using email '{2}' as the company name.", account.EntryGUID, account.ContactServiceID, account.Email1Address), HelperEventArgs.EventTypes.Error));
+                                }
+                                if (String.IsNullOrEmpty(companyNameToMatch))
+                                {
+                                    //companyNameToMatch = "UNKNOWN COMPANY"; Create using this name in ImportCompanyAsync
+                                    OnError(null, new HelperEventArgs(String.Format("Could not find a company name for Account with EntryGUID {0} (ContactServiceID: {1}). Importing company as 'UNKNOWN COMPANY'.", account.EntryGUID, account.ContactServiceID), HelperEventArgs.EventTypes.Error));
+                                }
+
                                 importMode = ImportModes.Create;
+                                cnt += 1;
                             }
 
                             await ImportCompanyAsync(account, importMode, ocmCompany);
