@@ -643,7 +643,6 @@ namespace BCM_Migration_Tool.Objects
 
         private async Task ImportContactAsync(ContactFullView contact, string companyName, ImportModes importMode, OCMContact2Value existingContact = null)
         {
-
             using (Log.VerboseCall())
             {
                 try
@@ -995,7 +994,16 @@ namespace BCM_Migration_Tool.Objects
                         if (!String.IsNullOrEmpty(companyName))
                             ocmContact.CompanyName = companyName;
                         if (!String.IsNullOrEmpty(contact.FirstName))
+                        {
                             ocmContact.GivenName = contact.FirstName;
+                        }
+                        else
+                        {
+                            //BUGFIXED 1.0.16 Error creating 'De heer Joop Visser': {"error":{"code":"ErrorInvalidProperty","message":"The property 'GivenName' is required when creating the entity."}}
+                            //NOTE: Warning will occur if FirstName is null; null LastName values are oddly okay
+                            ocmContact.GivenName = "_UNKNOWN";
+                        }
+
                         //ocmContact.Id = contact.CustomerID; //TODO Set ID to what?
                         if (!String.IsNullOrEmpty(contact.JobTitle))
                             ocmContact.JobTitle = contact.JobTitle;
@@ -1039,7 +1047,9 @@ namespace BCM_Migration_Tool.Objects
                                     {
                                         string[] phones = ocmContact.BusinessPhones;
                                         Array.Resize(ref phones, ocmContact.BusinessPhones.Length + 1);
-                                        phones[phones.Length + 1] = contact.WorkPhoneNum;
+                                        //phones[phones.Length + 1] = contact.WorkPhoneNum;
+                                        //BUGFIXED 1.0.16 Oops! wrong index
+                                        phones[phones.Length - 1] = contact.WorkPhoneNum;
                                         ocmContact.BusinessPhones = phones;
                                     }
                                 }
@@ -1065,7 +1075,9 @@ namespace BCM_Migration_Tool.Objects
                                     {
                                         string[] phones = ocmContact.HomePhones;
                                         Array.Resize(ref phones, ocmContact.HomePhones.Length + 1);
-                                        phones[phones.Length + 1] = contact.HomePhoneNum;
+                                        //phones[phones.Length + 1] = contact.HomePhoneNum;
+                                        //BUGFIXED 1.0.16 Oops! wrong index
+                                        phones[phones.Length - 1] = contact.HomePhoneNum;
                                         ocmContact.HomePhones = phones;
                                     }
                                 }
@@ -1105,7 +1117,7 @@ namespace BCM_Migration_Tool.Objects
 
                             //Debug.WriteLine(String.Format("Posting to {1}:{2}{0}{2}Token:{2}{3}", json, uri, Environment.NewLine, AccessToken));
 
-                            Log.VerboseFormat("Posting to {1}:{0}", json, uri);
+                            Log.VerboseFormat("Posting create call to {1}:{0}", json, uri);
                             PrepareRequest(RequestDataTypes.Contacts, RequestDataFormats.JSON);
                             using (var response = await _httpClient.PostAsync(uri, new StringContent(json, Encoding.UTF8, "application/json")))
                             {
@@ -1172,6 +1184,7 @@ namespace BCM_Migration_Tool.Objects
 
                             //Debug.WriteLine(String.Format("Patching to {1}:{2}{0}{2}Token:{2}{3}", json, uri, Environment.NewLine, AccessToken));
 
+                            Log.VerboseFormat("Posting update call to {1}:{0}", json, uri);
                             PrepareRequest(RequestDataTypes.Contacts, RequestDataFormats.JSON);
                             using (var response = await _httpClient.SendAsync(request))
                             {
@@ -1294,7 +1307,7 @@ namespace BCM_Migration_Tool.Objects
                             }
                             else
                             {
-                                Log.WarnFormat("No company match for contact '{0}' (ParentEntryID: {1}; ContactServiceID: {2})", contact.FullName, contact.ParentEntryID, contact.ContactServiceID);
+                                Log.VerboseFormat("No company match for contact '{0}' (ParentEntryID: {1}; ContactServiceID: {2})", contact.FullName, contact.ParentEntryID, contact.ContactServiceID);
                             }
                         }
                                                     

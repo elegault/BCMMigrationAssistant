@@ -824,6 +824,7 @@ namespace BCM_Migration_Tool.Objects
                                 else
                                 {
                                     //Update existing manually created item
+                                    Log.DebugFormat("Updating Company '{0}'", companyNameToMatch);
                                     importMode = ImportModes.Update;
                                 }
                             }

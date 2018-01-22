@@ -486,18 +486,18 @@ namespace BCM_Migration_Tool
                         goto leave;
                     }
 
-                    Log.InfoFormat("", Properties.Settings.Default.AADInstance);
-                    Log.InfoFormat("", Properties.Settings.Default.BCMDBName);
-                    Log.InfoFormat("", Properties.Settings.Default.BetaEndPoint);
-                    Log.InfoFormat("", Properties.Settings.Default.ClientID);
-                    Log.InfoFormat("", Properties.Settings.Default.DBAuthMode);
-                    Log.InfoFormat("", Properties.Settings.Default.DBInstance);
-                    Log.InfoFormat("", Properties.Settings.Default.DBUser);
-                    Log.InfoFormat("", Properties.Settings.Default.Domain);
-                    Log.InfoFormat("", Properties.Settings.Default.EWSEndPoint);
-                    Log.InfoFormat("", Properties.Settings.Default.LoginMode);
-                    Log.InfoFormat("", Properties.Settings.Default.RedirectURI);
-                    Log.InfoFormat("", Properties.Settings.Default.V2EndPoint);
+                    Log.InfoFormat("AADInstance: {0}", Properties.Settings.Default.AADInstance);
+                    Log.InfoFormat("BCMDBName: {0}", Properties.Settings.Default.BCMDBName);
+                    Log.InfoFormat("BetaEndPoint: {0}", Properties.Settings.Default.BetaEndPoint);
+                    Log.InfoFormat("ClientID: {0}", Properties.Settings.Default.ClientID);
+                    Log.InfoFormat("DBAuthMode: {0}", Properties.Settings.Default.DBAuthMode);
+                    Log.InfoFormat("DBInstance: {0}", Properties.Settings.Default.DBInstance);
+                    Log.InfoFormat("DBUser: {0}", Properties.Settings.Default.DBUser);
+                    Log.InfoFormat("Domain: {0}", Properties.Settings.Default.Domain);
+                    Log.InfoFormat("EWSEndPoint: {0}", Properties.Settings.Default.EWSEndPoint);
+                    Log.InfoFormat("LoginMode: {0}", Properties.Settings.Default.LoginMode);
+                    Log.InfoFormat("RedirectURI: {0}", Properties.Settings.Default.RedirectURI);
+                    Log.InfoFormat("V2EndPoint: {0}", Properties.Settings.Default.V2EndPoint);
 
                     migrate1.progressBar1.PerformStep();
                     migrate1.UpdateText("OCM system initialized...");
