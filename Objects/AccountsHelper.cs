@@ -778,7 +778,7 @@ namespace BCM_Migration_Tool.Objects
                         int cnt = 0;
                         foreach (var account in allAccounts)
                         {
-                            if (TestMode && cnt == TestingMaximum && TestingMaximum > 0)
+                            if (TestMode && cnt >= TestingMaximum && TestingMaximum > 0)
                                 break;
                             if (Cancelled)
                             {

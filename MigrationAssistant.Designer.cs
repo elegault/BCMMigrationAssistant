@@ -37,9 +37,9 @@
             this.tabPageMap = new System.Windows.Forms.TabPage();
             this.map1 = new BCM_Migration_Tool.Controls.Map();
             this.tabPageMigrate = new System.Windows.Forms.TabPage();
+            this.chkDebugMode = new System.Windows.Forms.CheckedListBox();
             this.label1 = new System.Windows.Forms.Label();
             this.chkGetOnly = new System.Windows.Forms.CheckBox();
-            this.cboTestMode = new System.Windows.Forms.ComboBox();
             this.chkTestMode = new System.Windows.Forms.CheckBox();
             this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
             this.migrate1 = new BCM_Migration_Tool.Controls.Migrate();
@@ -139,9 +139,9 @@
             // 
             // tabPageMigrate
             // 
+            this.tabPageMigrate.Controls.Add(this.chkDebugMode);
             this.tabPageMigrate.Controls.Add(this.label1);
             this.tabPageMigrate.Controls.Add(this.chkGetOnly);
-            this.tabPageMigrate.Controls.Add(this.cboTestMode);
             this.tabPageMigrate.Controls.Add(this.chkTestMode);
             this.tabPageMigrate.Controls.Add(this.numericUpDown1);
             this.tabPageMigrate.Controls.Add(this.migrate1);
@@ -153,10 +153,23 @@
             this.tabPageMigrate.Text = "Migrate";
             this.tabPageMigrate.UseVisualStyleBackColor = true;
             // 
+            // chkDebugMode
+            // 
+            this.chkDebugMode.FormattingEnabled = true;
+            this.chkDebugMode.Items.AddRange(new object[] {
+            "Accounts",
+            "Contacts",
+            "Opportunities",
+            "Deal Stages"});
+            this.chkDebugMode.Location = new System.Drawing.Point(480, 33);
+            this.chkDebugMode.Name = "chkDebugMode";
+            this.chkDebugMode.Size = new System.Drawing.Size(120, 38);
+            this.chkDebugMode.TabIndex = 6;
+            // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(318, 57);
+            this.label1.Location = new System.Drawing.Point(344, 74);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(256, 13);
             this.label1.TabIndex = 5;
@@ -172,20 +185,6 @@
             this.chkGetOnly.TabIndex = 2;
             this.chkGetOnly.Text = "Get only";
             this.chkGetOnly.UseVisualStyleBackColor = true;
-            // 
-            // cboTestMode
-            // 
-            this.cboTestMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cboTestMode.FormattingEnabled = true;
-            this.cboTestMode.Items.AddRange(new object[] {
-            "Accounts",
-            "Contacts",
-            "Opportunities",
-            "Deal Stages"});
-            this.cboTestMode.Location = new System.Drawing.Point(480, 33);
-            this.cboTestMode.Name = "cboTestMode";
-            this.cboTestMode.Size = new System.Drawing.Size(121, 21);
-            this.cboTestMode.TabIndex = 3;
             // 
             // chkTestMode
             // 
@@ -367,7 +366,6 @@
         private Controls.Migrate migrate1;
         private System.Windows.Forms.NumericUpDown numericUpDown1;
         private System.Windows.Forms.CheckBox chkTestMode;
-        private System.Windows.Forms.ComboBox cboTestMode;
         private Controls.Map map1;
         private System.Windows.Forms.CheckBox chkGetOnly;
         private System.Windows.Forms.Label lblCurrentUser;
@@ -377,5 +375,6 @@
         private System.Windows.Forms.Label lblWebSite;
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.CheckedListBox chkDebugMode;
     }
 }

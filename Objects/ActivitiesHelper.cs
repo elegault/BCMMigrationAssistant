@@ -263,7 +263,8 @@ namespace BCM_Migration_Tool.Objects
                             {
                                 if (String.IsNullOrEmpty(contact.ItemLinkId))
                                 {
-                                    Log.ErrorFormat("Not creating activity (no ItemLinkId for company '{0}' (ID: {1}))", contact.DisplayName, contact.Id);
+                                    //Occurs for manually created contacts only?
+                                    Log.WarnFormat("Not creating activity (no ItemLinkId for company '{0}' (ID: {1}))", contact.DisplayName, contact.Id);
                                     OnError(null, new HelperEventArgs(String.Format("No linking ID for contact '{0}'", contact.DisplayName), HelperEventArgs.EventTypes.Error));
                                     errors += 1;
                                     continue;

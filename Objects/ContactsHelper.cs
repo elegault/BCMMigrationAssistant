@@ -140,7 +140,8 @@ namespace BCM_Migration_Tool.Objects
                             string bcmID = contact.GetBCMID();
                             if (!String.IsNullOrEmpty(bcmID))
                             {
-                                Log.ErrorFormat("No item link ID for Contact '{0}' (company '{1}')", contact.DisplayName, contact.CompanyName);
+                                //Occurs for manually created contacts only?
+                                Log.WarnFormat("No item link ID for Contact '{0}' (company '{1}')", contact.DisplayName, contact.CompanyName);
                                 OnError(null, new HelperEventArgs(String.Format("No item link ID for Contact '{0}' (company '{1}')", contact.DisplayName,
                                     contact.CompanyName), HelperEventArgs.EventTypes.Error));}
                         }
@@ -1046,7 +1047,7 @@ namespace BCM_Migration_Tool.Objects
 
                             //Changed mapping from BCM CompanyMainPhoneNum to OCM BusinessPhones to BCM WorkPhoneNum to OCM BusinessPhones  
                             //BUGFIXED 1.0.17 Error updating a contact: {"error":{"code":"ErrorInvalidProperty","message":"The multi value property BusinessPhones has 3 entries, that exceeds the max allowed value of 2."}}. However, only one business phone is listed in the UI...don't add multiple, and only update non-null (could be non-null if an existing contact)
-                            if (!String.IsNullOrEmpty(contact.WorkPhoneNum) && ocmContact.BusinessPhones.Length == 0)
+                            if (!String.IsNullOrEmpty(contact.WorkPhoneNum) && (ocmContact.BusinessPhones?.Length == 0 || ocmContact.BusinessPhones == null))
                             {                                
                                 //if (ocmContact.BusinessPhones != null)
                                 //{
@@ -1078,20 +1079,27 @@ namespace BCM_Migration_Tool.Objects
                         {
                             if (!String.IsNullOrEmpty(contact.HomePhoneNum))
                             {
-                                if (ocmContact.HomePhones != null)
-                                {
-                                    //Existing contact - check if phone number exists
-                                    if (!ocmContact.HomePhones.Contains(contact.HomePhoneNum))
-                                    {
-                                        string[] phones = ocmContact.HomePhones;
-                                        Array.Resize(ref phones, ocmContact.HomePhones.Length + 1);
-                                        //phones[phones.Length + 1] = contact.HomePhoneNum;
-                                        //BUGFIXED 1.0.16 Oops! wrong index
-                                        phones[phones.Length - 1] = contact.HomePhoneNum;
-                                        ocmContact.HomePhones = phones;
-                                    }
-                                }
-                                else
+                                //1.0.18 only one home phone is listed in the UI...don't add multiple, and only update non-null (could be non-null if an existing contact)
+                                //if (ocmContact.HomePhones != null)
+                                //{
+                                //    //Existing contact - check if phone number exists
+                                //    if (!ocmContact.HomePhones.Contains(contact.HomePhoneNum))
+                                //    {
+                                //        string[] phones = ocmContact.HomePhones;
+                                //        Array.Resize(ref phones, ocmContact.HomePhones.Length + 1);
+                                //        //phones[phones.Length + 1] = contact.HomePhoneNum;
+                                //        //BUGFIXED 1.0.16 Oops! wrong index
+                                //        phones[phones.Length - 1] = contact.HomePhoneNum;
+                                //        ocmContact.HomePhones = phones;
+                                //    }
+                                //}
+                                //else
+                                //{
+                                //    ocmContact.HomePhones = new string[1];
+                                //    ocmContact.HomePhones[0] = contact.HomePhoneNum;
+                                //}
+                                if (!String.IsNullOrEmpty(contact.HomePhoneNum) &&
+                                    (ocmContact.HomePhones?.Length == 0 || ocmContact.HomePhones == null))
                                 {
                                     ocmContact.HomePhones = new string[1];
                                     ocmContact.HomePhones[0] = contact.HomePhoneNum;
@@ -1254,7 +1262,7 @@ namespace BCM_Migration_Tool.Objects
                     int cnt = 0;
                     foreach (var contact in contacts)
                     {
-                        if (TestMode && cnt == TestingMaximum)
+                        if (TestMode && cnt >= TestingMaximum)
                             break;
                         if (Cancelled)
                         {

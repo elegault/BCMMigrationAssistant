@@ -1264,7 +1264,7 @@ namespace BCM_Migration_Tool.Objects
                         {
                             try
                             {
-                                if (TestMode && cnt == TestingMaximum)
+                                if (TestMode && cnt <= TestingMaximum)
                                     break;
                                 if (Cancelled)
                                 {

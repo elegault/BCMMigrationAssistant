@@ -53,9 +53,9 @@ namespace BCM_Migration_Tool
 
 #if !DEBUG
             numericUpDown1.Visible = false;
-            cboTestMode.Visible = false;
             chkGetOnly.Visible = false;
             chkTestMode.Visible = false;
+            chkDebugMode.Visible = false;
 #endif
 #if DEBUG
             //TestDBConnection();
@@ -136,7 +136,8 @@ namespace BCM_Migration_Tool
                 FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(entryAssembly.Location);
                 lblVersion.Text = String.Format("Version {0}", fvi.FileVersion);
 #if DEBUG
-                connect1.txtDatabase.Text = "MSSampleBusiness2";
+                //connect1.txtDatabase.Text = "AQUARIASERVERDB2011";
+                //connect1.txtServer.Text = ".\\SQLEXPRESS";
 #endif
             }
             catch (System.Exception ex)
@@ -338,9 +339,7 @@ namespace BCM_Migration_Tool
                     var sharing = context.OrgTables.ToList();
                     Cursor.Current = Cursors.Default;
                     Log.InfoFormat("Connected to DB: {0}", connectionString);
-#if !DEBUG
-                              MessageBox.Show("Database connection successful!", "Connection Test Complete", MessageBoxButtons.OK, MessageBoxIcon.Information);                              
-#endif
+                    MessageBox.Show("Database connection successful!", "Connection Test Complete", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     connect1.lblConnectionString.Text = "DB connection string: " + connectionString;
                     connect1.lblLogin.Enabled = true;
                 }
@@ -471,10 +470,10 @@ namespace BCM_Migration_Tool
                     Cursor.Current = Cursors.WaitCursor;                   
 
 #if DEBUG
-                    numericUpDown1.Visible = false;
-                    cboTestMode.Visible = false;
+                    numericUpDown1.Visible = false;                    
                     chkGetOnly.Visible = false;
                     chkTestMode.Visible = false;
+                    chkDebugMode.Visible = false;
 #endif
 
                     migrate1.progressBar1.PerformStep();
@@ -526,50 +525,72 @@ namespace BCM_Migration_Tool
                         migrate1.UpdateText(String.Format("Deals created: {0}", dealsHelper.NumberCreated));
                         migrate1.UpdateText(String.Format("Deals updated: {0}", dealsHelper.NumberUpdated));
                         migrate1.UpdateText(String.Format("Deal import errors: {0}", dealsHelper.NumberOfErrors));
-
-                        Log.InfoFormat("Companies created: {0}", accountsHelper.NumberCreated);
-                        Log.InfoFormat("Companies updated: {0}", accountsHelper.NumberUpdated);
-                        Log.InfoFormat("Company import errors: {0}", accountsHelper.NumberOfErrors);
-                        Log.InfoFormat("Contacts created: {0}", contactsHelper.NumberCreated);
-                        Log.InfoFormat("Contacts updated: {0}", contactsHelper.NumberUpdated);
-                        Log.InfoFormat("Contact import errors: {0}", contactsHelper.NumberOfErrors);
-                        Log.InfoFormat("Deals created: {0}", dealsHelper.NumberCreated);
-                        Log.InfoFormat("Deals updated: {0}", dealsHelper.NumberUpdated);
-                        Log.InfoFormat("Deal import errors: {0}", dealsHelper.NumberOfErrors);
                     }
                     else
                     {
-                        switch (cboTestMode.Text)
+                        if (chkDebugMode.CheckedItems.Contains("Accounts"))
                         {
-                            case "Accounts":
-                                Debug.WriteLine("Calling MigrateAccounts");
-                                await MigrateAccounts();
-                                Debug.WriteLine("MigrateAccounts returned");
-                                break;
-                            case "Contacts":
-                                Debug.WriteLine("Calling MigrateBusinessContacts");
-                                await MigrateBusinessContacts();
-                                Debug.WriteLine("MigrateBusinessContacts returned");
-                                break;
-                            case "Opportunities":
-                                Debug.WriteLine("Calling MigrateOpportunities");
-                                await MigrateOpportunities();
-                                Debug.WriteLine("MigrateOpportunities returned");
-                                break;
-                            case "Deal Stages":
-                                await dealsHelper.UpdateTemplate();
-                                break;
+                            Debug.WriteLine("Calling MigrateAccounts");
+                            await MigrateAccounts();
+                            Debug.WriteLine("MigrateAccounts returned");                           
                         }
+                        if (chkDebugMode.CheckedItems.Contains("Contacts"))
+                        {
+                            Debug.WriteLine("Calling MigrateBusinessContacts");
+                            await MigrateBusinessContacts();
+                            Debug.WriteLine("MigrateBusinessContacts returned");
+                        }
+                        if (chkDebugMode.CheckedItems.Contains("Opportunities"))
+                        {
+                            Debug.WriteLine("Calling MigrateOpportunities");
+                            await MigrateOpportunities();
+                            Debug.WriteLine("MigrateOpportunities returned");
+                        }
+                        if (chkDebugMode.CheckedItems.Contains("Deal Stages"))
+                        {
+                            await dealsHelper.UpdateTemplate();
+                        }
+                        //switch (cboTestMode.Text)
+                        //{
+                        //    case "Accounts":
+                        //        Debug.WriteLine("Calling MigrateAccounts");
+                        //        await MigrateAccounts();
+                        //        Debug.WriteLine("MigrateAccounts returned");
+                        //        break;
+                        //    case "Contacts":
+                        //        Debug.WriteLine("Calling MigrateBusinessContacts");
+                        //        await MigrateBusinessContacts();
+                        //        Debug.WriteLine("MigrateBusinessContacts returned");
+                        //        break;
+                        //    case "Opportunities":
+                        //        Debug.WriteLine("Calling MigrateOpportunities");
+                        //        await MigrateOpportunities();
+                        //        Debug.WriteLine("MigrateOpportunities returned");
+                        //        break;
+                        //    case "Deal Stages":
+                        //        await dealsHelper.UpdateTemplate();
+                        //        break;
+                        //}
                     }
 
                     leave:
+
+                    Log.InfoFormat("Companies created: {0}", accountsHelper.NumberCreated);
+                    Log.InfoFormat("Companies updated: {0}", accountsHelper.NumberUpdated);
+                    Log.InfoFormat("Company import errors: {0}", accountsHelper.NumberOfErrors);
+                    Log.InfoFormat("Contacts created: {0}", contactsHelper.NumberCreated);
+                    Log.InfoFormat("Contacts updated: {0}", contactsHelper.NumberUpdated);
+                    Log.InfoFormat("Contact import errors: {0}", contactsHelper.NumberOfErrors);
+                    Log.InfoFormat("Deals created: {0}", dealsHelper.NumberCreated);
+                    Log.InfoFormat("Deals updated: {0}", dealsHelper.NumberUpdated);
+                    Log.InfoFormat("Deal import errors: {0}", dealsHelper.NumberOfErrors);
+
                     migrate1.progressBar1.Value = 0;
                     migrate1.UpdateStatus("DONE!");
                     Cursor.Current = Cursors.Default;
 
 #if DEBUG
-                    numericUpDown1.Visible = true;
-                    cboTestMode.Visible = true;
+                    numericUpDown1.Visible = true;                    
                     chkGetOnly.Visible = true;
                     chkTestMode.Visible = true;
 #endif
@@ -591,9 +612,9 @@ namespace BCM_Migration_Tool
 
 #if DEBUG
             numericUpDown1.Visible = true;
-            cboTestMode.Visible = true;
             chkGetOnly.Visible = true;
             chkTestMode.Visible = true;
+            chkDebugMode.Visible = true;
 #endif
             migrate1.cmdStart.Enabled = true;
             navigationBar1.ConfigureEnabled = true;
