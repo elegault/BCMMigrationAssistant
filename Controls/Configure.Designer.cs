@@ -41,6 +41,8 @@
             this.cmdDeleteDeals = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.cboDeleteDealsOptions = new System.Windows.Forms.ComboBox();
+            this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
+            this.chkDealCreationDate = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // lblAppRegHelp
@@ -168,16 +170,36 @@
             "All",
             "Private",
             "Shared"});
-            this.cboDeleteDealsOptions.Location = new System.Drawing.Point(257, 278);
+            this.cboDeleteDealsOptions.Location = new System.Drawing.Point(248, 278);
             this.cboDeleteDealsOptions.Name = "cboDeleteDealsOptions";
             this.cboDeleteDealsOptions.Size = new System.Drawing.Size(121, 29);
             this.cboDeleteDealsOptions.TabIndex = 12;
+            // 
+            // dateTimePicker1
+            // 
+            this.dateTimePicker1.Format = System.Windows.Forms.DateTimePickerFormat.Short;
+            this.dateTimePicker1.Location = new System.Drawing.Point(501, 275);
+            this.dateTimePicker1.Name = "dateTimePicker1";
+            this.dateTimePicker1.Size = new System.Drawing.Size(129, 29);
+            this.dateTimePicker1.TabIndex = 13;
+            // 
+            // chkDealCreationDate
+            // 
+            this.chkDealCreationDate.AutoSize = true;
+            this.chkDealCreationDate.Location = new System.Drawing.Point(384, 278);
+            this.chkDealCreationDate.Name = "chkDealCreationDate";
+            this.chkDealCreationDate.Size = new System.Drawing.Size(111, 25);
+            this.chkDealCreationDate.TabIndex = 15;
+            this.chkDealCreationDate.Text = "Created On:";
+            this.chkDealCreationDate.UseVisualStyleBackColor = true;
             // 
             // Configure
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.Color.White;
+            this.Controls.Add(this.chkDealCreationDate);
+            this.Controls.Add(this.dateTimePicker1);
             this.Controls.Add(this.cboDeleteDealsOptions);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.cmdDeleteDeals);
@@ -194,7 +216,7 @@
             this.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "Configure";
-            this.Size = new System.Drawing.Size(680, 391);
+            this.Size = new System.Drawing.Size(680, 330);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -214,5 +236,7 @@
         internal System.Windows.Forms.Button cmdDeleteDeals;
         internal System.Windows.Forms.ComboBox cboDeleteDealsOptions;
         internal System.Windows.Forms.Button cmdOpenDir;
+        internal System.Windows.Forms.DateTimePicker dateTimePicker1;
+        internal System.Windows.Forms.CheckBox chkDealCreationDate;
     }
 }

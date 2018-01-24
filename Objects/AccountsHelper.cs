@@ -637,7 +637,7 @@ namespace BCM_Migration_Tool.Objects
                         //e.g. https://outlook.office.com/api/beta/Me/XrmOrganizations?%24Expand=SingleValueExtendedProperties(%24filter%3d(PropertyId+eq+'String+{1a417774-4779-47c1-9851-e42057495fca}+Name+XrmSharingSourceUser')+OR+(PropertyId+eq+'String+{1a417774-4779-47c1-9851-e42057495fca}+Name+XrmSharingSourceUserDisplayName'))
 
                         //Debug.WriteLine(String.Format("Posting to {1}:{2}{0}{2}Token:{2}{3}", json, uri, Environment.NewLine, AccessToken));
-                        Log.VerboseFormat("Posting to {1}:{0}", json, uri);
+                        Log.VerboseFormat("Posting POST (create) to {1}:{0}", json, uri);
                         PrepareRequest(RequestDataTypes.Companies, RequestDataFormats.JSON);      
                                   
                         using (var response = await _httpClient.PostAsync(uri, new StringContent(json, Encoding.UTF8, "application/json")))
@@ -707,6 +707,7 @@ namespace BCM_Migration_Tool.Objects
                             uri = new Uri(String.Format("{0}/XrmOrganizations('{1}')?%24Expand=SingleValueExtendedProperties(%24filter%3d(PropertyId+eq+'String+%7B1a417774-4779-47c1-9851-e42057495fca%7D+Name+XrmSharingSourceUser')+OR+(PropertyId+eq+'String+%7B1a417774-4779-47c1-9851-e42057495fca%7D+Name+XrmSharingSourceUserDisplayName'))", Settings.Default.BetaEndPoint, existingCompany.Id));
                             //e.g. https://outlook.office.com/api/beta/Me/XrmOrganizations?%24Expand=SingleValueExtendedProperties(%24filter%3d(PropertyId+eq+'String+{1a417774-4779-47c1-9851-e42057495fca}+Name+XrmSharingSourceUser')+OR+(PropertyId+eq+'String+{1a417774-4779-47c1-9851-e42057495fca}+Name+XrmSharingSourceUserDisplayName'))
 
+                            Log.VerboseFormat("Posting PATCH (updating) to {1}:{0}", json, uri);
                             PrepareRequest(RequestDataTypes.Companies, RequestDataFormats.JSON);
                             HttpMethod method = new HttpMethod("PATCH");
                             HttpContent httpContent = new StringContent(json, Encoding.UTF8, "application/json");

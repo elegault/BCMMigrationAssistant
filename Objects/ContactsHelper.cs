@@ -934,7 +934,10 @@ namespace BCM_Migration_Tool.Objects
                     if (existingContact != null)
                     {
                         //TESTED If updating existing company, use existingCompany var or copy to ocmCompany
-                        ocmContact.Birthday = existingContact.Birthday;
+
+                        //BUGFIXED 1.0.17 Will get error as per PATCH below if we don't use a nullable type and ensure we don't set if it's a minvalue
+                        if (existingContact.Birthday != null && existingContact.Birthday != DateTimeOffset.MinValue)
+                            ocmContact.Birthday = (DateTimeOffset)existingContact.Birthday;
                         ocmContact.BusinessAddress = existingContact.BusinessAddress;
                         try
                         {
@@ -968,6 +971,10 @@ namespace BCM_Migration_Tool.Objects
                         ocmContact.PersonalNotes = existingContact.PersonalNotes;
                         ocmContact.Surname = existingContact.Surname.ToString();
                         ocmContact.Title = existingContact.Title;
+
+                        //TESTED 1.0.17 Wasn't setting ID or mobile...
+                        ocmContact.Id = existingContact.Id;
+                        ocmContact.MobilePhone1 = existingContact.MobilePhone1?.ToString();
                     }
 
                     //Skip null value (do not update existing non-empty value with an empty/null value from BCM)
@@ -1006,7 +1013,7 @@ namespace BCM_Migration_Tool.Objects
 
                         //ocmContact.Id = contact.CustomerID; //TODO Set ID to what?
                         if (!String.IsNullOrEmpty(contact.JobTitle))
-                            ocmContact.JobTitle = contact.JobTitle;
+                            ocmContact.JobTitle = contact.JobTitle;                        
                         if (!String.IsNullOrEmpty(contact.ContactNotes))
                             ocmContact.PersonalNotes = contact.ContactNotes;
                         if (!String.IsNullOrEmpty(contact.LastName))
@@ -1038,26 +1045,29 @@ namespace BCM_Migration_Tool.Objects
                         {
 
                             //Changed mapping from BCM CompanyMainPhoneNum to OCM BusinessPhones to BCM WorkPhoneNum to OCM BusinessPhones  
-                            if (!String.IsNullOrEmpty(contact.WorkPhoneNum))
-                            {
-                                if (ocmContact.BusinessPhones != null)
-                                {
-                                    //Existing contact - check if phone number exists
-                                    if (!ocmContact.BusinessPhones.Contains(contact.WorkPhoneNum))
-                                    {
-                                        string[] phones = ocmContact.BusinessPhones;
-                                        Array.Resize(ref phones, ocmContact.BusinessPhones.Length + 1);
-                                        //phones[phones.Length + 1] = contact.WorkPhoneNum;
-                                        //BUGFIXED 1.0.16 Oops! wrong index
-                                        phones[phones.Length - 1] = contact.WorkPhoneNum;
-                                        ocmContact.BusinessPhones = phones;
-                                    }
-                                }
-                                else
-                                {
-                                    ocmContact.BusinessPhones = new string[1];
-                                    ocmContact.BusinessPhones[0] = contact.WorkPhoneNum;
-                                }
+                            //BUGFIXED 1.0.17 Error updating a contact: {"error":{"code":"ErrorInvalidProperty","message":"The multi value property BusinessPhones has 3 entries, that exceeds the max allowed value of 2."}}. However, only one business phone is listed in the UI...don't add multiple, and only update non-null (could be non-null if an existing contact)
+                            if (!String.IsNullOrEmpty(contact.WorkPhoneNum) && ocmContact.BusinessPhones.Length == 0)
+                            {                                
+                                //if (ocmContact.BusinessPhones != null)
+                                //{
+                                //    //Existing contact - check if phone number exists
+                                //    if (!ocmContact.BusinessPhones.Contains(contact.WorkPhoneNum) && ocmContact.BusinessPhones.Length < 2)
+                                //    {
+                                //        string[] phones = ocmContact.BusinessPhones;
+                                //        Array.Resize(ref phones, ocmContact.BusinessPhones.Length + 1);
+                                //        //phones[phones.Length + 1] = contact.WorkPhoneNum;
+                                //        //BUGFIXED 1.0.16 Oops! wrong index
+                                //        phones[phones.Length - 1] = contact.WorkPhoneNum;
+                                //        ocmContact.BusinessPhones = phones;
+                                //    }
+                                //}
+                                //else
+                                //{
+                                //    ocmContact.BusinessPhones = new string[1];
+                                //    ocmContact.BusinessPhones[0] = contact.WorkPhoneNum;
+                                //}
+                                ocmContact.BusinessPhones = new string[1];
+                                ocmContact.BusinessPhones[0] = contact.WorkPhoneNum;
                             }
                         }
                         catch (Exception ex)
@@ -1106,7 +1116,7 @@ namespace BCM_Migration_Tool.Objects
                     //=====================================================================================
 
                     var json = JsonConvert.SerializeObject(ocmContact);
-
+                    
                     try
                     {
                         Uri uri;
@@ -1117,7 +1127,7 @@ namespace BCM_Migration_Tool.Objects
 
                             //Debug.WriteLine(String.Format("Posting to {1}:{2}{0}{2}Token:{2}{3}", json, uri, Environment.NewLine, AccessToken));
 
-                            Log.VerboseFormat("Posting create call to {1}:{0}", json, uri);
+                            Log.VerboseFormat("Posting POST (create) call to {1}:{0}", json, uri);
                             PrepareRequest(RequestDataTypes.Contacts, RequestDataFormats.JSON);
                             using (var response = await _httpClient.PostAsync(uri, new StringContent(json, Encoding.UTF8, "application/json")))
                             {
@@ -1184,13 +1194,14 @@ namespace BCM_Migration_Tool.Objects
 
                             //Debug.WriteLine(String.Format("Patching to {1}:{2}{0}{2}Token:{2}{3}", json, uri, Environment.NewLine, AccessToken));
 
-                            Log.VerboseFormat("Posting update call to {1}:{0}", json, uri);
+                            Log.VerboseFormat("Posting PATCH (update) call to {1}:{0}", json, uri);
                             PrepareRequest(RequestDataTypes.Contacts, RequestDataFormats.JSON);
                             using (var response = await _httpClient.SendAsync(request))
                             {
                                 if (!response.IsSuccessStatusCode) // Check status code.
                                 {
-                                    //BUGWATCH "{\"error\":{\"code\":\"ErrorIncorrectUpdatePropertyCount\",\"message\":\"An object within a change description must contain one and only one property to modify.\"}}" Happens with Mr. Syed Abbas; was ImportModes.Update; maybe problem with sharing props that aren't needed?                                    
+                                    //BUGWATCH "{\"error\":{\"code\":\"ErrorIncorrectUpdatePropertyCount\",\"message\":\"An object within a change description must contain one and only one property to modify.\"}}" Happens with Mr. Syed Abbas; was ImportModes.Update; maybe problem with sharing props that aren't needed?    
+                                    //BUGFIXED Was because of DateTime.MinValue in OCMContact.Birthday; it prefers a nullable type, so I made it nullable and voila! No more error
                                     var content = await response.Content.ReadAsStringAsync();
                                     Log.ErrorFormat("Error updating '{1}': {0}", content, contact.FullName);
                                     OnError(null, new HelperEventArgs(String.Format("ERROR updating '{1}': {0}", content, contact.FullName), HelperEventArgs.EventTypes.Error));
@@ -1228,7 +1239,7 @@ namespace BCM_Migration_Tool.Objects
                     context.Database.Connection.ConnectionString = ConnectionString;
 
                     var contacts = from mycontact in context.ContactFullViews where !mycontact.IsDeletedLocally && mycontact.Type == 1 select mycontact;
-                    //var contacts = (from a in context.ContactFullViews join c in context.AccountsFullViews on a.ParentEntryID equals c.EntryGUID select new { CompanyName = c.FullName, Contact = a });
+
                     if (TestMode)
                     {
                         NumberToProcess = TestingMaximum;
@@ -1398,6 +1409,6 @@ namespace BCM_Migration_Tool.Objects
         //        Debug.WriteLine(ex.ToString());
         //    }
         //}
-        #endregion
+#endregion
     }
 }
