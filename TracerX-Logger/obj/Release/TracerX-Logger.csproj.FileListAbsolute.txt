@@ -38,3 +38,4 @@ C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Assistant\Tr
 C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Assistant\TracerX-Logger\obj\Release\TracerX-Logger.csproj.GenerateResource.Cache
 C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Assistant\TracerX-Logger\obj\Release\TracerX-Logger.dll
 C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Assistant\TracerX-Logger\obj\Release\TracerX-Logger.pdb
+C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Assistant\TracerX-Logger\obj\Release\TracerX-Logger.csproj.CoreCompileInputs.cache

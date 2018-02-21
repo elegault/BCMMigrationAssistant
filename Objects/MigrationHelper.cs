@@ -80,62 +80,127 @@ namespace BCM_Migration_Tool.Objects
             //Was urn:ietf:wg:oauth:2.0:oob
             get { return new Uri(Properties.Settings.Default.RedirectURI); }
         }
+        public static DateTimeOffset TokenExpiresAt { get; set; }
         #endregion
         #region Methods
         /// <summary>
-        /// Get an access token for the Microsoft Graph using ADAL
+        /// Use to refresh expired tokens. Technically this is not using the refresh token, as ADAL (v3?) is fine with just using AcquireToken and not AcquireTokenByRefreshToken
         /// </summary>
         /// <returns></returns>
-        public static string GetAccessToken(string loginMode)
+        public static AuthenticationResult GetAccessToken(bool silent)
         {
             // Create the authentication context (ADAL)
-            try
+            using (Log.VerboseCall())
             {
-                //Authority e.g.: https://login.microsoftonline.com/common/mydomain.onmicrosoft.com/
-                var authenticationContext = new AuthenticationContext(Authority);
-
-                PromptBehavior promptBehavior;
-
-                switch (loginMode)
+                AuthenticationResult result = null;
+                try
                 {
-                    case "Always":
-                        promptBehavior = PromptBehavior.Always;
-                        break;
-                    case "Automatic":
-                        promptBehavior = PromptBehavior.Auto;
-                        break;
-                    case "Refresh":
-                        promptBehavior = PromptBehavior.RefreshSession;
-                        break;
-                    default:
-                        promptBehavior = PromptBehavior.RefreshSession;
-                        break;
+                    //Authority e.g.: https://login.microsoftonline.com/common/mydomain.onmicrosoft.com/
+                    var authenticationContext = new AuthenticationContext(Authority);
+
+                    PromptBehavior promptBehavior;
+
+                    switch (Settings.Default.LoginMode)
+                    {
+                        case "Always":
+                            promptBehavior = PromptBehavior.Always;
+                            break;
+                        case "Automatic":
+                            promptBehavior = PromptBehavior.Auto;
+                            break;
+                        case "Refresh":
+                            promptBehavior = PromptBehavior.RefreshSession;
+                            break;
+                        default:
+                            promptBehavior = PromptBehavior.RefreshSession;
+                            break;
+                    }
+
+                    // Get the access token       
+                    if (silent)
+                    {
+                        result = authenticationContext.AcquireToken(GraphResource, ClientId, RedirectUri);
+                    }
+                    else
+                    {
+                        result = authenticationContext.AcquireToken(GraphResource, ClientId, RedirectUri, promptBehavior);
+
+                    }
+                    if (result != null)
+                    {
+                        TokenExpiresAt = result.ExpiresOn;
+                        Log.InfoFormat(
+                        "Access token retrieved: {0} (AccessTokenType: {1}; ExpiresOn: {2}; IdToken: {3}; RefreshToken: {4}; TenantID: {5}; User: {6}",
+                        result.AccessToken, result.AccessTokenType, result.ExpiresOn, result.IdToken,
+                        result.RefreshToken, result.TenantId, result.UserInfo?.DisplayableId);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    //Watch for {"authentication_canceled: User canceled authentication"}; or when cancelling final step: {"AADSTS65004: The resource owner or authorization server denied the request.\r\nTrace ID: e5e00775-0f74-4d61-9e0e-38398cd768da\r\nCorrelation ID: edce93a1-20d7-41da-b672-12ef1c2c2644\r\nTimestamp: 2016-12-14 19:33:17Z"}
+                    Log.Error(ex);
                 }
 
-                // Get the access token       
-                         
-//#if DEBUG
-//                //NOTE Easy way to authenticate while testing - set login and password here
-//                var authenticationResult = authenticationContext.AcquireToken(GraphResource, ClientId, new UserCredential("user@domain.com", "password"));
-//#else
-//                var authenticationResult = authenticationContext.AcquireToken(GraphResource, ClientId, RedirectUri, promptBehavior);
-//#endif
-
-                var authenticationResult = authenticationContext.AcquireToken(GraphResource, ClientId, RedirectUri, promptBehavior);
-
-                //"The browser based authentication dialog failed to complete. Reason: The server has not found anything matching the requested URI (Uniform Resource Identifier)."
-                var accessToken = authenticationResult.AccessToken;                
-                Log.InfoFormat("Access token: " + accessToken);
-                return accessToken;
+                return result;
             }
-            catch (System.Exception ex)
-            {
-                //Watch for {"authentication_canceled: User canceled authentication"}; or when cancelling final step: {"AADSTS65004: The resource owner or authorization server denied the request.\r\nTrace ID: e5e00775-0f74-4d61-9e0e-38398cd768da\r\nCorrelation ID: edce93a1-20d7-41da-b672-12ef1c2c2644\r\nTimestamp: 2016-12-14 19:33:17Z"}
-                Log.Error(ex);
-            }
-
-            return null;
         }
+//        /// <summary>
+//        /// Get an access token for the Microsoft Graph using ADAL
+//        /// </summary>
+//        /// <returns></returns>
+//        public static string GetAccessToken(string loginMode)
+//        {
+//            // Create the authentication context (ADAL)
+//            using (Log.VerboseCall())
+//            {
+//                try
+//                {
+//                    //Authority e.g.: https://login.microsoftonline.com/common/mydomain.onmicrosoft.com/
+//                    var authenticationContext = new AuthenticationContext(Authority);
+
+//                    PromptBehavior promptBehavior;
+
+//                    switch (loginMode)
+//                    {
+//                        case "Always":
+//                            promptBehavior = PromptBehavior.Always;
+//                            break;
+//                        case "Automatic":
+//                            promptBehavior = PromptBehavior.Auto;
+//                            break;
+//                        case "Refresh":
+//                            promptBehavior = PromptBehavior.RefreshSession;
+//                            break;
+//                        default:
+//                            promptBehavior = PromptBehavior.RefreshSession;
+//                            break;
+//                    }
+
+//                    // Get the access token       
+                         
+////#if DEBUG
+////                //NOTE Easy way to authenticate while testing - set login and password here
+////                var authenticationResult = authenticationContext.AcquireToken(GraphResource, ClientId, new UserCredential("user@domain.com", "password"));
+////#else
+////                var authenticationResult = authenticationContext.AcquireToken(GraphResource, ClientId, RedirectUri, promptBehavior);
+////#endif
+
+//                    var authenticationResult = authenticationContext.AcquireToken(GraphResource, ClientId, RedirectUri, promptBehavior);
+
+//                    //"The browser based authentication dialog failed to complete. Reason: The server has not found anything matching the requested URI (Uniform Resource Identifier)."
+//                    var accessToken = authenticationResult.AccessToken;                
+//                    Log.InfoFormat("Access token: {0} (AccessTokenType: {1}; ExpiresOn: {2}; IdToken: {3}; RefreshToken: {4}; TenantID: {5}; User: {6}", accessToken, authenticationResult.AccessTokenType, authenticationResult.ExpiresOn, authenticationResult.IdToken, authenticationResult.RefreshToken, authenticationResult.TenantId, authenticationResult.UserInfo?.GivenName);
+//                    return accessToken;
+//                }
+//                catch (Exception ex)
+//                {
+//                    //Watch for {"authentication_canceled: User canceled authentication"}; or when cancelling final step: {"AADSTS65004: The resource owner or authorization server denied the request.\r\nTrace ID: e5e00775-0f74-4d61-9e0e-38398cd768da\r\nCorrelation ID: edce93a1-20d7-41da-b672-12ef1c2c2644\r\nTimestamp: 2016-12-14 19:33:17Z"}
+//                    Log.Error(ex);
+//                }
+
+//                return null;
+//            }
+//        }        
         /// <summary>
         /// Prepare an HttpClient with the an authorization header (access token)
         /// </summary>
@@ -162,9 +227,6 @@ namespace BCM_Migration_Tool.Objects
             {
                 HttpClient httpClient = GetHttpClient(accessToken);
                 //https://outlook.office365.com/v1.0/me
-                //var userResponse = await httpClient.GetStringAsync(GraphResource + GraphVersion + "/me/");
-                //string request = String.Format("{0}/me", Properties.Settings.Default.V2EndPoint);
-                //var response = await httpClient.GetAsync(GraphResource + GraphVersion + "/me");
                 var response = await httpClient.GetAsync(Properties.Settings.Default.V2EndPoint);
                 if (!response.IsSuccessStatusCode)
                 {
@@ -193,10 +255,13 @@ namespace BCM_Migration_Tool.Objects
             }
             //return null;
         }
-        internal static async Task<string> Login()
-        {
-            return GetAccessToken(Properties.Settings.Default.LoginMode);
-        }
+        //internal static async Task<string> Login()
+        //{
+        //    using (Log.VerboseCall())
+        //    {
+        //        return GetAccessToken(Settings.Default.LoginMode);
+        //    }
+        //}
         internal static bool StartXRMSession(string accessToken)
         {
             bool result = false;

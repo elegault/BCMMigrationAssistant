@@ -37,11 +37,15 @@
             this.tabPageMap = new System.Windows.Forms.TabPage();
             this.map1 = new BCM_Migration_Tool.Controls.Map();
             this.tabPageMigrate = new System.Windows.Forms.TabPage();
-            this.chkDebugMode = new System.Windows.Forms.CheckedListBox();
-            this.label1 = new System.Windows.Forms.Label();
+            this.lblRESTRetries = new System.Windows.Forms.Label();
+            this.numericUpDownRetryMax = new System.Windows.Forms.NumericUpDown();
+            this.lblRetryDelay = new System.Windows.Forms.Label();
+            this.numericUpDownRetryDelay = new System.Windows.Forms.NumericUpDown();
+            this.lblMaxRecords = new System.Windows.Forms.Label();
+            this.chkLBDebugMode = new System.Windows.Forms.CheckedListBox();
             this.chkGetOnly = new System.Windows.Forms.CheckBox();
             this.chkTestMode = new System.Windows.Forms.CheckBox();
-            this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
+            this.numericUpDownMaxRecords = new System.Windows.Forms.NumericUpDown();
             this.migrate1 = new BCM_Migration_Tool.Controls.Migrate();
             this.tabPageConfig = new System.Windows.Forms.TabPage();
             this.configure1 = new BCM_Migration_Tool.Controls.Configure();
@@ -56,7 +60,9 @@
             this.tabPageConnect.SuspendLayout();
             this.tabPageMap.SuspendLayout();
             this.tabPageMigrate.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownRetryMax)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownRetryDelay)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMaxRecords)).BeginInit();
             this.tabPageConfig.SuspendLayout();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -139,11 +145,15 @@
             // 
             // tabPageMigrate
             // 
-            this.tabPageMigrate.Controls.Add(this.chkDebugMode);
-            this.tabPageMigrate.Controls.Add(this.label1);
+            this.tabPageMigrate.Controls.Add(this.lblRESTRetries);
+            this.tabPageMigrate.Controls.Add(this.numericUpDownRetryMax);
+            this.tabPageMigrate.Controls.Add(this.lblRetryDelay);
+            this.tabPageMigrate.Controls.Add(this.numericUpDownRetryDelay);
+            this.tabPageMigrate.Controls.Add(this.lblMaxRecords);
+            this.tabPageMigrate.Controls.Add(this.chkLBDebugMode);
             this.tabPageMigrate.Controls.Add(this.chkGetOnly);
             this.tabPageMigrate.Controls.Add(this.chkTestMode);
-            this.tabPageMigrate.Controls.Add(this.numericUpDown1);
+            this.tabPageMigrate.Controls.Add(this.numericUpDownMaxRecords);
             this.tabPageMigrate.Controls.Add(this.migrate1);
             this.tabPageMigrate.Location = new System.Drawing.Point(4, 22);
             this.tabPageMigrate.Name = "tabPageMigrate";
@@ -153,55 +163,132 @@
             this.tabPageMigrate.Text = "Migrate";
             this.tabPageMigrate.UseVisualStyleBackColor = true;
             // 
-            // chkDebugMode
+            // lblRESTRetries
             // 
-            this.chkDebugMode.FormattingEnabled = true;
-            this.chkDebugMode.Items.AddRange(new object[] {
+            this.lblRESTRetries.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblRESTRetries.AutoSize = true;
+            this.lblRESTRetries.Location = new System.Drawing.Point(459, 59);
+            this.lblRESTRetries.Name = "lblRESTRetries";
+            this.lblRESTRetries.Size = new System.Drawing.Size(166, 13);
+            this.lblRESTRetries.TabIndex = 11;
+            this.lblRESTRetries.Text = "Max REST call retries on failure:";
+            this.toolTip1.SetToolTip(this.lblRESTRetries, "How many retries to attempt before aborting the call (this setting is also used w" +
+        "hen Test Mode is off)");
+            // 
+            // numericUpDownRetryMax
+            // 
+            this.numericUpDownRetryMax.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.numericUpDownRetryMax.Location = new System.Drawing.Point(631, 57);
+            this.numericUpDownRetryMax.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.numericUpDownRetryMax.Name = "numericUpDownRetryMax";
+            this.numericUpDownRetryMax.Size = new System.Drawing.Size(50, 22);
+            this.numericUpDownRetryMax.TabIndex = 10;
+            this.toolTip1.SetToolTip(this.numericUpDownRetryMax, "How many retries to attempt before aborting the call (this setting is also used w" +
+        "hen Test Mode is off)");
+            this.numericUpDownRetryMax.Value = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            // 
+            // lblRetryDelay
+            // 
+            this.lblRetryDelay.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblRetryDelay.AutoSize = true;
+            this.lblRetryDelay.Location = new System.Drawing.Point(511, 34);
+            this.lblRetryDelay.Name = "lblRetryDelay";
+            this.lblRetryDelay.Size = new System.Drawing.Size(115, 13);
+            this.lblRetryDelay.TabIndex = 9;
+            this.lblRetryDelay.Text = "REST retry delay (sec):";
+            this.toolTip1.SetToolTip(this.lblRetryDelay, "The amount of time in seconds to wait before any failed REST calls are retried");
+            // 
+            // numericUpDownRetryDelay
+            // 
+            this.numericUpDownRetryDelay.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.numericUpDownRetryDelay.Location = new System.Drawing.Point(631, 32);
+            this.numericUpDownRetryDelay.Maximum = new decimal(new int[] {
+            1800,
+            0,
+            0,
+            0});
+            this.numericUpDownRetryDelay.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numericUpDownRetryDelay.Name = "numericUpDownRetryDelay";
+            this.numericUpDownRetryDelay.Size = new System.Drawing.Size(50, 22);
+            this.numericUpDownRetryDelay.TabIndex = 8;
+            this.toolTip1.SetToolTip(this.numericUpDownRetryDelay, "The amount of time in seconds to wait before any failed REST calls are retried (t" +
+        "his setting is also used when Test Mode is off)");
+            this.numericUpDownRetryDelay.Value = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            // 
+            // lblMaxRecords
+            // 
+            this.lblMaxRecords.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblMaxRecords.AutoSize = true;
+            this.lblMaxRecords.Location = new System.Drawing.Point(383, 34);
+            this.lblMaxRecords.Name = "lblMaxRecords";
+            this.lblMaxRecords.Size = new System.Drawing.Size(72, 13);
+            this.lblMaxRecords.TabIndex = 7;
+            this.lblMaxRecords.Text = "Max records:";
+            this.toolTip1.SetToolTip(this.lblMaxRecords, "Limits the number of records to create (per checked item)");
+            // 
+            // chkLBDebugMode
+            // 
+            this.chkLBDebugMode.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.chkLBDebugMode.FormattingEnabled = true;
+            this.chkLBDebugMode.Items.AddRange(new object[] {
             "Accounts",
             "Contacts",
             "Opportunities",
             "Deal Stages"});
-            this.chkDebugMode.Location = new System.Drawing.Point(480, 33);
-            this.chkDebugMode.Name = "chkDebugMode";
-            this.chkDebugMode.Size = new System.Drawing.Size(120, 38);
-            this.chkDebugMode.TabIndex = 6;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(344, 74);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(256, 13);
-            this.label1.TabIndex = 5;
-            this.label1.Text = "THE CONTROLS ABOVE ARE FOR DEBUG TESTING";
-            this.label1.Visible = false;
+            this.chkLBDebugMode.Location = new System.Drawing.Point(252, 34);
+            this.chkLBDebugMode.Name = "chkLBDebugMode";
+            this.chkLBDebugMode.Size = new System.Drawing.Size(120, 38);
+            this.chkLBDebugMode.TabIndex = 6;
             // 
             // chkGetOnly
             // 
+            this.chkGetOnly.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.chkGetOnly.AutoSize = true;
-            this.chkGetOnly.Location = new System.Drawing.Point(405, 33);
+            this.chkGetOnly.Location = new System.Drawing.Point(168, 57);
             this.chkGetOnly.Name = "chkGetOnly";
             this.chkGetOnly.Size = new System.Drawing.Size(69, 17);
             this.chkGetOnly.TabIndex = 2;
             this.chkGetOnly.Text = "Get only";
+            this.toolTip1.SetToolTip(this.chkGetOnly, "Will not create records if checked");
             this.chkGetOnly.UseVisualStyleBackColor = true;
             // 
             // chkTestMode
             // 
+            this.chkTestMode.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.chkTestMode.AutoSize = true;
-            this.chkTestMode.Location = new System.Drawing.Point(321, 33);
+            this.chkTestMode.Location = new System.Drawing.Point(168, 34);
             this.chkTestMode.Name = "chkTestMode";
             this.chkTestMode.Size = new System.Drawing.Size(78, 17);
             this.chkTestMode.TabIndex = 1;
             this.chkTestMode.Text = "Test Mode";
+            this.toolTip1.SetToolTip(this.chkTestMode, "If checked, will limit the records created or retrieved to the items selected in " +
+        "the list box (up to the Max records specified)");
             this.chkTestMode.UseVisualStyleBackColor = true;
             // 
-            // numericUpDown1
+            // numericUpDownMaxRecords
             // 
-            this.numericUpDown1.Location = new System.Drawing.Point(619, 33);
-            this.numericUpDown1.Name = "numericUpDown1";
-            this.numericUpDown1.Size = new System.Drawing.Size(78, 22);
-            this.numericUpDown1.TabIndex = 4;
+            this.numericUpDownMaxRecords.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.numericUpDownMaxRecords.Location = new System.Drawing.Point(386, 50);
+            this.numericUpDownMaxRecords.Name = "numericUpDownMaxRecords";
+            this.numericUpDownMaxRecords.Size = new System.Drawing.Size(50, 22);
+            this.numericUpDownMaxRecords.TabIndex = 4;
+            this.toolTip1.SetToolTip(this.numericUpDownMaxRecords, "Limits the number of records to create");
             // 
             // migrate1
             // 
@@ -343,7 +430,9 @@
             this.tabPageMap.PerformLayout();
             this.tabPageMigrate.ResumeLayout(false);
             this.tabPageMigrate.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownRetryMax)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownRetryDelay)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMaxRecords)).EndInit();
             this.tabPageConfig.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
@@ -364,7 +453,6 @@
         private Controls.NavigationBar navigationBar1;
         private Controls.Connect connect1;
         private Controls.Migrate migrate1;
-        private System.Windows.Forms.NumericUpDown numericUpDown1;
         private System.Windows.Forms.CheckBox chkTestMode;
         private Controls.Map map1;
         private System.Windows.Forms.CheckBox chkGetOnly;
@@ -374,7 +462,12 @@
         private System.Windows.Forms.Label lblVersion;
         private System.Windows.Forms.Label lblWebSite;
         private System.Windows.Forms.ToolTip toolTip1;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.CheckedListBox chkDebugMode;
+        private System.Windows.Forms.CheckedListBox chkLBDebugMode;
+        internal System.Windows.Forms.Label lblMaxRecords;
+        internal System.Windows.Forms.Label lblRESTRetries;
+        internal System.Windows.Forms.NumericUpDown numericUpDownRetryMax;
+        internal System.Windows.Forms.Label lblRetryDelay;
+        internal System.Windows.Forms.NumericUpDown numericUpDownRetryDelay;
+        internal System.Windows.Forms.NumericUpDown numericUpDownMaxRecords;
     }
 }

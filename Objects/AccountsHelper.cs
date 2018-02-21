@@ -5,6 +5,7 @@ using System.Data.Entity;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Reflection;
 using System.Runtime.Serialization.Json;
@@ -43,8 +44,11 @@ namespace BCM_Migration_Tool.Objects
         #region Methods
         internal async Task CreateCompanies()
         {
-            Cancelled = false;
-            await RunCreateCompanyAsync();
+            using (Log.VerboseCall())
+            {
+                Cancelled = false;
+                await RunCreateCompanyAsync();
+            }
         }
         internal async Task GetBCMAccounts()
         {
@@ -62,9 +66,12 @@ namespace BCM_Migration_Tool.Objects
                         BCMAccountsFullView = companies; //REVIEW BCMAccountsFullView is set but not referenced
                         Log.InfoFormat("Found {0} BCM Accounts: ", companies.Count());
                         OnGetComplete(null, new HelperEventArgs(String.Format("Found {0} BCM Accounts: ", companies.Count()), HelperEventArgs.EventTypes.Status));
-                        foreach (var company in companies)
-                        {                            
-                            OnGetItemComplete(null, new HelperEventArgs(String.Format(" -{0}", company.FileAs), HelperEventArgs.EventTypes.Status));
+                        if (LogRecordNames)
+                        {
+                            foreach (var company in companies)
+                            {
+                                OnGetItemComplete(null, new HelperEventArgs(String.Format(" -{0}", company.FileAs), HelperEventArgs.EventTypes.Status));
+                            }
                         }
                     }
                 }
@@ -85,6 +92,7 @@ namespace BCM_Migration_Tool.Objects
 
                 //OnGetComplete(null, new HelperEventArgs(String.Format("Found {0} existing OCM Companies (* = previously imported):", OCMAccounts?.Count), HelperEventArgs.EventTypes.Status));
                 Log.InfoFormat("Found {0} existing OCM Companies", OCMAccounts?.Count);
+
                 OnGetComplete(null, new HelperEventArgs(String.Format("Found {0} existing OCM Companies", OCMAccounts?.Count), HelperEventArgs.EventTypes.Status));
 
                 bool headerShown = false;
@@ -97,8 +105,8 @@ namespace BCM_Migration_Tool.Objects
                             OnGetComplete(null, new HelperEventArgs("Previously imported companies:", HelperEventArgs.EventTypes.Status));
                             headerShown = true;
                         }
-
-                        OnGetItemComplete(null, new HelperEventArgs(String.Format(" -{0} (BCM ID: {1})", item.DisplayName, item.GetBCMID()), HelperEventArgs.EventTypes.Status));
+                        if (LogRecordNames)
+                            OnGetItemComplete(null, new HelperEventArgs(String.Format(" -{0} (BCM ID: {1})", item.DisplayName, item.GetBCMID()), HelperEventArgs.EventTypes.Status));
                         Log.DebugFormat("{0} (BCMID: {1}; XRMID: {2})", item.DisplayName, item.BCMID, item.XrmId);
                     }
                     else
@@ -111,88 +119,86 @@ namespace BCM_Migration_Tool.Objects
         }
         private async Task GetOCMCompaniesAsync()
         {
-            try
+            using (Log.VerboseCall())
             {
-                string request;
+                try
+                {
+                    string request;
          
-                if (PageSkip == 0)
-                {
-                    request = String.Format("{0}/XrmOrganizations?$top=50&$expand=SingleValueExtendedProperties($filter=PropertyId%20eq%20'String%20{1}%20Name%20BCMID')", Properties.Settings.Default.BetaEndPoint, FieldMappings.BCMIDPropertyGUID);
-                }
-                else
-                {
-                    request = String.Format("{0}/XrmOrganizations?$top=50&$expand=SingleValueExtendedProperties($filter=PropertyId%20eq%20'String%20{1}%20Name%20BCMID')&$skip={2}", Properties.Settings.Default.BetaEndPoint, FieldMappings.BCMIDPropertyGUID, PageSkip);
-                }
+                    if (PageSkip == 0)
+                    {
+                        request = String.Format("{0}/XrmOrganizations?$top=50&$expand=SingleValueExtendedProperties($filter=PropertyId%20eq%20'String%20{1}%20Name%20BCMID')", Settings.Default.BetaEndPoint, FieldMappings.BCMIDPropertyGUID);
+                    }
+                    else
+                    {
+                        request = String.Format("{0}/XrmOrganizations?$top=50&$expand=SingleValueExtendedProperties($filter=PropertyId%20eq%20'String%20{1}%20Name%20BCMID')&$skip={2}", Settings.Default.BetaEndPoint, FieldMappings.BCMIDPropertyGUID, PageSkip);
+                    }
                 
-                PrepareRequest(RequestDataTypes.Companies, RequestDataFormats.None);
-                using (var response = await _httpClient.GetAsync(request))
-                {
-                    // Check status code.
-                    if (!response.IsSuccessStatusCode)
-                    {
-                        var responseContent = await response.Content.ReadAsStringAsync();
-                        OnError(null, new HelperEventArgs(String.Format("ERROR in GetOCMCompaniesAsync(): {0}", responseContent), HelperEventArgs.EventTypes.Error));
-                        NumberOfErrors += 1;
-                        return;
-                    }
-                    // Read and deserialize response.    
-                    var content = await response.Content.ReadAsStringAsync();
+                    PrepareRequest(RequestDataTypes.Companies, RequestDataFormats.None);
+                    //OCMCompany2 contacts2 = null;
+                    //TESTED New global REST methods
+                    RestResponse<OCMCompany2> contacts2 = await Get<OCMCompany2>(request, true, null, false, false);
+                    //using (var response = await _httpClient.GetAsync(request))
+                    //{
+                    //    // Check status code.
+                    //    if (!response.IsSuccessStatusCode)
+                    //    {
+                    //        var responseContent = await response.Content.ReadAsStringAsync();
+                    //        OnError(null, new HelperEventArgs(String.Format("ERROR in GetOCMCompaniesAsync(): {0}", responseContent), HelperEventArgs.EventTypes.Error));
+                    //        NumberOfErrors += 1;
+                    //        return;
+                    //    }
+                    //    // Read and deserialize response.    
+                    //    var content = await response.Content.ReadAsStringAsync();
 
-                    OCMCompany2 contacts2 = null;
+                    //    OCMCompany2 contacts2 = null;
 
-                    try
-                    {
-                        contacts2 = JsonConvert.DeserializeObject<OCMCompany2>(content);
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.Error(ex);
+                    //    try
+                    //    {
+                    //        contacts2 = JsonConvert.DeserializeObject<OCMCompany2>(content);
+                    //    }
+                    //    catch (Exception ex)
+                    //    {
+                    //        Log.Error(ex);
 
-                    }
+                    //    }                        
+                    //}
 
                     if (OCMAccounts == null)
                         OCMAccounts = new List<OCMCompany2Value>();
 
-                    foreach (var company in contacts2.value)
+                    if (contacts2.StatusCode != HttpStatusCode.OK)
                     {
-                        OCMAccounts.Add(company);
+                        OnError(null, new HelperEventArgs(String.Format("ERROR in GetOCMCompaniesAsync(): {1}: {0}", contacts2.ErrorContent, contacts2.StatusCode), HelperEventArgs.EventTypes.Error));
+                        NumberOfErrors += 1;
+                        return;
                     }
+                    if (contacts2.Content != null)
+                    {
+                        foreach (var company in contacts2.Content.value)
+                        {
+                            OCMAccounts.Add(company);
+                        }
 
+                        if (contacts2.Content.value.Length < 50)
+                        {
+                            //No more items to get
+                            PageSkip = 0;
+                            OnGetItemComplete(null, new HelperEventArgs(String.Format("Fetched {0} OCM Companies", OCMAccounts.Count), HelperEventArgs.EventTypes.Status));
+                        }
+                        else
+                        {
+                            PageSkip += 50;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
 
-                    //if (!String.IsNullOrEmpty(contacts2.odatanextLink?.ToString()))
-                    //{
-                    //    if (contacts2.odatanextLink == LastPageResult) //Done paging
-                    //    {
-                    //        OnGetItemComplete(null, new HelperEventArgs(String.Format("Fetched {0} OCM Companies", OCMAccounts.Count), HelperEventArgs.EventTypes.Status));
-                    //        return;
-                    //    }
-                    //    //Debug.WriteLine(String.Format("Setting page: {0}", contacts2.odatanextLink));
-                    //    LastPageResult = contacts2.odatanextLink.ToString();
-                    //}
-                    //else
-                    //{
-                    //    //Done paging
-                    //    LastPageResult = null;
-                    //    return;
-                    //}
-                    if (contacts2.value.Length < 50)
-                    {
-                        //No more items to get
-                        PageSkip = 0;
-                        OnGetItemComplete(null, new HelperEventArgs(String.Format("Fetched {0} OCM Companies", OCMAccounts.Count), HelperEventArgs.EventTypes.Status));
-                    }
-                    else
-                    {
-                        PageSkip += 50;
-                    }
-                }                
+                    //return null;
+                }
+                Debug.WriteLine("Leaving GetOCMCompaniesAsync");
             }
-            catch (System.Exception ex)
-            {
-
-                //return null;
-            }
-            Debug.WriteLine("Leaving GetOCMCompaniesAsync");
         }
 
         internal static OCMCompany2Value GetOCMCompany(string val, UpdateKeyTypes keyType)
@@ -256,46 +262,49 @@ namespace BCM_Migration_Tool.Objects
         }
         private async Task<OCMCompanyTemplate.Rootobject> GetTemplateAsync()
         {
-            try
+            using (Log.VerboseCall())
             {
-                PrepareRequest(RequestDataTypes.Templates, RequestDataFormats.None);
-                // Get response
-                using (
-                    var response =
-                        await _httpClient.GetAsync(
-                            "https://outlook.office.com/api/beta/me/XrmOrganizationTemplate('CompanyTemplate')"))
+                try
                 {
-                    // Check status code.
-                    //response.EnsureSuccessStatusCode(); //throw a message in case of an error
-                    var content = await response.Content.ReadAsStringAsync();
-
-                    Log.InfoFormat("Company Template: {0}", content);
-
-                    if (!response.IsSuccessStatusCode)
+                    PrepareRequest(RequestDataTypes.Templates, RequestDataFormats.None);
+                    // Get response
+                    using (
+                        var response =
+                            await _httpClient.GetAsync(
+                                "https://outlook.office.com/api/beta/me/XrmOrganizationTemplate('CompanyTemplate')"))
                     {
-                        Log.ErrorFormat("Error'{0}': {1}", response.ReasonPhrase, content);
-                        OnError(null,
-                            new HelperEventArgs(String.Format("ERROR '{0}': {1}", response.ReasonPhrase, content),
-                                HelperEventArgs.EventTypes.Error, HelperEventArgs.ProcessingModes.Mapping));
-                        NumberOfErrors += 1;
-                        return null;
-                    }
+                        // Check status code.
+                        //response.EnsureSuccessStatusCode(); //throw a message in case of an error
+                        var content = await response.Content.ReadAsStringAsync();
 
-                    // Read and deserialize response.                
-                    var content2 = await response.Content.ReadAsStreamAsync();
-                    var jsonSerializer = new DataContractJsonSerializer(typeof(OCMCompanyTemplate.Rootobject));
-                    OCMCompanyTemplate.Rootobject jsonResponse = jsonSerializer.ReadObject(content2) as OCMCompanyTemplate.Rootobject;     
-                    Log.InfoFormat("Companies template retrieved with {0} custom fields: {1}", jsonResponse.Template.FieldList?.Length, content);       
-                    //Version: 8        
-                    return jsonResponse;
+                        Log.InfoFormat("Company Template: {0}", content);
+
+                        if (!response.IsSuccessStatusCode)
+                        {
+                            Log.ErrorFormat("Error'{0}': {1}", response.ReasonPhrase, content);
+                            OnError(null,
+                                new HelperEventArgs(String.Format("ERROR '{0}': {1}", response.ReasonPhrase, content),
+                                    HelperEventArgs.EventTypes.Error, HelperEventArgs.ProcessingModes.Mapping));
+                            NumberOfErrors += 1;
+                            return null;
+                        }
+
+                        // Read and deserialize response.                
+                        var content2 = await response.Content.ReadAsStreamAsync();
+                        var jsonSerializer = new DataContractJsonSerializer(typeof(OCMCompanyTemplate.Rootobject));
+                        OCMCompanyTemplate.Rootobject jsonResponse = jsonSerializer.ReadObject(content2) as OCMCompanyTemplate.Rootobject;     
+                        Log.InfoFormat("Companies template retrieved with {0} custom fields: {1}", jsonResponse.Template.FieldList?.Length, content);       
+                        //Version: 8        
+                        return jsonResponse;
+                    }
                 }
-            }
-            catch (System.Exception ex)
-            {
-                Log.Error(ex);
-                OnError(null, new HelperEventArgs(String.Format("ERROR in GetTemplateAsync: {0}", ex.Message), HelperEventArgs.EventTypes.Error, HelperEventArgs.ProcessingModes.Mapping));
-                NumberOfErrors += 1;
-                return null;
+                catch (Exception ex)
+                {
+                    Log.Error(ex);
+                    OnError(null, new HelperEventArgs(String.Format("ERROR in GetTemplateAsync: {0}", ex.Message), HelperEventArgs.EventTypes.Error, HelperEventArgs.ProcessingModes.Mapping));
+                    NumberOfErrors += 1;
+                    return null;
+                }
             }
         }
         private async Task ImportCompanyAsync(AccountsFullView company, ImportModes importMode, OCMCompany2Value existingCompany = null)
@@ -634,70 +643,131 @@ namespace BCM_Migration_Tool.Objects
                     if (importMode == ImportModes.Create)
                     {
                         uri = new Uri(String.Format("{0}/XrmOrganizations?%24Expand=SingleValueExtendedProperties(%24filter%3d(PropertyId+eq+'String+%7B1a417774-4779-47c1-9851-e42057495fca%7D+Name+XrmSharingSourceUser')+OR+(PropertyId+eq+'String+%7B1a417774-4779-47c1-9851-e42057495fca%7D+Name+XrmSharingSourceUserDisplayName'))", Settings.Default.BetaEndPoint));
-                        //e.g. https://outlook.office.com/api/beta/Me/XrmOrganizations?%24Expand=SingleValueExtendedProperties(%24filter%3d(PropertyId+eq+'String+{1a417774-4779-47c1-9851-e42057495fca}+Name+XrmSharingSourceUser')+OR+(PropertyId+eq+'String+{1a417774-4779-47c1-9851-e42057495fca}+Name+XrmSharingSourceUserDisplayName'))
+                        //e.g. https://outlook.office.com/api/beta/Me/XrmOrganizations?%24Expand=SingleValueExtendedProperties(%24filter%3d(PropertyId+eq+'String+{1a417774-4779-47c1-9851-e42057495fca}+Name+XrmSharingSourceUser')+OR+(PropertyId+eq+'String+{1a417774-4779-47c1-9851-e42057495fca}+Name+XrmSharingSourceUserDisplayName'))                        
 
-                        //Debug.WriteLine(String.Format("Posting to {1}:{2}{0}{2}Token:{2}{3}", json, uri, Environment.NewLine, AccessToken));
-                        Log.VerboseFormat("Posting POST (create) to {1}:{0}", json, uri);
-                        PrepareRequest(RequestDataTypes.Companies, RequestDataFormats.JSON);      
-                                  
-                        using (var response = await _httpClient.PostAsync(uri, new StringContent(json, Encoding.UTF8, "application/json")))
+                        //Log.VerboseFormat("Posting POST (create) to {1}:{0}", json, uri);
+                        //using (var response = await _httpClient.PostAsync(uri, new StringContent(json, Encoding.UTF8, "application/json")))
+                        //{
+                        //    var content = await response.Content.ReadAsStringAsync();
+
+                        //    if (!response.IsSuccessStatusCode) // Check status code.
+                        //    {
+                        //        var responseContent = response.Content.ReadAsStringAsync();
+                        //        Log.ErrorFormat("ERROR creating '{1}': {0}", responseContent, company.FullName);
+                        //        OnError(null, new HelperEventArgs(String.Format("ERROR creating '{1}': {0}", responseContent, company.FullName), HelperEventArgs.EventTypes.Error));
+                        //        NumberOfErrors += 1;
+                        //    }
+                        //    else
+                        //    {                            
+                        //        Log.DebugFormat("Created Company '{0}' (BCMID: {1})'", company.FullName, company.EntryGUID.ToString());
+                        //        OnCreateItemComplete(null, new HelperEventArgs(String.Format("Created Company '{0}'...", company.FullName), false));
+                        //        NumberCreated += 1;
+
+                        //        try
+                        //        {                           
+                        //            //TESTED Get response with Contact details so we can get the ID for use in moving operation to share it; move with contacts/{ID}/move call
+                        //            newCompany = JsonConvert.DeserializeObject<OCMCompany2Value>(content);
+                        //            newCompany.BCMID = company.EntryGUID.ToString();
+                        //            OCMAccounts.Add(newCompany);
+
+                        //            //HIGH: No need to make /move calls with new sharing changes in 2018 Q1
+                        //            //NOTE To make a Contact or Company shared: make a REST call to ‘/move’ with the folder-id of the sharing child-folder, not the modern-group mailbox guid.
+                        //            //REVIEW If doing a PATCH, do we need to check if it has already been shared so as not to 'move' it again? try it on a shared Company and see if it throws an error
+
+                        //            PrepareRequest(RequestDataTypes.Companies, RequestDataFormats.XML);
+                        //            uri = new Uri(Settings.Default.EWSEndPoint);
+
+                        //            string id = newCompany.Id.Replace("_", "+");
+                        //            id = id.Replace("-", "/"); //HIGH HACK to make the MoveItem operation work (ErrorInvalidIdMalformed)
+                        //            string xmlRequest = String.Format(Resources.ShareContactsRequest, MigrationHelper.CompaniesFolderID,
+                        //                id);
+
+                        //            using (var moveResponse = await _httpClient.PostAsync(uri, new StringContent(xmlRequest, Encoding.UTF8, "text/xml")))
+                        //            {
+                        //                if (!moveResponse.IsSuccessStatusCode) // Check status code.
+                        //                {
+                        //                    var moveResponseContent = await moveResponse.Content.ReadAsStringAsync();
+                        //                    Log.ErrorFormat("ERROR sharing '{1}': {0}", moveResponseContent, company.FullName);
+                        //                    OnError(null,
+                        //                        new HelperEventArgs(
+                        //                            String.Format("ERROR sharing '{1}': {0}", moveResponseContent, company.FullName),
+                        //                            HelperEventArgs.EventTypes.Error));
+                        //                    NumberOfErrors += 1;
+                        //                }
+                        //                else
+                        //                {
+                        //                    //Log message?
+                        //                }
+                        //            }
+                        //        }
+                        //        catch (Exception ex)
+                        //        {
+                        //            Log.Error(ex);
+                        //        }                            
+                        //    }
+                        //}
+
+                        //TEST New global REST methods
+
+                        PrepareRequest(RequestDataTypes.Companies, RequestDataFormats.JSON);
+                        RestResponse<OCMCompany2Value> result = null;
+                        //OCMCompany2Value newOCMCompany = null;
+
+                        result = await Post<OCMCompany2Value>(uri, new StringContent(json, Encoding.UTF8, "application/json"), json, false, null, false, false);
+                        //newOCMCompany = result.Content;
+                        //newCompany = await Post<OCMCompany2Value>(uri, new StringContent(json, Encoding.UTF8, "application/json"), json, true, 10000, 5, false, null, false, false);
+                        if (result.StatusCode == HttpStatusCode.Created)
                         {
-                            var content = await response.Content.ReadAsStringAsync();
+                            newCompany = result.Content;
+                            Log.DebugFormat("Created Company '{0}' (BCMID: {1})'", company.FullName, company.EntryGUID.ToString());
+                            OnCreateItemComplete(null, new HelperEventArgs(String.Format("Created Company '{0}'...", company.FullName), false));
+                            NumberCreated += 1;
 
-                            if (!response.IsSuccessStatusCode) // Check status code.
+                            try
                             {
-                                var responseContent = response.Content.ReadAsStringAsync();
-                                Log.ErrorFormat("ERROR creating '{1}': {0}", responseContent, company.FullName);
-                                OnError(null, new HelperEventArgs(String.Format("ERROR creating '{1}': {0}", responseContent, company.FullName), HelperEventArgs.EventTypes.Error));
-                                NumberOfErrors += 1;
-                            }
-                            else
-                            {                            
-                                Log.DebugFormat("Created Company '{0}' (BCMID: {1})'", company.FullName, company.EntryGUID.ToString());
-                                OnCreateItemComplete(null, new HelperEventArgs(String.Format("Created Company '{0}'...", company.FullName), false));
-                                NumberCreated += 1;
-                            
-                                try
-                                {                           
-                                    //TESTED Get response with Contact details so we can get the ID for use in moving operation to share it; move with contacts/{ID}/move call
-                                    newCompany = JsonConvert.DeserializeObject<OCMCompany2Value>(content);
-                                    newCompany.BCMID = company.EntryGUID.ToString();
-                                    OCMAccounts.Add(newCompany);
+                                //TESTED Get response with Contact details so we can get the ID for use in moving operation to share it; move with contacts/{ID}/move call
+                                newCompany.BCMID = company.EntryGUID.ToString();
+                                OCMAccounts.Add(newCompany);
 
-                                    //NOTE To make a Contact or Company shared: make a REST call to ‘/move’ with the folder-id of the sharing child-folder, not the modern-group mailbox guid.
-                                    //REVIEW If doing a PATCH, do we need to check if it has already been shared so as not to 'move' it again? try it on a shared Company and see if it throws an error
+                                //HIGH: No need to make /move calls with new sharing changes in 2018 Q1
+                                //NOTE To make a Contact or Company shared: make a REST call to ‘/move’ with the folder-id of the sharing child-folder, not the modern-group mailbox guid.
+                                //REVIEW If doing a PATCH, do we need to check if it has already been shared so as not to 'move' it again? try it on a shared Company and see if it throws an error
 
-                                    PrepareRequest(RequestDataTypes.Companies, RequestDataFormats.XML);
-                                    uri = new Uri(Settings.Default.EWSEndPoint);
+                                PrepareRequest(RequestDataTypes.Companies, RequestDataFormats.XML);
+                                uri = new Uri(Settings.Default.EWSEndPoint);
 
-                                    string id = newCompany.Id.Replace("_", "+");
-                                    id = id.Replace("-", "/"); //HIGH HACK to make the MoveItem operation work (ErrorInvalidIdMalformed)
-                                    string xmlRequest = String.Format(Resources.ShareContactsRequest, MigrationHelper.CompaniesFolderID,
-                                        id);
+                                string id = newCompany.Id.Replace("_", "+");
+                                id = id.Replace("-", "/"); //HIGH HACK to make the MoveItem operation work (ErrorInvalidIdMalformed)
+                                string xmlRequest = String.Format(Resources.ShareContactsRequest, MigrationHelper.CompaniesFolderID,
+                                    id);
 
-                                    using (var moveResponse = await _httpClient.PostAsync(uri, new StringContent(xmlRequest, Encoding.UTF8, "text/xml")))
-                                    {
-                                        if (!moveResponse.IsSuccessStatusCode) // Check status code.
-                                        {
-                                            var moveResponseContent = await moveResponse.Content.ReadAsStringAsync();
-                                            Log.ErrorFormat("ERROR sharing '{1}': {0}", moveResponseContent, company.FullName);
-                                            OnError(null,
-                                                new HelperEventArgs(
-                                                    String.Format("ERROR sharing '{1}': {0}", moveResponseContent, company.FullName),
-                                                    HelperEventArgs.EventTypes.Error));
-                                            NumberOfErrors += 1;
-                                        }
-                                        else
-                                        {
-                                            //Log message?
-                                        }
-                                    }
+                                //RestResponse<HttpWebResponse> response = await Post<HttpWebResponse>(uri, new StringContent(xmlRequest, Encoding.UTF8, "text/xml"), null, true, 10000, 5, false, null, false, false);
+
+                                RestResponse<HttpWebResponse> response = await Post<HttpWebResponse>(uri, new StringContent(xmlRequest, Encoding.UTF8, "text/xml"));
+
+                                if (response.StatusCode != HttpStatusCode.Created && response.StatusCode != HttpStatusCode.OK)
+                                {                                    
+                                    Log.ErrorFormat("ERROR sharing '{1}': {0}", response.ErrorContent, company.FullName);
+                                    OnError(null,
+                                        new HelperEventArgs(
+                                            String.Format("ERROR sharing '{1}': {0}", response.ErrorContent, company.FullName),
+                                            HelperEventArgs.EventTypes.Error));
+                                    NumberOfErrors += 1;
                                 }
-                                catch (Exception ex)
+                                else
                                 {
-                                    Log.Error(ex);
-                                }                            
+                                    //Log message?
+                                }
                             }
+                            catch (Exception ex)
+                            {
+                                Log.Error(ex);
+                            }
+                        }
+                        else
+                        {
+                            OnError(null, new HelperEventArgs(String.Format("ERROR creating '{0}': {2}: {1}", company.FullName, result.ErrorContent, result.StatusCode), HelperEventArgs.EventTypes.Error));
+                            NumberOfErrors += 1;
                         }
                     }
                     else
@@ -707,36 +777,56 @@ namespace BCM_Migration_Tool.Objects
                             uri = new Uri(String.Format("{0}/XrmOrganizations('{1}')?%24Expand=SingleValueExtendedProperties(%24filter%3d(PropertyId+eq+'String+%7B1a417774-4779-47c1-9851-e42057495fca%7D+Name+XrmSharingSourceUser')+OR+(PropertyId+eq+'String+%7B1a417774-4779-47c1-9851-e42057495fca%7D+Name+XrmSharingSourceUserDisplayName'))", Settings.Default.BetaEndPoint, existingCompany.Id));
                             //e.g. https://outlook.office.com/api/beta/Me/XrmOrganizations?%24Expand=SingleValueExtendedProperties(%24filter%3d(PropertyId+eq+'String+{1a417774-4779-47c1-9851-e42057495fca}+Name+XrmSharingSourceUser')+OR+(PropertyId+eq+'String+{1a417774-4779-47c1-9851-e42057495fca}+Name+XrmSharingSourceUserDisplayName'))
 
-                            Log.VerboseFormat("Posting PATCH (updating) to {1}:{0}", json, uri);
-                            PrepareRequest(RequestDataTypes.Companies, RequestDataFormats.JSON);
                             HttpMethod method = new HttpMethod("PATCH");
                             HttpContent httpContent = new StringContent(json, Encoding.UTF8, "application/json");
                             HttpRequestMessage request = new HttpRequestMessage(method, uri) { Content = httpContent };
-                            using (var response = await _httpClient.SendAsync(request))
-                            {
-                            
-                                //Debug.WriteLine(String.Format("Patching to {1}:{2}{0}{2}Token:{2}{3}", json, uri, Environment.NewLine, AccessToken));
-                                //Debug.WriteLine(response);
-                                var content = await response.Content.ReadAsStringAsync();
-                                if (!response.IsSuccessStatusCode) // Check status code.
-                                {
-                                    //BUGFIXED ERROR updating 'Major Sport Suppliers': {"error":{"code":"ErrorInvalidRequest","message":"Method 'PATCH/MERGE' not allowed for 'Microsoft.OData.UriParser.NavigationPropertySegment'"}}
-                                    Log.ErrorFormat("ERROR updating '{1}': {0}", content, company.FullName);
-                                    OnError(null, new HelperEventArgs(String.Format("ERROR updating '{1}': {0}", content, company.FullName), HelperEventArgs.EventTypes.Error));
-                                    NumberOfErrors += 1;
-                                }
-                                else
-                                {
-                                    OnPatchComplete(null, new HelperEventArgs(String.Format("Updated Company '{0}'...", company.FullName), false));
-                                    NumberUpdated += 1;
-                                    //REVIEW Do we need to set the BCMID on an existing company?
-                                    existingCompany.BCMID = company.EntryGUID.ToString();
 
-                                    //Do we still need to add a patched company to internal collection for linking later? NO - it should have already been retrieved in GetOCMCompanies!
-                                    //newCompany = JsonConvert.DeserializeObject<OCMCompany2Value>(content);
-                                    //OCMAccounts.Add(newCompany);
-                                }
-                            }                        
+                            PrepareRequest(RequestDataTypes.Companies, RequestDataFormats.JSON);
+
+                            if (FullRESTLogging)
+                                Log.VerboseFormat("Posting PATCH (update) call to {1}:{0}", json, uri);
+                            //Don't log json/uri in Patch call - do above
+                            RestResponse<HttpWebResponse> response = await Patch<HttpWebResponse>(request, true, null, true, false);
+                            if (response.StatusCode != HttpStatusCode.Created && response.StatusCode != HttpStatusCode.OK)
+                            {
+                                Log.ErrorFormat("Error updating '{1}': {0}", response.ErrorContent, company.FullName);
+                                OnError(null, new HelperEventArgs(String.Format("ERROR updating '{1}': {0}. JSON: {2}", response.ErrorContent, company.FullName, json), HelperEventArgs.EventTypes.Error));
+                                NumberOfErrors += 1;
+                            }
+                            else
+                            {
+                                OnPatchComplete(null, new HelperEventArgs(String.Format("Updated Company '{0}'...", company.FullName), false));
+                                NumberUpdated += 1;
+                                //REVIEW Do we need to set the BCMID on an existing company?
+                                existingCompany.BCMID = company.EntryGUID.ToString();                                    
+                                //Do we still need to add a patched company to internal collection for linking later? NO - it should have already been retrieved in GetOCMCompanies!
+                            }
+
+                            //using (var response = await _httpClient.SendAsync(request))
+                            //{
+                            
+                            //    //Debug.WriteLine(String.Format("Patching to {1}:{2}{0}{2}Token:{2}{3}", json, uri, Environment.NewLine, AccessToken));
+                            //    //Debug.WriteLine(response);
+                            //    var content = await response.Content.ReadAsStringAsync();
+                            //    if (!response.IsSuccessStatusCode) // Check status code.
+                            //    {
+                            //        //BUGFIXED ERROR updating 'Major Sport Suppliers': {"error":{"code":"ErrorInvalidRequest","message":"Method 'PATCH/MERGE' not allowed for 'Microsoft.OData.UriParser.NavigationPropertySegment'"}}
+                            //        Log.ErrorFormat("ERROR updating '{1}': {0}", content, company.FullName);
+                            //        OnError(null, new HelperEventArgs(String.Format("ERROR updating '{1}': {0}", content, company.FullName), HelperEventArgs.EventTypes.Error));
+                            //        NumberOfErrors += 1;
+                            //    }
+                            //    else
+                            //    {
+                            //        OnPatchComplete(null, new HelperEventArgs(String.Format("Updated Company '{0}'...", company.FullName), false));
+                            //        NumberUpdated += 1;
+                            //        //REVIEW Do we need to set the BCMID on an existing company?
+                            //        existingCompany.BCMID = company.EntryGUID.ToString();
+
+                            //        //Do we still need to add a patched company to internal collection for linking later? NO - it should have already been retrieved in GetOCMCompanies!
+                            //        //newCompany = JsonConvert.DeserializeObject<OCMCompany2Value>(content);
+                            //        //OCMAccounts.Add(newCompany);
+                            //    }
+                            //}                        
                         }
                         catch (TaskCanceledException e)
                         {

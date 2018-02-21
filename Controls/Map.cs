@@ -105,15 +105,26 @@ namespace BCM_Migration_Tool.Controls
 
             try
             {
-                if (FieldMappings.BCMAccountFields.BCMFields.MappedFields.Count !=
-    FieldMappings.OCMAccountFields.OCMFields.MappedFields.Count)
-                    return false;
-                if (FieldMappings.BCMBusinessContactFields.BCMFields.MappedFields.Count !=
-        FieldMappings.OCMBusinessContactFields.OCMFields.MappedFields.Count)
-                    return false;
-                if (FieldMappings.BCMOpportunityFields.BCMFields.MappedFields.Count !=
-        FieldMappings.OCMDealFields.OCMFields.MappedFields.Count)
-                    return false;
+                if (FieldMappings.BCMAccountFields.BCMFields != null)
+                {
+                    if (FieldMappings.BCMAccountFields.BCMFields.MappedFields.Count !=
+            FieldMappings.OCMAccountFields.OCMFields.MappedFields.Count)
+                        return false;
+                }
+
+                if (FieldMappings.BCMBusinessContactFields.BCMFields != null)
+                {
+                    if (FieldMappings.BCMBusinessContactFields.BCMFields.MappedFields.Count !=
+            FieldMappings.OCMBusinessContactFields.OCMFields.MappedFields.Count)
+                        return false;
+                }
+
+                if (FieldMappings.BCMOpportunityFields.BCMFields != null)
+                {
+                    if (FieldMappings.BCMOpportunityFields.BCMFields.MappedFields.Count !=
+            FieldMappings.OCMDealFields.OCMFields.MappedFields.Count)
+                        return false;
+                }                
             }
             catch (Exception e)
             {

@@ -72,3 +72,11 @@ C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Assistant\ob
 C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Assistant\obj\Release\BCM Migration Assistant.application
 C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Assistant\obj\Release\BCM Migration Assistant.exe
 C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Assistant\obj\Release\BCM Migration Assistant.pdb
+C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Assistant\bin\Release\Microsoft.Exchange.WebServices.Auth.dll
+C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Assistant\bin\Release\Microsoft.Exchange.WebServices.dll
+C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Assistant\bin\Release\Microsoft.IdentityModel.Extensions.dll
+C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Assistant\bin\Release\Microsoft.Exchange.WebServices.pdb
+C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Assistant\bin\Release\Microsoft.Exchange.WebServices.xml
+C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Assistant\bin\Release\Microsoft.Exchange.WebServices.Auth.pdb
+C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Assistant\bin\Release\Microsoft.Exchange.WebServices.Auth.xml
+C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Assistant\obj\Release\BCM Migration Tool.csproj.CoreCompileInputs.cache

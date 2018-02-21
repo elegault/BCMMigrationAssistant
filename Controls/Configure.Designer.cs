@@ -43,6 +43,10 @@
             this.cboDeleteDealsOptions = new System.Windows.Forms.ComboBox();
             this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
             this.chkDealCreationDate = new System.Windows.Forms.CheckBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.chkFullRESTLogging = new System.Windows.Forms.CheckBox();
+            this.chkLogRecordNames = new System.Windows.Forms.CheckBox();
+            this.chkEnableTestMode = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // lblAppRegHelp
@@ -65,7 +69,7 @@
             this.label11.Location = new System.Drawing.Point(5, 142);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(80, 17);
-            this.label11.TabIndex = 7;
+            this.label11.TabIndex = 11;
             this.label11.Text = "Redirect URI";
             // 
             // txtRedirectURI
@@ -74,7 +78,7 @@
             this.txtRedirectURI.Location = new System.Drawing.Point(8, 162);
             this.txtRedirectURI.Name = "txtRedirectURI";
             this.txtRedirectURI.Size = new System.Drawing.Size(357, 25);
-            this.txtRedirectURI.TabIndex = 8;
+            this.txtRedirectURI.TabIndex = 12;
             // 
             // label3
             // 
@@ -93,7 +97,7 @@
             this.label10.Location = new System.Drawing.Point(5, 42);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(89, 17);
-            this.label10.TabIndex = 2;
+            this.label10.TabIndex = 3;
             this.label10.Text = "Application ID";
             // 
             // txtClientID
@@ -102,7 +106,7 @@
             this.txtClientID.Location = new System.Drawing.Point(8, 62);
             this.txtClientID.Name = "txtClientID";
             this.txtClientID.Size = new System.Drawing.Size(358, 25);
-            this.txtClientID.TabIndex = 3;
+            this.txtClientID.TabIndex = 4;
             // 
             // label12
             // 
@@ -111,7 +115,7 @@
             this.label12.Location = new System.Drawing.Point(5, 117);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(44, 17);
-            this.label12.TabIndex = 5;
+            this.label12.TabIndex = 8;
             this.label12.Text = "http://";
             // 
             // label9
@@ -121,7 +125,7 @@
             this.label9.Location = new System.Drawing.Point(5, 94);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(158, 17);
-            this.label9.TabIndex = 4;
+            this.label9.TabIndex = 6;
             this.label9.Text = "Office 365 Tenant Domain";
             // 
             // txtDomain
@@ -130,14 +134,14 @@
             this.txtDomain.Location = new System.Drawing.Point(50, 114);
             this.txtDomain.Name = "txtDomain";
             this.txtDomain.Size = new System.Drawing.Size(316, 25);
-            this.txtDomain.TabIndex = 6;
+            this.txtDomain.TabIndex = 9;
             // 
             // cmdOpenDir
             // 
             this.cmdOpenDir.Location = new System.Drawing.Point(10, 238);
             this.cmdOpenDir.Name = "cmdOpenDir";
             this.cmdOpenDir.Size = new System.Drawing.Size(232, 34);
-            this.cmdOpenDir.TabIndex = 10;
+            this.cmdOpenDir.TabIndex = 14;
             this.cmdOpenDir.Text = "Send Logs (the *.tx1 files)";
             this.cmdOpenDir.UseVisualStyleBackColor = true;
             this.cmdOpenDir.Click += new System.EventHandler(this.cmdOpenDir_Click);
@@ -148,7 +152,7 @@
             this.cmdDeleteDeals.Location = new System.Drawing.Point(10, 278);
             this.cmdDeleteDeals.Name = "cmdDeleteDeals";
             this.cmdDeleteDeals.Size = new System.Drawing.Size(232, 34);
-            this.cmdDeleteDeals.TabIndex = 11;
+            this.cmdDeleteDeals.TabIndex = 16;
             this.cmdDeleteDeals.Text = "Delete Deals";
             this.cmdDeleteDeals.UseVisualStyleBackColor = true;
             // 
@@ -159,7 +163,7 @@
             this.label1.Location = new System.Drawing.Point(6, 204);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(70, 21);
-            this.label1.TabIndex = 9;
+            this.label1.TabIndex = 13;
             this.label1.Text = "Utilities";
             // 
             // cboDeleteDealsOptions
@@ -173,7 +177,7 @@
             this.cboDeleteDealsOptions.Location = new System.Drawing.Point(248, 278);
             this.cboDeleteDealsOptions.Name = "cboDeleteDealsOptions";
             this.cboDeleteDealsOptions.Size = new System.Drawing.Size(121, 29);
-            this.cboDeleteDealsOptions.TabIndex = 12;
+            this.cboDeleteDealsOptions.TabIndex = 17;
             // 
             // dateTimePicker1
             // 
@@ -181,7 +185,7 @@
             this.dateTimePicker1.Location = new System.Drawing.Point(501, 275);
             this.dateTimePicker1.Name = "dateTimePicker1";
             this.dateTimePicker1.Size = new System.Drawing.Size(129, 29);
-            this.dateTimePicker1.TabIndex = 13;
+            this.dateTimePicker1.TabIndex = 15;
             // 
             // chkDealCreationDate
             // 
@@ -189,15 +193,63 @@
             this.chkDealCreationDate.Location = new System.Drawing.Point(384, 278);
             this.chkDealCreationDate.Name = "chkDealCreationDate";
             this.chkDealCreationDate.Size = new System.Drawing.Size(111, 25);
-            this.chkDealCreationDate.TabIndex = 15;
+            this.chkDealCreationDate.TabIndex = 18;
             this.chkDealCreationDate.Text = "Created On:";
             this.chkDealCreationDate.UseVisualStyleBackColor = true;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.Location = new System.Drawing.Point(399, 62);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(137, 21);
+            this.label2.TabIndex = 5;
+            this.label2.Text = "Logging Options";
+            // 
+            // chkFullRESTLogging
+            // 
+            this.chkFullRESTLogging.AutoSize = true;
+            this.chkFullRESTLogging.Checked = true;
+            this.chkFullRESTLogging.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkFullRESTLogging.Location = new System.Drawing.Point(403, 179);
+            this.chkFullRESTLogging.Name = "chkFullRESTLogging";
+            this.chkFullRESTLogging.Size = new System.Drawing.Size(150, 25);
+            this.chkFullRESTLogging.TabIndex = 10;
+            this.chkFullRESTLogging.Text = "Full REST logging";
+            this.chkFullRESTLogging.UseVisualStyleBackColor = true;
+            // 
+            // chkLogRecordNames
+            // 
+            this.chkLogRecordNames.Checked = true;
+            this.chkLogRecordNames.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkLogRecordNames.Location = new System.Drawing.Point(405, 94);
+            this.chkLogRecordNames.Name = "chkLogRecordNames";
+            this.chkLogRecordNames.Size = new System.Drawing.Size(239, 79);
+            this.chkLogRecordNames.TabIndex = 7;
+            this.chkLogRecordNames.Text = "Log existing Company/Contact names to output window";
+            this.chkLogRecordNames.UseVisualStyleBackColor = true;
+            // 
+            // chkEnableTestMode
+            // 
+            this.chkEnableTestMode.AutoSize = true;
+            this.chkEnableTestMode.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkEnableTestMode.Location = new System.Drawing.Point(403, 13);
+            this.chkEnableTestMode.Name = "chkEnableTestMode";
+            this.chkEnableTestMode.Size = new System.Drawing.Size(163, 25);
+            this.chkEnableTestMode.TabIndex = 2;
+            this.chkEnableTestMode.Text = "Enable Test Mode";
+            this.chkEnableTestMode.UseVisualStyleBackColor = true;
             // 
             // Configure
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.Color.White;
+            this.Controls.Add(this.chkEnableTestMode);
+            this.Controls.Add(this.chkLogRecordNames);
+            this.Controls.Add(this.chkFullRESTLogging);
+            this.Controls.Add(this.label2);
             this.Controls.Add(this.chkDealCreationDate);
             this.Controls.Add(this.dateTimePicker1);
             this.Controls.Add(this.cboDeleteDealsOptions);
@@ -238,5 +290,9 @@
         internal System.Windows.Forms.Button cmdOpenDir;
         internal System.Windows.Forms.DateTimePicker dateTimePicker1;
         internal System.Windows.Forms.CheckBox chkDealCreationDate;
+        private System.Windows.Forms.Label label2;
+        internal System.Windows.Forms.CheckBox chkFullRESTLogging;
+        internal System.Windows.Forms.CheckBox chkLogRecordNames;
+        internal System.Windows.Forms.CheckBox chkEnableTestMode;
     }
 }

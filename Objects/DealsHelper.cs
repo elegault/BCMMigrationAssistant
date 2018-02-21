@@ -4,6 +4,7 @@ using System.Data.Common;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Reflection;
 using System.Runtime.Serialization.Json;
@@ -94,22 +95,35 @@ namespace BCM_Migration_Tool.Objects
             try
             {
                 PrepareRequest(RequestDataTypes.Links, RequestDataFormats.XML);
-                using (var response = await _httpClient.PostAsync(uri, new StringContent(xmlRequest, Encoding.UTF8, "text/xml")))
-                {
-                    var content = await response.Content.ReadAsStringAsync();
 
-                    if (!response.IsSuccessStatusCode)
-                    {
-                        OnError(null,
-                            new HelperEventArgs(String.Format("ERROR: {0}", content), HelperEventArgs.EventTypes.Error));
-                        NumberOfErrors += 1;
-                        return false;
-                    }
-                    else
-                    {
-                        return true;
-                    }
+                RestResponse<HttpWebResponse> response = await Post<HttpWebResponse>(uri, new StringContent(xmlRequest, Encoding.UTF8, "text/xml"));
+                if (response.StatusCode != HttpStatusCode.Created && response.StatusCode != HttpStatusCode.OK)
+                {
+                    OnError(null, new HelperEventArgs(String.Format("ERROR: {0}", response.ErrorContent), HelperEventArgs.EventTypes.Error));
+                    NumberOfErrors += 1;
+                    return false;
                 }
+                else
+                {
+                    return true;
+                }
+
+                //using (var response = await _httpClient.PostAsync(uri, new StringContent(xmlRequest, Encoding.UTF8, "text/xml")))
+                //{
+                //    var content = await response.Content.ReadAsStringAsync();
+
+                //    if (!response.IsSuccessStatusCode)
+                //    {
+                //        OnError(null,
+                //            new HelperEventArgs(String.Format("ERROR: {0}", content), HelperEventArgs.EventTypes.Error));
+                //        NumberOfErrors += 1;
+                //        return false;
+                //    }
+                //    else
+                //    {
+                //        return true;
+                //    }
+                //}
             }
             catch (System.Exception ex)
             {
@@ -294,8 +308,11 @@ namespace BCM_Migration_Tool.Objects
         }
         internal async Task CreateDeals()
         {
-            Cancelled = false;
-            await RunCreateDealsAsync();
+            using (Log.VerboseCall())
+            {
+                Cancelled = false;
+                await RunCreateDealsAsync();
+            }
         }
 
         private async Task<bool> DeleteDeal(string ID)
@@ -344,83 +361,86 @@ namespace BCM_Migration_Tool.Objects
         //}
         internal async Task<int> DeleteDeals(DeleteDealsOptions options, DateTime dealCreatedOn)
         {
-            int cnt = 0;
-
-            try
+            using (Log.VerboseCall())
             {
-                OCMDeals = null;
-                await GetOCMDealsAsync();
-                //if (OCMDeals == null)
-                //{
-                //    await GetOCMDealsAsync();
-                //}
+                int cnt = 0;
 
-                List<Deal> dealsToDelete = null;
+                try
+                {
+                    OCMDeals = null;
+                    await GetOCMDealsAsync();
+                    //if (OCMDeals == null)
+                    //{
+                    //    await GetOCMDealsAsync();
+                    //}
+
+                    List<Deal> dealsToDelete = null;
 //#if DEBUG
 //                int dayOfYear = 1;
 //                dealsToDelete = OCMDeals.Where(deals => deals.CreationTime.DayOfYear == 0) as List<Deal>;
 //#else
 //                dealsToDelete = OCMDeals;
 //#endif
-                if (dealCreatedOn != DateTime.MinValue)
-                {
-                    dealsToDelete = new List<Deal>();
-                    //Why does this return null??
-                    //dealsToDelete = OCMDeals.Where(deals => deals.CreationTime.DayOfYear == dealCreatedOn.DayOfYear) as List<Deal>;
-                    foreach (var deal in OCMDeals)
+                    if (dealCreatedOn != DateTime.MinValue)
                     {
-                        if (deal.CreationTime.DayOfYear == dealCreatedOn.DayOfYear)
-                            dealsToDelete.Add(deal);
+                        dealsToDelete = new List<Deal>();
+                        //Why does this return null??
+                        //dealsToDelete = OCMDeals.Where(deals => deals.CreationTime.DayOfYear == dealCreatedOn.DayOfYear) as List<Deal>;
+                        foreach (var deal in OCMDeals)
+                        {
+                            if (deal.CreationTime.DayOfYear == dealCreatedOn.DayOfYear)
+                                dealsToDelete.Add(deal);
+                        }
                     }
-                }
-                else
-                {
-                    dealsToDelete = OCMDeals;
-                }
-
-                for (int i = dealsToDelete.Count -1; i >= 0; i--)
-                {
-                    Deal deal = dealsToDelete[i];
-                    Debug.Print("Deleting deal '{0}'", deal.Name);
-                    switch (options)
+                    else
                     {
-                        case DeleteDealsOptions.All:
+                        dealsToDelete = OCMDeals;
+                    }
+
+                    for (int i = dealsToDelete.Count -1; i >= 0; i--)
+                    {
+                        Deal deal = dealsToDelete[i];
+                        Debug.Print("Deleting deal '{0}'", deal.Name);
+                        switch (options)
+                        {
+                            case DeleteDealsOptions.All:
                             
-                            if (await DeleteDeal(deal.Id))
-                            {
-                                cnt += 1;
-                            }
-                            break;
-                        case DeleteDealsOptions.Private:
-                            Guid sourceMailboxGuid = new Guid(deal.SourceMailboxGuid);
-                            if (sourceMailboxGuid == Guid.Empty)
-                            {
                                 if (await DeleteDeal(deal.Id))
                                 {
                                     cnt += 1;
                                 }
-                            }
-                            break;
-                        case DeleteDealsOptions.Shared:
-                            Guid sourceMailboxGuid2 = new Guid(deal.SourceMailboxGuid);
-                            if (sourceMailboxGuid2 != Guid.Empty)
-                            {
-                                if (await DeleteDeal(deal.Id))
+                                break;
+                            case DeleteDealsOptions.Private:
+                                Guid sourceMailboxGuid = new Guid(deal.SourceMailboxGuid);
+                                if (sourceMailboxGuid == Guid.Empty)
                                 {
-                                    cnt += 1;
+                                    if (await DeleteDeal(deal.Id))
+                                    {
+                                        cnt += 1;
+                                    }
                                 }
-                            }
-                            break;
+                                break;
+                            case DeleteDealsOptions.Shared:
+                                Guid sourceMailboxGuid2 = new Guid(deal.SourceMailboxGuid);
+                                if (sourceMailboxGuid2 != Guid.Empty)
+                                {
+                                    if (await DeleteDeal(deal.Id))
+                                    {
+                                        cnt += 1;
+                                    }
+                                }
+                                break;
+                        }
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex);
-            }
+                catch (Exception ex)
+                {
+                    Log.Error(ex);
+                }
 
-            OCMDeals = null;
-            return cnt;
+                OCMDeals = null;
+                return cnt;
+            }
         }
         private async Task ImportDealAsync(OpportunityFullView opportunity, ImportModes importMode, Deal existingDeal = null)
         {
@@ -860,46 +880,82 @@ namespace BCM_Migration_Tool.Objects
 
                     //BUGFIXED ErrorInternalServerError: "Invalid custom property id\"; happens when trying to add BCMID custom prop. Can add it with a subsequent PATCH request with the BCM ID - as below
 
-                    using (var response = await _httpClient.PostAsync(uri, new StringContent(json, Encoding.UTF8, "application/json")))
+                    RestResponse<Deal> response = await Post<Deal>(uri, new StringContent(json, Encoding.UTF8, "application/json"));
+                    if (response.StatusCode != HttpStatusCode.Created && response.StatusCode != HttpStatusCode.OK)
                     {
-                        var content = await response.Content.ReadAsStringAsync();
-                        // Check status code.
-                        if (!response.IsSuccessStatusCode)
+                        Log.ErrorFormat("ERROR creating deal '{1} (Hashtag: {2})': {0}", response.ErrorContent, opportunity.OpportunityName, ocmDeal.AppliedHashtags[0].Hashtag);
+                        OnError(null,
+                            new HelperEventArgs(String.Format("ERROR creating deal '{1} (Hashtag: {2})': {3}:{0}",
+                                response.ErrorContent, opportunity.OpportunityName, ocmDeal.AppliedHashtags[0].Hashtag,
+                                response.StatusCode), HelperEventArgs.EventTypes.Error));
+                        NumberOfErrors += 1;
+                    }
+                    else
+                    {
+                        Log.DebugFormat("Created Deal '{0}' (Hashtag: {1})", opportunity.OpportunityName, ocmDeal.AppliedHashtags[0].Hashtag);
+                        OnCreateItemComplete(null, new HelperEventArgs(String.Format("Created Deal '{0}' (Hashtag: {1})", opportunity.OpportunityName, ocmDeal.AppliedHashtags[0].Hashtag), false));
+                        NumberCreated += 1;
+
+                        try
                         {
-                            //BUGWATCH with hashtag InterestedinMountainBikes47ofthenewmodelMountain400andMountain400WDeal
-                            Log.ErrorFormat("ERROR creating deal '{1} (Hashtag: {2})': {0}", content, opportunity.OpportunityName, ocmDeal.AppliedHashtags[0].Hashtag);
-                            OnError(null,
-                                new HelperEventArgs(String.Format("ERROR creating deal '{1} (Hashtag: {2})': {3}:{0}", content, opportunity.OpportunityName, ocmDeal.AppliedHashtags[0].Hashtag, response.ReasonPhrase),
-                                    HelperEventArgs.EventTypes.Error));
-                            NumberOfErrors += 1;
+                            Deal newDeal = response.Content;
+                            newDeal.BCMID = opportunity.EntryGUID.ToString();
+                            OCMDeals.Add(newDeal);
+                            if (OCMDealsCreated == null)
+                                OCMDealsCreated = new List<Deal>();
+                            OCMDealsCreated.Add(newDeal);
+
+                            //HIGH Bypass patching deal to store the custom BCMID prop and value, until the bug with SingleValueExtendedProperties on deals is resolved
+                            //await PatchDeal(ocmDeal, newDeal.Id, newDeal.BCMID);
                         }
-                        else
+                        catch (System.Exception ex)
                         {
-                            //TESTED Get response with deal details and add to in-memory collection
-                            Log.DebugFormat("Created Deal '{0}' (Hashtag: {1})", opportunity.OpportunityName, ocmDeal.AppliedHashtags[0].Hashtag);
-                            OnCreateItemComplete(null, new HelperEventArgs(String.Format("Created Deal '{0}' (Hashtag: {1})", opportunity.OpportunityName, ocmDeal.AppliedHashtags[0].Hashtag), false));
-                            NumberCreated += 1;
-
-                            try
-                            {
-                                Deal newDeal = JsonConvert.DeserializeObject<Deal>(content);
-                                newDeal.BCMID = opportunity.EntryGUID.ToString();
-                                OCMDeals.Add(newDeal);
-                                if (OCMDealsCreated == null)
-                                    OCMDealsCreated = new List<Deal>();
-                                OCMDealsCreated.Add(newDeal);
-
-                                //HIGH Bypass patching deal to store the custom BCMID prop and value, until the bug with SingleValueExtendedProperties on deals is resolved
-                                //await PatchDeal(ocmDeal, newDeal.Id, newDeal.BCMID);
-                            }
-                            catch (System.Exception ex)
-                            {
-                                Log.Error(ex);
-                                OnError(null,new HelperEventArgs(String.Format("ERROR sharing '{1}': {0}", content, opportunity.OpportunityName),
-                                        HelperEventArgs.EventTypes.Error));
-                            }
+                            Log.Error(ex);
+                            OnError(null, new HelperEventArgs(String.Format("Unexpected error patching deal '{0}'", opportunity.OpportunityName),
+                                    HelperEventArgs.EventTypes.Error));
                         }
                     }
+
+                    //using (var response = await _httpClient.PostAsync(uri, new StringContent(json, Encoding.UTF8, "application/json")))
+                    //{
+                    //    var content = await response.Content.ReadAsStringAsync();
+                    //    // Check status code.
+                    //    if (!response.IsSuccessStatusCode)
+                    //    {
+                    //        //BUGWATCH with hashtag InterestedinMountainBikes47ofthenewmodelMountain400andMountain400WDeal
+                    //        Log.ErrorFormat("ERROR creating deal '{1} (Hashtag: {2})': {0}", content, opportunity.OpportunityName, ocmDeal.AppliedHashtags[0].Hashtag);
+                    //        OnError(null,
+                    //            new HelperEventArgs(String.Format("ERROR creating deal '{1} (Hashtag: {2})': {3}:{0}", content, opportunity.OpportunityName, ocmDeal.AppliedHashtags[0].Hashtag, response.ReasonPhrase),
+                    //                HelperEventArgs.EventTypes.Error));
+                    //        NumberOfErrors += 1;
+                    //    }
+                    //    else
+                    //    {
+                    //        //TESTED Get response with deal details and add to in-memory collection
+                    //        Log.DebugFormat("Created Deal '{0}' (Hashtag: {1})", opportunity.OpportunityName, ocmDeal.AppliedHashtags[0].Hashtag);
+                    //        OnCreateItemComplete(null, new HelperEventArgs(String.Format("Created Deal '{0}' (Hashtag: {1})", opportunity.OpportunityName, ocmDeal.AppliedHashtags[0].Hashtag), false));
+                    //        NumberCreated += 1;
+
+                    //        try
+                    //        {
+                    //            Deal newDeal = JsonConvert.DeserializeObject<Deal>(content);
+                    //            newDeal.BCMID = opportunity.EntryGUID.ToString();
+                    //            OCMDeals.Add(newDeal);
+                    //            if (OCMDealsCreated == null)
+                    //                OCMDealsCreated = new List<Deal>();
+                    //            OCMDealsCreated.Add(newDeal);
+
+                    //            //HIGH Bypass patching deal to store the custom BCMID prop and value, until the bug with SingleValueExtendedProperties on deals is resolved
+                    //            //await PatchDeal(ocmDeal, newDeal.Id, newDeal.BCMID);
+                    //        }
+                    //        catch (System.Exception ex)
+                    //        {
+                    //            Log.Error(ex);
+                    //            OnError(null,new HelperEventArgs(String.Format("ERROR sharing '{1}': {0}", content, opportunity.OpportunityName),
+                    //                    HelperEventArgs.EventTypes.Error));
+                    //        }
+                    //    }
+                    //}
                 }
                 else
                 {
@@ -939,66 +995,72 @@ namespace BCM_Migration_Tool.Objects
             }
         }
         internal async Task GetBCMOpportunities()
-        {            
-            try
+        {
+            using (Log.VerboseCall())
             {
-                OnStart(null, new HelperEventArgs("Getting BCM Opportunities data", HelperEventArgs.EventTypes.Status));
-
-                using (var context = new MSSampleBusinessEntities())
+                try
                 {
-                    context.Database.Connection.ConnectionString = ConnectionString;
+                    OnStart(null, new HelperEventArgs("Getting BCM Opportunities data", HelperEventArgs.EventTypes.Status));
 
-                    //NOTE Can also use BCM_Opportunity_Core.sql in Resources instead of EF
-                    var opportunities = context.OpportunityFullViews.Where(a => (!a.IsDeletedLocally)).ToList();
-
-                    BCMOpportunities = new List<string>();
-
-                    Log.InfoFormat("Found {0} BCM Opportunities:", opportunities.Count());                  ;
-                    OnGetComplete(null, new HelperEventArgs(String.Format("Found {0} BCM Opportunities:", opportunities.Count()), HelperEventArgs.EventTypes.Status));
-
-                    foreach (var opp in opportunities)
+                    using (var context = new MSSampleBusinessEntities())
                     {
-                        Log.InfoFormat("-{0}", opp.OpportunityName);
-                        BCMOpportunities.Add(opp.OpportunityName);
-                        OnGetItemComplete(null, new HelperEventArgs(String.Format(" -'{0}'", opp.OpportunityName), HelperEventArgs.EventTypes.Status));
+                        context.Database.Connection.ConnectionString = ConnectionString;
+
+                        //NOTE Can also use BCM_Opportunity_Core.sql in Resources instead of EF
+                        var opportunities = context.OpportunityFullViews.Where(a => (!a.IsDeletedLocally)).ToList();
+
+                        BCMOpportunities = new List<string>();
+
+                        Log.InfoFormat("Found {0} BCM Opportunities:", opportunities.Count());                  ;
+                        OnGetComplete(null, new HelperEventArgs(String.Format("Found {0} BCM Opportunities:", opportunities.Count()), HelperEventArgs.EventTypes.Status));
+
+                        foreach (var opp in opportunities)
+                        {
+                            Log.InfoFormat("-{0}", opp.OpportunityName);
+                            BCMOpportunities.Add(opp.OpportunityName);
+                            OnGetItemComplete(null, new HelperEventArgs(String.Format(" -'{0}'", opp.OpportunityName), HelperEventArgs.EventTypes.Status));
+                        }
                     }
                 }
-            }
-            catch (System.Exception ex)
-            {
-                Log.Error(ex);
-                OnError(null, new HelperEventArgs(String.Format("Error in DealsHelper.GetBCMOpportunities: {0}", ex.Message), HelperEventArgs.EventTypes.Error));
+                catch (Exception ex)
+                {
+                    Log.Error(ex);
+                    OnError(null, new HelperEventArgs(String.Format("Error in DealsHelper.GetBCMOpportunities: {0}", ex.Message), HelperEventArgs.EventTypes.Error));
+                }
             }
         }
         internal List<string> GetDealStages()
         {
-            List<string> result = new List<string>();
-
-            try
+            using (Log.VerboseCall())
             {
-                using (var context = new MSSampleBusinessEntities())
+                List<string> result = new List<string>();
+
+                try
                 {
-                    context.Database.Connection.ConnectionString = ConnectionString;
-
-                    //SqlQuery: https://msdn.microsoft.com/en-us/library/jj592907(v=vs.113).aspx
-                    var dealStages = context.PicklistsMasterLists.SqlQuery("SELECT [PicklistID], [PicklistValueGUID], [OrderID], [StringValue], [IsDeleted] FROM [dbo].[PicklistsMasterList] WHERE PicklistID = N'2272CC9E-F4B5-4419-B366-28B52FAB2789' AND IsDeleted = 0 ORDER BY OrderID").ToList();
-                    //NOTE: For some reason running the query in SQL Server Object Explorer works fine without having to include every column in the SELECT clause
-
-                    Log.InfoFormat("{0} BCM deal stages: ", dealStages.Count);
-                    foreach (var dealStage in dealStages)
+                    using (var context = new MSSampleBusinessEntities())
                     {
-                        Log.InfoFormat("-{0}", dealStage.StringValue);
-                        result.Add(dealStage.StringValue);
+                        context.Database.Connection.ConnectionString = ConnectionString;
+
+                        //SqlQuery: https://msdn.microsoft.com/en-us/library/jj592907(v=vs.113).aspx
+                        var dealStages = context.PicklistsMasterLists.SqlQuery("SELECT [PicklistID], [PicklistValueGUID], [OrderID], [StringValue], [IsDeleted] FROM [dbo].[PicklistsMasterList] WHERE PicklistID = N'2272CC9E-F4B5-4419-B366-28B52FAB2789' AND IsDeleted = 0 ORDER BY OrderID").ToList();
+                        //NOTE: For some reason running the query in SQL Server Object Explorer works fine without having to include every column in the SELECT clause
+
+                        Log.InfoFormat("{0} BCM deal stages: ", dealStages.Count);
+                        foreach (var dealStage in dealStages)
+                        {
+                            Log.InfoFormat("-{0}", dealStage.StringValue);
+                            result.Add(dealStage.StringValue);
+                        }
                     }
                 }
-            }
-            catch (System.Exception ex)
-            {
-                Log.Error(ex);
-                OnError(null, new HelperEventArgs("Unknown error in GetDealStages", HelperEventArgs.EventTypes.Error, ex));
-            }
+                catch (Exception ex)
+                {
+                    Log.Error(ex);
+                    OnError(null, new HelperEventArgs("Unknown error in GetDealStages", HelperEventArgs.EventTypes.Error, ex));
+                }
 
-            return result;
+                return result;
+            }
         }
         private Deal GetOCMDeal(string val, UpdateKeyTypes keyType)
         {
@@ -1064,72 +1126,110 @@ namespace BCM_Migration_Tool.Objects
         }
         private async Task GetOCMDealsAsync()
         {
-            try
+            using (Log.VerboseCall())
             {
-                //NOTE Requests for Deals must have the following HTTP header present: Prefer: exchange.behavior=”SocialFabricInternal”
-                //NOTE Requests for Deals need $expand=AppliedHashtags for the AppliedHashags property to be visible.
-                string request = String.Format("{0}/XrmDeals?%24expand=AppliedHashtags", Properties.Settings.Default.BetaEndPoint);
-
-                //Debug.WriteLine("Request to : " + request);
-
-                if (PageSkip == 0)
+                try
                 {
-                    request = String.Format("{0}/XrmDeals?$expand=AppliedHashtags&$top=50", Properties.Settings.Default.BetaEndPoint);
-                }
-                else
-                {
-                    request = String.Format("{0}/XrmDeals?$expand=AppliedHashtags&$top=50&$skip={1}", Properties.Settings.Default.BetaEndPoint, PageSkip);
-                }
+                    //NOTE Requests for Deals must have the following HTTP header present: Prefer: exchange.behavior=”SocialFabricInternal”
+                    //NOTE Requests for Deals need $expand=AppliedHashtags for the AppliedHashags property to be visible.
+                    string request = String.Format("{0}/XrmDeals?%24expand=AppliedHashtags", Settings.Default.BetaEndPoint);
 
-                PrepareRequest(RequestDataTypes.Deals, RequestDataFormats.None);
-                using (var response = await _httpClient.GetAsync(request))
-                {
-                    // Check status code.
-                    if (!response.IsSuccessStatusCode)
+                    //Debug.WriteLine("Request to : " + request);
+
+                    if (PageSkip == 0)
                     {
-                        var responseContent = await response.Content.ReadAsStringAsync();
-                        Log.ErrorFormat("Error for request {0}: {1}", request, responseContent);
-                        OnError(null, new HelperEventArgs(String.Format("ERROR in GetOCMDealsAsync(): {0}", responseContent), HelperEventArgs.EventTypes.Error));
+                        request = String.Format("{0}/XrmDeals?$expand=AppliedHashtags&$top=50", Settings.Default.BetaEndPoint);
+                    }
+                    else
+                    {
+                        request = String.Format("{0}/XrmDeals?$expand=AppliedHashtags&$top=50&$skip={1}", Settings.Default.BetaEndPoint, PageSkip);
+                    }
+
+                    PrepareRequest(RequestDataTypes.Deals, RequestDataFormats.None);
+                    RestResponse<OCMDeal> deals = await Get<OCMDeal>(request);
+
+                    if (deals.StatusCode == HttpStatusCode.OK)
+                    {
+                        if (OCMDeals == null)
+                        {
+                            OCMDeals = deals.Content.value.ToList();
+                        }
+                        else
+                        {
+                            if (deals.Content.value.Length > 0)
+                                OCMDeals.AddRange(deals.Content.value.ToList());
+                        }
+
+                        if (deals.Content.value.Length < 50)
+                        {
+                            //No more items to get
+                            PageSkip = 0;
+                            Log.InfoFormat("Fetched {0} OCM Deals", OCMDeals.Count);
+                            OnGetItemComplete(null,
+                                new HelperEventArgs(String.Format("Fetched {0} OCM Deals", OCMDeals.Count),
+                                    HelperEventArgs.EventTypes.Status));
+                        }
+                        else
+                        {
+                            PageSkip += 50;
+                        }
+                    }
+                    else
+                    {                                                
+                        OnError(null, new HelperEventArgs(String.Format("ERROR in GetOCMDealsAsync(): {1}: {0}", deals.ErrorContent, deals.StatusCode), HelperEventArgs.EventTypes.Error));
                         NumberOfErrors += 1;
                         return;
                     }
 
-                    // Read and deserialize response.                
-                    var content = await response.Content.ReadAsStringAsync();
-                    OCMDeal deals = null;
+                    //using (var response = await _httpClient.GetAsync(request))
+                    //{
+                    //    // Check status code.
+                    //    if (!response.IsSuccessStatusCode)
+                    //    {
+                    //        var responseContent = await response.Content.ReadAsStringAsync();
+                    //        Log.ErrorFormat("Error for request {0}: {1}", request, responseContent);
+                    //        OnError(null, new HelperEventArgs(String.Format("ERROR in GetOCMDealsAsync(): {0}", responseContent), HelperEventArgs.EventTypes.Error));
+                    //        NumberOfErrors += 1;
+                    //        return;
+                    //    }
 
-                    //BUGFIXED Neither of these deserialize properly 
-                    //jsonResponse = JsonConvert.DeserializeObject<OCMDeal.Rootobject>(content);
-                    deals = JsonConvert.DeserializeObject<OCMDeal>(content);
-                    //BUGFIXED +		ex	{"Input string '8000.0' is not a valid integer. Path 'value[0].Amount', line 1, position 705."}	System.Exception {Newtonsoft.Json.JsonReaderException}
-                    if (OCMDeals == null)
-                    {
-                        OCMDeals = deals.value.ToList();
-                    }
-                    else
-                    {
-                        if (deals.value.Length > 0)
-                            OCMDeals.AddRange(deals.value.ToList());
-                    }
+                    //    // Read and deserialize response.                
+                    //    var content = await response.Content.ReadAsStringAsync();
+                    //    OCMDeal deals = null;
 
-                    if (deals.value.Length < 50)
-                    {
-                        //No more items to get
-                        PageSkip = 0;
-                        Log.InfoFormat("Fetched {0} OCM Deals", OCMDeals.Count);
-                        OnGetItemComplete(null, new HelperEventArgs(String.Format("Fetched {0} OCM Deals", OCMDeals.Count), HelperEventArgs.EventTypes.Status));
-                    }
-                    else
-                    {
-                        PageSkip += 50;
-                    }
+                    //    //BUGFIXED Neither of these deserialize properly 
+                    //    //jsonResponse = JsonConvert.DeserializeObject<OCMDeal.Rootobject>(content);
+                    //    deals = JsonConvert.DeserializeObject<OCMDeal>(content);
+                    //    //BUGFIXED +		ex	{"Input string '8000.0' is not a valid integer. Path 'value[0].Amount', line 1, position 705."}	System.Exception {Newtonsoft.Json.JsonReaderException}
+                    //    if (OCMDeals == null)
+                    //    {
+                    //        OCMDeals = deals.value.ToList();
+                    //    }
+                    //    else
+                    //    {
+                    //        if (deals.value.Length > 0)
+                    //            OCMDeals.AddRange(deals.value.ToList());
+                    //    }
+
+                    //    if (deals.value.Length < 50)
+                    //    {
+                    //        //No more items to get
+                    //        PageSkip = 0;
+                    //        Log.InfoFormat("Fetched {0} OCM Deals", OCMDeals.Count);
+                    //        OnGetItemComplete(null, new HelperEventArgs(String.Format("Fetched {0} OCM Deals", OCMDeals.Count), HelperEventArgs.EventTypes.Status));
+                    //    }
+                    //    else
+                    //    {
+                    //        PageSkip += 50;
+                    //    }
+                    //}
                 }
-            }
-            catch (System.Exception ex)
-            {                
-                Log.Error(ex);
-                OnError(null, new HelperEventArgs(String.Format("ERROR in GetOCMDealsAsync: {0}", ex.Message), HelperEventArgs.EventTypes.Error));
-                NumberOfErrors += 1;
+                catch (Exception ex)
+                {                
+                    Log.Error(ex);
+                    OnError(null, new HelperEventArgs(String.Format("ERROR in GetOCMDealsAsync: {0}", ex.Message), HelperEventArgs.EventTypes.Error));
+                    NumberOfErrors += 1;
+                }
             }
         }
         private async Task<OCMDealTemplate.Rootobject> GetTemplateAsync()
@@ -1206,29 +1306,49 @@ namespace BCM_Migration_Tool.Objects
 
                 PrepareRequest(RequestDataTypes.Deals, RequestDataFormats.JSON);
                 _httpClient.DefaultRequestHeaders.Add("X-DealTemplateVersion", DealTemplate.Version.ToString());
-                using (var response = await _httpClient.SendAsync(request))
+
+                RestResponse<HttpWebResponse> response = await Patch<HttpWebResponse>(request, true, null, true, false);
+                if (response.StatusCode != HttpStatusCode.Created && response.StatusCode != HttpStatusCode.OK)
                 {
-                    //Debug.WriteLine(response);
-                    if (!response.IsSuccessStatusCode) // Check status code.
-                    {
-                        var content = await response.Content.ReadAsStringAsync();
-                        //BUG "{\"error\":{\"code\":\"ErrorInternalServerError\",\"message\":\"Invalid custom property id\"}}". Outstanding issue being unable to add custom properties to Deals
+                    //BUG "{\"error\":{\"code\":\"ErrorInternalServerError\",\"message\":\"Invalid custom property id\"}}". Outstanding issue being unable to add custom properties to Deals
 #if DEBUG
-                        Log.WarnFormat("ERROR patching deal '{1}' for BCM ID: {0}", content, ocmDeal.Name);
+                    Log.WarnFormat("ERROR patching deal '{1}' for BCM ID: {0}", response.ErrorContent, ocmDeal.Name);
 #else
-                        Log.ErrorFormat("ERROR patching deal '{1}' for BCM ID: {0}", content, ocmDeal.Name);
+                        Log.ErrorFormat("ERROR patching deal '{1}' for BCM ID: {0}", response.ErrorContent, ocmDeal.Name);
 #endif
 #if !DEBUG
-                        OnError(null, new HelperEventArgs(String.Format("ERROR patching '{1}': {0}", content, ocmDeal.Name), HelperEventArgs.EventTypes.Error));
+                        OnError(null, new HelperEventArgs(String.Format("ERROR patching '{1}': {0}", response.ErrorContent, ocmDeal.Name), HelperEventArgs.EventTypes.Error));
 #endif
-                        NumberOfErrors += 1;
-                    }
-                    else
-                    {
-                        Log.DebugFormat("Deal '{0}' updated with BCMID {1})", ocmDeal.Name, bcmID);
-                        OnPatchComplete(null, new HelperEventArgs(String.Format("Updated Deal '{0}'...", ocmDeal.Name), false));
-                    }
                 }
+                else
+                {
+                    Log.DebugFormat("Deal '{0}' updated with BCMID {1})", ocmDeal.Name, bcmID);
+                    OnPatchComplete(null, new HelperEventArgs(String.Format("Updated Deal '{0}'...", ocmDeal.Name), false));
+                }
+
+//                using (var response = await _httpClient.SendAsync(request))
+//                {
+//                    //Debug.WriteLine(response);
+//                    if (!response.IsSuccessStatusCode) // Check status code.
+//                    {
+//                        var content = await response.Content.ReadAsStringAsync();
+//                        //BUG "{\"error\":{\"code\":\"ErrorInternalServerError\",\"message\":\"Invalid custom property id\"}}". Outstanding issue being unable to add custom properties to Deals
+//#if DEBUG
+//                        Log.WarnFormat("ERROR patching deal '{1}' for BCM ID: {0}", content, ocmDeal.Name);
+//#else
+//                        Log.ErrorFormat("ERROR patching deal '{1}' for BCM ID: {0}", content, ocmDeal.Name);
+//#endif
+//#if !DEBUG
+//                        OnError(null, new HelperEventArgs(String.Format("ERROR patching '{1}': {0}", content, ocmDeal.Name), HelperEventArgs.EventTypes.Error));
+//#endif
+//                        NumberOfErrors += 1;
+//                    }
+//                    else
+//                    {
+//                        Log.DebugFormat("Deal '{0}' updated with BCMID {1})", ocmDeal.Name, bcmID);
+//                        OnPatchComplete(null, new HelperEventArgs(String.Format("Updated Deal '{0}'...", ocmDeal.Name), false));
+//                    }
+//                }
             }
             catch (Exception ex)
             {
@@ -1362,30 +1482,33 @@ namespace BCM_Migration_Tool.Objects
         }
         public async Task RunGetTemplateAsync()
         {
-            // Get template.
-            OnStart(null, new HelperEventArgs("Retrieving Deals template...", HelperEventArgs.EventTypes.Status, HelperEventArgs.ProcessingModes.Mapping));
-            DealTemplate = await GetTemplateAsync();
-            FieldMappings.OCMDealFields.DealTemplate = DealTemplate;
-
-            //Debug.WriteLine("Stages: " + DealTemplate.Template.StatusList.Count());
-            //OnDisplayMessage(null, new HelperEventArgs(String.Format("Deals template retrieved! Version: {0}; {1} stage categories", DealTemplate.Version, DealTemplate.Template.StatusList.Count()), HelperEventArgs.EventTypes.Status, HelperEventArgs.ProcessingModes.Mapping));
-            try
+            using (Log.VerboseCall())
             {
-                Log.InfoFormat("{0} statuses:", DealTemplate.Template.StatusList.Length);
-                foreach (var status in DealTemplate.Template.StatusList)
+                // Get template.
+                OnStart(null, new HelperEventArgs("Retrieving Deals template...", HelperEventArgs.EventTypes.Status, HelperEventArgs.ProcessingModes.Mapping));
+                DealTemplate = await GetTemplateAsync();
+                FieldMappings.OCMDealFields.DealTemplate = DealTemplate;
+
+                //Debug.WriteLine("Stages: " + DealTemplate.Template.StatusList.Count());
+                //OnDisplayMessage(null, new HelperEventArgs(String.Format("Deals template retrieved! Version: {0}; {1} stage categories", DealTemplate.Version, DealTemplate.Template.StatusList.Count()), HelperEventArgs.EventTypes.Status, HelperEventArgs.ProcessingModes.Mapping));
+                try
                 {
-                    Log.InfoFormat("Stage category: {0} (Id: {1}); {2} stages:", status.Label, status.Id, status.Stages.Length);
-                    OnDisplayMessage(null, new HelperEventArgs(String.Format("Stage category: {0} (Id: {1})", status.Label, status.Id), HelperEventArgs.EventTypes.Status, HelperEventArgs.ProcessingModes.Mapping));
-                    foreach (var stage in status.Stages)
+                    Log.InfoFormat("{0} statuses:", DealTemplate.Template.StatusList.Length);
+                    foreach (var status in DealTemplate.Template.StatusList)
                     {
-                        Log.InfoFormat("-{0} (Id: {1}; Deleted: {2})", stage.Label, stage.Id, stage.Deleted);
-                        OnDisplayMessage(null, new HelperEventArgs(String.Format(" - {0} (Id: {1}; Deleted: {2})", stage.Label, stage.Id, stage.Deleted), HelperEventArgs.EventTypes.Status, HelperEventArgs.ProcessingModes.Mapping));
+                        Log.InfoFormat("Stage category: {0} (Id: {1}); {2} stages:", status.Label, status.Id, status.Stages.Length);
+                        OnDisplayMessage(null, new HelperEventArgs(String.Format("Stage category: {0} (Id: {1})", status.Label, status.Id), HelperEventArgs.EventTypes.Status, HelperEventArgs.ProcessingModes.Mapping));
+                        foreach (var stage in status.Stages)
+                        {
+                            Log.InfoFormat("-{0} (Id: {1}; Deleted: {2})", stage.Label, stage.Id, stage.Deleted);
+                            OnDisplayMessage(null, new HelperEventArgs(String.Format(" - {0} (Id: {1}; Deleted: {2})", stage.Label, stage.Id, stage.Deleted), HelperEventArgs.EventTypes.Status, HelperEventArgs.ProcessingModes.Mapping));
+                        }
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex);
+                catch (Exception ex)
+                {
+                    Log.Error(ex);
+                }
             }
         }
         private async Task UpdateTemplateAsync()
@@ -1434,82 +1557,85 @@ namespace BCM_Migration_Tool.Objects
         }
         internal async Task UpdateTemplate()
         {
-            //NOTE: When updating a Template, it is recommended to increase the version by 1. When changing the version it is necessary to set the outer Version and inner _Version to the same number.
-            //NOTE: The ordering of Stages is important - the order in this array drives the order in OCM UX.
-            //NOTE: Users are able to re - order Stages in OCM UX. Templates are updated with this ordering.
-            //NOTE: use only the Stage ID with Deal CRUD operations, not Label.
-
-            //TESTED Should only update ALL templates when there is a change!
-            try
+            using (Log.VerboseCall())
             {
-                OCMDealTemplate.Statuslist openStatusList;
-                OCMDealTemplate.Stage[] ocmStages;
+                //NOTE: When updating a Template, it is recommended to increase the version by 1. When changing the version it is necessary to set the outer Version and inner _Version to the same number.
+                //NOTE: The ordering of Stages is important - the order in this array drives the order in OCM UX.
+                //NOTE: Users are able to re - order Stages in OCM UX. Templates are updated with this ordering.
+                //NOTE: use only the Stage ID with Deal CRUD operations, not Label.
 
-                openStatusList = DealTemplate.Template.StatusList.FirstOrDefault(statuses => statuses.Label == "Open");
-
-                int idx = openStatusList.Stages.Length;
-                ocmStages = openStatusList.Stages; //Get existing stages
-
-                //Make room for new stages in array
-                //EL 2017-10-16 Must also make sure that a stage with the same name doesn't already exist - so remove any stages that do from the list 
-
-                List<string> newStages = new List<string>();
-                //EL Copy BCM stages to new list that we will remove duplicates from when we iterate and compare against the OCM list (there's probably a better way to do this)
-
-                OnDisplayMessage(null, new HelperEventArgs(String.Format("Found {0} BCM sales stages:", DealStages.Count), HelperEventArgs.EventTypes.Status, HelperEventArgs.ProcessingModes.Migrating));
-                foreach (string stage in DealStages)
+                //TESTED Should only update ALL templates when there is a change!
+                try
                 {
-                    OnDisplayMessage(null, new HelperEventArgs(String.Format("-{0}", stage), HelperEventArgs.EventTypes.Status, HelperEventArgs.ProcessingModes.Migrating));
-                    newStages.Add(stage);
-                }
+                    OCMDealTemplate.Statuslist openStatusList;
+                    OCMDealTemplate.Stage[] ocmStages;
 
-                //Now loop through our original read-only list of BCM stages and look for a matching OCM stage by name
-                foreach (string stage in DealStages)
-                {
-                    OCMDealTemplate.Stage ocmStage = openStatusList.Stages.FirstOrDefault(ocmStages2 => ocmStages2.Label == stage);
-                    if (ocmStage != null)
+                    openStatusList = DealTemplate.Template.StatusList.FirstOrDefault(statuses => statuses.Label == "Open");
+
+                    int idx = openStatusList.Stages.Length;
+                    ocmStages = openStatusList.Stages; //Get existing stages
+
+                    //Make room for new stages in array
+                    //EL 2017-10-16 Must also make sure that a stage with the same name doesn't already exist - so remove any stages that do from the list 
+
+                    List<string> newStages = new List<string>();
+                    //EL Copy BCM stages to new list that we will remove duplicates from when we iterate and compare against the OCM list (there's probably a better way to do this)
+
+                    OnDisplayMessage(null, new HelperEventArgs(String.Format("Found {0} BCM sales stages:", DealStages.Count), HelperEventArgs.EventTypes.Status, HelperEventArgs.ProcessingModes.Migrating));
+                    foreach (string stage in DealStages)
                     {
-                        //The stage already exists in OCM; remove it from our copy of the BCM list
-                        newStages.Remove(stage);
+                        OnDisplayMessage(null, new HelperEventArgs(String.Format("-{0}", stage), HelperEventArgs.EventTypes.Status, HelperEventArgs.ProcessingModes.Migrating));
+                        newStages.Add(stage);
                     }
+
+                    //Now loop through our original read-only list of BCM stages and look for a matching OCM stage by name
+                    foreach (string stage in DealStages)
+                    {
+                        OCMDealTemplate.Stage ocmStage = openStatusList.Stages.FirstOrDefault(ocmStages2 => ocmStages2.Label == stage);
+                        if (ocmStage != null)
+                        {
+                            //The stage already exists in OCM; remove it from our copy of the BCM list
+                            newStages.Remove(stage);
+                        }
+                    }
+
+                    //Need to count non-DELETED stages? No - throws error
+
+                    if (ocmStages.Length + newStages.Count > 10)
+                    {
+                        //HIGH Any OCM Status cannot have more than 10 stages. We either need to get these OCM stages first to display to the user before we update them if choices are to be made for which to exclude. Will confirm with Welly
+                        Log.WarnFormat("{0} new deal {1} would exceed the maximum of 10 per-status - ignoring extra stages", newStages.Count, newStages.Count == 1 ? "stage" : "stages");
+                        OnDisplayMessage(null, new HelperEventArgs(String.Format("{0} new deal {1} would exceed the maximum of 10 per-status - ignoring extra stages", newStages.Count, newStages.Count == 1 ? "stage" : "stages"), HelperEventArgs.EventTypes.Error, HelperEventArgs.ProcessingModes.Migrating));
+                        OnUpdateTemplateComplete(null, new EventArgs()); //REVIEW Change event to handle error message/condition?
+                        return;
+                    }
+
+                    Array.Resize(ref ocmStages, ocmStages.Length + newStages.Count);
+
+                    Log.InfoFormat("Adding {0} new stages to template:", newStages.Count);
+                    foreach (string stage in newStages)
+                    {
+                        OCMDealTemplate.Stage ocmStage = new OCMDealTemplate.Stage();
+                        ocmStage.Id = Guid.NewGuid().ToString();
+                        ocmStage.Label = stage;
+                        ocmStage.Deleted = false;
+                        ocmStages[idx] = ocmStage; //Add to indexed element of the array
+                        idx += 1;
+                        Log.InfoFormat("-{0}", stage);
+                    }
+
+                    openStatusList.Stages = ocmStages;
+                    Log.InfoFormat("Updating template to version {0} from {1}", DealTemplate.Version + 1, DealTemplate.Version);
+                    DealTemplate.Version += 1;                
+                    DealTemplate.Template._Version = DealTemplate.Version;
+                    await UpdateTemplateAsync();
                 }
-
-                //Need to count non-DELETED stages? No - throws error
-
-                if (ocmStages.Length + newStages.Count > 10)
+                catch (Exception ex)
                 {
-                    //HIGH Any OCM Status cannot have more than 10 stages. We either need to get these OCM stages first to display to the user before we update them if choices are to be made for which to exclude. Will confirm with Welly
-                    Log.WarnFormat("{0} new deal {1} would exceed the maximum of 10 per-status - ignoring extra stages", newStages.Count, newStages.Count == 1 ? "stage" : "stages");
-                    OnDisplayMessage(null, new HelperEventArgs(String.Format("{0} new deal {1} would exceed the maximum of 10 per-status - ignoring extra stages", newStages.Count, newStages.Count == 1 ? "stage" : "stages"), HelperEventArgs.EventTypes.Error, HelperEventArgs.ProcessingModes.Migrating));
-                    OnUpdateTemplateComplete(null, new EventArgs()); //REVIEW Change event to handle error message/condition?
-                    return;
-                }
-
-                Array.Resize(ref ocmStages, ocmStages.Length + newStages.Count);
-
-                Log.InfoFormat("Adding {0} new stages to template:", newStages.Count);
-                foreach (string stage in newStages)
-                {
-                    OCMDealTemplate.Stage ocmStage = new OCMDealTemplate.Stage();
-                    ocmStage.Id = Guid.NewGuid().ToString();
-                    ocmStage.Label = stage;
-                    ocmStage.Deleted = false;
-                    ocmStages[idx] = ocmStage; //Add to indexed element of the array
-                    idx += 1;
-                    Log.InfoFormat("-{0}", stage);
-                }
-
-                openStatusList.Stages = ocmStages;
-                Log.InfoFormat("Updating template to version {0} from {1}", DealTemplate.Version + 1, DealTemplate.Version);
-                DealTemplate.Version += 1;                
-                DealTemplate.Template._Version = DealTemplate.Version;
-                await UpdateTemplateAsync();
+                    Log.Error(ex);
+                    OnError(null, new HelperEventArgs(String.Format("Unknown error in DealsHelper.UpdateTemplate:{0}", ex.ToString()), HelperEventArgs.EventTypes.Error, ex));                
+                }            
             }
-            catch (System.Exception ex)
-            {
-                Log.Error(ex);
-                OnError(null, new HelperEventArgs(String.Format("Unknown error in DealsHelper.UpdateTemplate:{0}", ex.ToString()), HelperEventArgs.EventTypes.Error, ex));                
-            }            
         }
 
 #endregion

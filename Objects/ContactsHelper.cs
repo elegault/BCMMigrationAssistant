@@ -5,6 +5,7 @@ using System.Data.SqlClient;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Reflection;
 using System.Runtime.Serialization.Json;
@@ -55,24 +56,36 @@ namespace BCM_Migration_Tool.Objects
             {
                 Log.VerboseFormat("Posting to {1}:{2}{0}{2}", xmlRequest, uri, Environment.NewLine);
                 PrepareRequest(RequestDataTypes.Links, RequestDataFormats.XML);
-                using (
-                 var response = await _httpClient.PostAsync(uri, new StringContent(xmlRequest, Encoding.UTF8, "text/xml"))
-             )
+                RestResponse<HttpWebResponse> response = await Post<HttpWebResponse>(uri, new StringContent(xmlRequest, Encoding.UTF8,
+                    "text/xml"));
+                if (response.StatusCode != HttpStatusCode.Created && response.StatusCode != HttpStatusCode.OK)
                 {
-                    var content = await response.Content.ReadAsStringAsync();
-
-                    if (!response.IsSuccessStatusCode)
-                    {
-                        Log.Error(content);
-                        OnError(null, new HelperEventArgs(String.Format("ERROR: {0}", content), HelperEventArgs.EventTypes.Error));
-                        NumberOfErrors += 1;
-                        return false;
-                    }
-                    else
-                    {
-                        return true;
-                    }
+                    Log.Error(response.ErrorContent);
+                    OnError(null, new HelperEventArgs(String.Format("ERROR '{1}': {0}", response.ErrorContent, response.StatusCode), HelperEventArgs.EventTypes.Error));
+                    NumberOfErrors += 1;
+                    return false;
                 }
+                else
+                {
+                    return true;
+                }
+
+                //using (var response = await _httpClient.PostAsync(uri, new StringContent(xmlRequest, Encoding.UTF8, "text/xml")))
+                //{
+                //    var content = await response.Content.ReadAsStringAsync();
+
+                //    if (!response.IsSuccessStatusCode)
+                //    {
+                //        Log.Error(content);
+                //        OnError(null, new HelperEventArgs(String.Format("ERROR: {0}", content), HelperEventArgs.EventTypes.Error));
+                //        NumberOfErrors += 1;
+                //        return false;
+                //    }
+                //    else
+                //    {
+                //        return true;
+                //    }
+                //}
             }
             catch (System.Exception ex)
             {
@@ -124,6 +137,8 @@ namespace BCM_Migration_Tool.Objects
                                 continue;
                             }
 
+                            //HIGH BUG Seen a contact with an ID doubled in ItemLinkId; check for length, or take only the first x chars (eg. 0d4723e8-7137-46ca-be8a-e9b3f6f7dc9610d4723e8-7137-46ca-be8a-e9b3f6f7dc96)
+                            //Use 0d4723e8-7137-46ca-be8a-e9b3f6f7dc96 as reference
                             bool linked = await CreateCompanyLink(contact.ItemLinkId, company.XrmId);
                             if (linked)
                             {
@@ -162,9 +177,11 @@ namespace BCM_Migration_Tool.Objects
         }
         internal async Task CreateContacts()
         {
-            Cancelled = false;
-            await RunCreateContactsAsync();
-                
+            using (Log.VerboseCall())
+            {
+                Cancelled = false;
+                await RunCreateContactsAsync();
+            }                
         }
 
         internal async Task FindPeople()
@@ -193,135 +210,160 @@ namespace BCM_Migration_Tool.Objects
                         
                         //Log.DebugFormat("Posting to {1}:{2}{0}{2}", xmlRequest, uri, Environment.NewLine);
                         PrepareRequest(RequestDataTypes.EWS, RequestDataFormats.XML);
-                        using (var response = await _httpClient.PostAsync(uri, new StringContent(xmlRequest, Encoding.UTF8, "text/xml")))
+                        string content = "";
+
+                        //RestResponse<HttpResponseMessage> response = await Post<HttpResponseMessage>(uri, new StringContent(xmlRequest, Encoding.UTF8, "text/xml"));
+                        RestResponse<string> response = await Post<string>(uri,
+    new StringContent(xmlRequest, Encoding.UTF8, "text/xml"));
+
+                        if (response.StatusCode != HttpStatusCode.Created && response.StatusCode != HttpStatusCode.OK)
                         {
-                            var content = await response.Content.ReadAsStringAsync();
+                            Log.ErrorFormat("ERROR '{1}': {0}", response.ErrorContent, response.StatusCode);
+                            OnError(null, new HelperEventArgs(String.Format("Fatal error with FindPeople operation '{1}': {0}", response.ErrorContent), HelperEventArgs.EventTypes.Error));
+                            return;
+                        }
+                        else
+                        {
+                            //content = await response.Content.Content.ReadAsStringAsync();                            
+                            content = response.StringContent;
+                        }
 
+                        //using (var response = await _httpClient.PostAsync(uri, new StringContent(xmlRequest, Encoding.UTF8, "text/xml")))
+                        //{
+                        //    content = await response.Content.ReadAsStringAsync();
+                        //}
+
+                        if (FullRESTLogging)
+                        {
                             Log.DebugFormat("FindPeople (offset: {0}): {1}", offset, content);
-                            //Debug.WriteLine(content);
+                        }
+                        else
+                        {
+                            Log.DebugFormat("FindPeople (offset: {0})", offset);
+                        }                        
 
-                            XElement responseEnvelope = XElement.Load(new StringReader(content));
+                        XElement responseEnvelope = XElement.Load(new StringReader(content));
 
-                            if (responseEnvelope == null)
+                        if (responseEnvelope == null)
+                        {
+                            OnError(null, new HelperEventArgs(String.Format("ERROR: {0}", "Fatal error with FindPeople operation"), HelperEventArgs.EventTypes.Error));
+                            return;
+                        }
+                        // Check the response for error codes. If there is an error, throw an application exception.
+                        IEnumerable<XElement> errorCodes = from errorCode in responseEnvelope.Descendants
+                                ("{http://schemas.microsoft.com/exchange/services/2006/messages}ResponseCode")
+                                                           select errorCode;
+                        foreach (var errorCode in errorCodes)
+                        {
+                            if (errorCode.Value != "NoError")
                             {
-                                OnError(null, new HelperEventArgs(String.Format("ERROR: {0}", "Fatal error with FindPeople operation"), HelperEventArgs.EventTypes.Error));
+                                switch (errorCode.Parent.Name.LocalName.ToString())
+                                {
+                                    case "Response":
+                                        string responseError = "Response-level error getting FindPeople information:\n" + errorCode.Value;
+                                        OnError(null, new HelperEventArgs(String.Format("ERROR: {0}", responseError), HelperEventArgs.EventTypes.Error));
+                                        break;
+                                    case "UserResponse":
+                                        string userError = "User-level error getting FindPeople information:\n" + errorCode.Value;
+                                        OnError(null, new HelperEventArgs(String.Format("ERROR: {0}", userError), HelperEventArgs.EventTypes.Error));
+                                        break;
+                                }
                                 return;
                             }
-                            // Check the response for error codes. If there is an error, throw an application exception.
-                            IEnumerable<XElement> errorCodes = from errorCode in responseEnvelope.Descendants
-                                    ("{http://schemas.microsoft.com/exchange/services/2006/messages}ResponseCode")
-                                select errorCode;
-                            foreach (var errorCode in errorCodes)
-                            {
-                                if (errorCode.Value != "NoError")
-                                {
-                                    switch (errorCode.Parent.Name.LocalName.ToString())
-                                    {
-                                        case "Response":
-                                            string responseError = "Response-level error getting FindPeople information:\n" + errorCode.Value;
-                                            OnError(null, new HelperEventArgs(String.Format("ERROR: {0}", responseError), HelperEventArgs.EventTypes.Error));
-                                            break;
-                                        case "UserResponse":
-                                            string userError = "User-level error getting FindPeople information:\n" + errorCode.Value;
-                                            OnError(null, new HelperEventArgs(String.Format("ERROR: {0}", userError), HelperEventArgs.EventTypes.Error));
-                                            break;
-                                    }
-                                    return;
-                                }
-                            }
+                        }
 
-                            if (totalPeople == 0)
+                        if (totalPeople == 0)
+                        {
+                            //Get number of contacts in the folder
+                            elementsRoot =
+                                responseEnvelope.Descendants("{http://schemas.microsoft.com/exchange/services/2006/messages}FindPeopleResponse");
+                            elementsRoot = elementsRoot.Descendants("{http://schemas.microsoft.com/exchange/services/2006/messages}TotalNumberOfPeopleInView");
+                            totalPeople = Convert.ToInt32(elementsRoot.ElementAt(0).Value);
+                            OnDisplayMessage(null, new HelperEventArgs(String.Format("Checking {0} contacts...", totalPeople), HelperEventArgs.EventTypes.Status));
+                        }
+
+                        try
+                        {
+                            //Enumerate Persona nodes in response
+                            IEnumerable<XElement> elements = from elementA in
+                                responseEnvelope.Descendants
+                                    ("{http://schemas.microsoft.com/exchange/services/2006/messages}People")
+                                                             select elementA;
+                            IEnumerable<XElement> elementsB = from elementB in
+                                elements.Descendants("{http://schemas.microsoft.com/exchange/services/2006/types}Persona")
+                                                              select elementB;
+
+                            //peopleFound += elementsB.Count();
+                            peopleFound = elementsB.Count();
+
+                            int idIndexes = 0;
+                            foreach (var elementC in elementsB)
                             {
-                                //Get number of contacts in the folder
+                                XNode personaNode = elementC.FirstNode;
+                                XAttribute att = elementC.FirstAttribute;
+                                XElement element1;
+                                string personaID = "";
+                                string displayName = "";
+                                OCMContact2Value ocmContact = null;
+
+                                element1 = (XElement)personaNode;
+                                att = element1.FirstAttribute;
+                                personaID = att.Value;
+                                //Debug.WriteLine(personaID);
                                 elementsRoot =
-                                    responseEnvelope.Descendants("{http://schemas.microsoft.com/exchange/services/2006/messages}FindPeopleResponse");
-                                elementsRoot = elementsRoot.Descendants("{http://schemas.microsoft.com/exchange/services/2006/messages}TotalNumberOfPeopleInView");
-                                totalPeople = Convert.ToInt32(elementsRoot.ElementAt(0).Value);
-                                OnDisplayMessage(null, new HelperEventArgs(String.Format("Checking {0} contacts...", totalPeople), HelperEventArgs.EventTypes.Status));
-                            }
+                                    elementC.Descendants("{http://schemas.microsoft.com/exchange/services/2006/types}DisplayName");
+                                displayName = elementsRoot.ElementAt(0).Value;
+                                ocmContact = GetOCMContact(displayName);
 
-                            try
-                            {
-                                //Enumerate Persona nodes in response
-                                IEnumerable<XElement> elements = from elementA in
-                                    responseEnvelope.Descendants
-                                        ("{http://schemas.microsoft.com/exchange/services/2006/messages}People")
-                                    select elementA;
-                                IEnumerable<XElement> elementsB = from elementB in
-                                    elements.Descendants("{http://schemas.microsoft.com/exchange/services/2006/types}Persona")
-                                    select elementB;
+                                if (ocmContact != null)
+                                {
+                                    Debug.WriteLine(String.Format("Found OCM contact: {0}", ocmContact.DisplayName));
+                                    ocmContact.PersonaId = personaID;
+                                }
+                                else
+                                {
+                                    Debug.WriteLine(String.Format("Non-OCM contact: {0}", displayName));
+                                    continue;
+                                }
 
-                                //peopleFound += elementsB.Count();
-                                peopleFound = elementsB.Count();
+                                elementsRoot =
+                                    elementC.Descendants("{http://schemas.microsoft.com/exchange/services/2006/types}PersonaType");
+                                if (elementsRoot.ElementAt(0).Value == "DistributionList")
+                                    continue;
 
-                                int idIndexes = 0;
-                                foreach (var elementC in elementsB)
-                                {                                
-                                    XNode personaNode = elementC.FirstNode;
-                                    XAttribute att = elementC.FirstAttribute;
-                                    XElement element1;
-                                    string personaID = "";
-                                    string displayName = "";
-                                    OCMContact2Value ocmContact = null;
-
-                                    element1 = (XElement) personaNode;
-                                    att = element1.FirstAttribute;
-                                    personaID = att.Value;
-                                    //Debug.WriteLine(personaID);
-                                    elementsRoot =
-                                        elementC.Descendants("{http://schemas.microsoft.com/exchange/services/2006/types}DisplayName");
-                                    displayName = elementsRoot.ElementAt(0).Value;
-                                    ocmContact = GetOCMContact(displayName);
-
-                                    if (ocmContact != null)
-                                    {
-                                        Debug.WriteLine(String.Format("Found OCM contact: {0}", ocmContact.DisplayName));
-                                        ocmContact.PersonaId = personaID;
-                                    }
-                                    else
-                                    {
-                                        Debug.WriteLine(String.Format("Non-OCM contact: {0}", displayName));
-                                        continue;
-                                    }
-
-                                    elementsRoot =
-                                        elementC.Descendants("{http://schemas.microsoft.com/exchange/services/2006/types}PersonaType");
-                                    if (elementsRoot.ElementAt(0).Value == "DistributionList")
-                                        continue;
-
-                                    //TESTED Get ItemLinkId
-                                    var myelement = from anElement in elementsB.Descendants
-                                            ("{http://schemas.microsoft.com/exchange/services/2006/types}ItemLinkIds")
-                                        select anElement.Value;
-                                    try
-                                    {
-                                        //HACK HACK HACK!!! Must remove trailing 1!
-                                        ocmContact.ItemLinkId = myelement.ElementAt(idIndexes);
-                                        idIndexes += 1;
-                                        //ocmContact.ItemLinkId = myelement.First();
-                                        ocmContact.ItemLinkId = ocmContact.ItemLinkId.Substring(0, ocmContact.ItemLinkId.Length - 1);
-                                        Log.DebugFormat("{0} (ItemLinkID: {1})", ocmContact.DisplayName, ocmContact.ItemLinkId);
-                                        //Try .Value.Value? or .Child.Child, or folderName.First. Still doesn't work! Just use above hack
-                                        //ALSO TRY: folderName.Descendants("Value") .Descendants("Value") 
-                                        //result = element.Descendants("Value").Descendants("Value").ToString();
-                                    }
-                                    catch (Exception ex)
-                                    {
-                                        Log.Error(ex);
-                                        OnError(null, new HelperEventArgs(String.Format("Unknown error in FindPeopleA: {0})", ex), HelperEventArgs.EventTypes.Error));
-                                        //throw;
-                                    }                                
+                                //TESTED Get ItemLinkId
+                                var myelement = from anElement in elementsB.Descendants
+                                        ("{http://schemas.microsoft.com/exchange/services/2006/types}ItemLinkIds")
+                                                select anElement.Value;
+                                try
+                                {
+                                    //HACK HACK HACK!!! Must remove trailing 1!
+                                    ocmContact.ItemLinkId = myelement.ElementAt(idIndexes);
+                                    idIndexes += 1;
+                                    //ocmContact.ItemLinkId = myelement.First();
+                                    ocmContact.ItemLinkId = ocmContact.ItemLinkId.Substring(0, ocmContact.ItemLinkId.Length - 1);
+                                    Log.DebugFormat("{0} (ItemLinkID: {1})", ocmContact.DisplayName, ocmContact.ItemLinkId);
+                                    //Try .Value.Value? or .Child.Child, or folderName.First. Still doesn't work! Just use above hack
+                                    //ALSO TRY: folderName.Descendants("Value") .Descendants("Value") 
+                                    //result = element.Descendants("Value").Descendants("Value").ToString();
+                                }
+                                catch (Exception ex)
+                                {
+                                    Log.Error(ex);
+                                    OnError(null, new HelperEventArgs(String.Format("Unknown error in FindPeopleA: {0})", ex), HelperEventArgs.EventTypes.Error));
+                                    //throw;
                                 }
                             }
-                            catch (Exception ex)
-                            {
-                                Log.Error(ex);
-                                OnError(null, new HelperEventArgs(String.Format("Unknown error in FindPeopleB: {0})", ex.ToString()), HelperEventArgs.EventTypes.Error));
-                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Error(ex);
+                            OnError(null, new HelperEventArgs(String.Format("Unknown error in FindPeopleB: {0})", ex.ToString()), HelperEventArgs.EventTypes.Error));
+                        }
 
-                            OnDisplayMessage(null, new HelperEventArgs(String.Format("Processed {0} contacts...", offset), HelperEventArgs.EventTypes.Status));
-                            offset += peopleFound;
-                        }                       
+                        OnDisplayMessage(null, new HelperEventArgs(String.Format("Processed {0} contacts...", offset), HelperEventArgs.EventTypes.Status));
+                        offset += peopleFound;
+
                     } while (totalPeople > offset);
                 }
                 catch (Exception ex)
@@ -333,52 +375,54 @@ namespace BCM_Migration_Tool.Objects
         }
         internal async Task GetBCMContacts()
         {
-           
-            try
+            using (Log.VerboseCall())
             {
-
-                OnStart(null, new HelperEventArgs("Getting BCM Contacts data", HelperEventArgs.EventTypes.Status));
-
-                using (var context = new MSSampleBusinessEntities())
+                try
                 {
-                    context.Database.Connection.ConnectionString = ConnectionString;
+                    OnStart(null, new HelperEventArgs("Getting BCM Contacts data", HelperEventArgs.EventTypes.Status));
 
-                    //#if !DEBUG
-                    //                    context.Database.Connection.ConnectionString = ConnectionString;
-                    //#else
-                    //                    //NOTE Use this for mounting a LocalDB db during debugging
-                    //                    object dbPath = AppDomain.CurrentDomain.GetData("DataDirectory");
-                    //                    if (dbPath == null)
-                    //                    {
-                    //                        string path = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-                    //                        if (Environment.MachineName == "PRECISION")
-                    //                            path = @"C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Tool";
-                    //                        AppDomain.CurrentDomain.SetData("DataDirectory", path);
-                    //                        dbPath = AppDomain.CurrentDomain.GetData("DataDirectory");
-                    //                    }
-                    //#endif
+                    using (var context = new MSSampleBusinessEntities())
+                    {
+                        context.Database.Connection.ConnectionString = ConnectionString;
 
-                    //TESTED Use LINQ instead
-                    //NOTE Can also use BCM_BusinessContacts_Core.sql in Resources instead of EF
+                        //#if !DEBUG
+                        //                    context.Database.Connection.ConnectionString = ConnectionString;
+                        //#else
+                        //                    //NOTE Use this for mounting a LocalDB db during debugging
+                        //                    object dbPath = AppDomain.CurrentDomain.GetData("DataDirectory");
+                        //                    if (dbPath == null)
+                        //                    {
+                        //                        string path = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+                        //                        if (Environment.MachineName == "PRECISION")
+                        //                            path = @"C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Tool";
+                        //                        AppDomain.CurrentDomain.SetData("DataDirectory", path);
+                        //                        dbPath = AppDomain.CurrentDomain.GetData("DataDirectory");
+                        //                    }
+                        //#endif
+
+                        //TESTED Use LINQ instead
+                        //NOTE Can also use BCM_BusinessContacts_Core.sql in Resources instead of EF
                                         
-                    var contacts = context.ContactFullViews.Where(mycontacts => mycontacts.Type == 1 && mycontacts.IsDeletedLocally == false);
+                        var contacts = context.ContactFullViews.Where(mycontacts => mycontacts.Type == 1 && mycontacts.IsDeletedLocally == false);
                     
-                    BCMContacts = new List<ContactFullView>();
+                        BCMContacts = new List<ContactFullView>();
 
-                    Log.DebugFormat("Found {0} BCM Contacts:", contacts.Count());
-                    OnGetComplete(null, new HelperEventArgs(String.Format("Found {0} BCM Contacts:", contacts.Count()), HelperEventArgs.EventTypes.Status));
+                        Log.DebugFormat("Found {0} BCM Contacts:", contacts.Count());
+                        OnGetComplete(null, new HelperEventArgs(String.Format("Found {0} BCM Contacts:", contacts.Count()), HelperEventArgs.EventTypes.Status));
 
-                    foreach (var contact in contacts)
-                    {                        
-                        OnGetItemComplete(null, new HelperEventArgs(String.Format(" -{0} (Company: {1})", contact.FullName, contact.CompanyName), HelperEventArgs.EventTypes.Status));
-                        BCMContacts.Add(contact);
+                        foreach (var contact in contacts)
+                        {
+                            if (LogRecordNames)
+                                OnGetItemComplete(null, new HelperEventArgs(String.Format(" -{0} (Company: {1})", contact.FullName, contact.CompanyName), HelperEventArgs.EventTypes.Status));
+                            BCMContacts.Add(contact);
+                        }
                     }
                 }
-            }
-            catch (System.Exception ex)
-            {
-                Log.Error(ex);
-                OnError(null, new HelperEventArgs(String.Format("Error in ContactsHelper.GetBCmContacts: {0}", ex.Message), HelperEventArgs.EventTypes.Error));                
+                catch (Exception ex)
+                {
+                    Log.Error(ex);
+                    OnError(null, new HelperEventArgs(String.Format("Error in ContactsHelper.GetBCmContacts: {0}", ex.Message), HelperEventArgs.EventTypes.Error));                
+                }
             }
         }
         private OCMContact2Value GetOCMContact(string val, UpdateKeyTypes keyType)
@@ -455,144 +499,209 @@ namespace BCM_Migration_Tool.Objects
         }
         internal async Task GetOCMContacts()
         {
-
-            OCMContacts = new List<OCMContact2Value>();
-            await RunGetOCMContactsAsync();
-            bool headerShown = false;
-
-            //OnGetComplete(null, new HelperEventArgs(String.Format("Found {0} existing contacts (* = previously imported):", OCMContacts?.Count), HelperEventArgs.EventTypes.Status));
-            //OnGetComplete(null, new HelperEventArgs(String.Format("Found {0} existing OCM contacts", OCMContacts?.Count), HelperEventArgs.EventTypes.Status));
-
-            Log.InfoFormat("Total contacts: {0}", OCMContacts.Count);
-
-            foreach (var item in OCMContacts)
+            using (Log.VerboseCall())
             {
-                string bcmID = item.GetBCMID();
-                string output = "";
+                OCMContacts = new List<OCMContact2Value>();
+                await RunGetOCMContactsAsync();
+                bool headerShown = false;
 
-                try
+                //OnGetComplete(null, new HelperEventArgs(String.Format("Found {0} existing contacts (* = previously imported):", OCMContacts?.Count), HelperEventArgs.EventTypes.Status));
+                //OnGetComplete(null, new HelperEventArgs(String.Format("Found {0} existing OCM contacts", OCMContacts?.Count), HelperEventArgs.EventTypes.Status));
+
+                Log.InfoFormat("Found {0} existing contacts", OCMContacts?.Count);
+
+                foreach (var item in OCMContacts)
                 {
-                    ////output = String.Format(" -{3}{0}{2}{1}", item.DisplayName,
-                    //    !String.IsNullOrEmpty(bcmID) ? String.Format(" (BCM ID: {0})", bcmID) : "",
-                    //    String.IsNullOrEmpty(item.CompanyName?.ToString()) ? "" : ": " + item.CompanyName,
-                    //    !String.IsNullOrEmpty(bcmID) ? "*" : "");
-                    output = String.Format(" -{3}{0}{2}{1}", item.DisplayName,
-                    !String.IsNullOrEmpty(bcmID) ? String.Format(" (BCM ID: {0})", bcmID) : "",
-                        String.IsNullOrEmpty(item.CompanyName?.ToString()) ? "" : ": " + item.CompanyName,
-                        !String.IsNullOrEmpty(bcmID) ? "" : "");
-                    if (!String.IsNullOrEmpty(bcmID)) //Only output previously imported contacts to log window
+                    string bcmID = item.GetBCMID();
+                    string output = "";
+
+                    try
                     {
-                        if (!headerShown)
-                        {                            
-                            OnGetComplete(null, new HelperEventArgs("Previously imported contacts:", HelperEventArgs.EventTypes.Status));
-                            headerShown = true;
+                        ////output = String.Format(" -{3}{0}{2}{1}", item.DisplayName,
+                        //    !String.IsNullOrEmpty(bcmID) ? String.Format(" (BCM ID: {0})", bcmID) : "",
+                        //    String.IsNullOrEmpty(item.CompanyName?.ToString()) ? "" : ": " + item.CompanyName,
+                        //    !String.IsNullOrEmpty(bcmID) ? "*" : "");
+                        
+                        //BUG HIGH If values have braces, format exception!!! Use string interpolation? Wait - had a bad Log.DebugFormat(val) line below; switched to Log.Debug
+                        output =
+                            $" -{(!String.IsNullOrEmpty(bcmID) ? "" : "")}{item.DisplayName}{(String.IsNullOrEmpty(item.CompanyName?.ToString()) ? "" : ": " + item.CompanyName)}{(!String.IsNullOrEmpty(bcmID) ? String.Format(" (BCM ID: {0})", bcmID) : "")}";
+                        //output = $" -@{!String.IsNullOrEmpty(bcmID) ? "" : ""}";
+                        if (!String.IsNullOrEmpty(bcmID)) //Only output previously imported contacts to log window
+                        {
+                            if (!headerShown)
+                            {                            
+                                OnGetComplete(null, new HelperEventArgs("Previously imported contacts:", HelperEventArgs.EventTypes.Status));
+                                headerShown = true;
+                            }
+                            Log.Debug(output);
+                            if (LogRecordNames)
+                                OnGetItemComplete(null, new HelperEventArgs(output, HelperEventArgs.EventTypes.Status));
                         }
-                        Log.DebugFormat(output);
-                        OnGetItemComplete(null, new HelperEventArgs(output, HelperEventArgs.EventTypes.Status));
                     }
-                }
-                catch (Exception ex)
-                {
-                    Log.Error(ex);
+                    catch (Exception ex)
+                    {
+                        Log.Error(ex);
+                    }
                 }
             }
         }
         private async Task GetOCMContactsAsync(bool getSharedContacts)
         {
-            try
-            {                
-                string request;
+            using (Log.VerboseCall())
+            {
+                try
+                {                
+                    string request;
 
-                if (!String.IsNullOrEmpty(LastPageResult))
-                {
-                    request = LastPageResult;
-                }
-                else
-                {
-                    //request = "https://outlook.office.com/api/v2.0/me/contacts?$select=EmailAddresses,GivenName,SurName,DisplayName,CompanyName,JobTitle,BusinessPhones,HomePhones,Birthday,PersonalNotes";
-                    //request = "https://outlook.office.com/api/v2.0/me/contacts?$top=50&$select=EmailAddresses,GivenName,SurName,DisplayName,CompanyName,JobTitle,BusinessPhones,HomePhones,Birthday,PersonalNotes";                  
-                    //request = String.Format("{0}/contacts?$top=50&$expand=SingleValueExtendedProperties($filter=PropertyId%20eq%20'String%20{1}%20Name%20BCMID')&$select=EmailAddresses,GivenName,SurName,DisplayName,CompanyName", Properties.Settings.Default.V2EndPoint, FieldMappings.BCMIDPropertyGUID);
-                    //Get ALL fields
-
-                    if (getSharedContacts)
+                    if (!String.IsNullOrEmpty(LastPageResult))
                     {
-                        //Shared contacts will be in the All Sales Team folder under the default Contacts Folder
-                        //e.g. https://graph.microsoft.com/beta/me/contactfolders/AAMkAGUzNmEzYTBmLTI1NDItNGE0My1iZDk5LWFkMDgxODI3YWNlOQAuAAAAAACK2VEhi72QSaw+u0XV7xUHAQAuH-1UA8tzTYD5jbYriaIUAAJ4xE13AAA=/contacts
-                        request = String.Format("{0}/contactfolders/{2}/contacts?$top=50&$expand=SingleValueExtendedProperties($filter=PropertyId%20eq%20'String%20{1}%20Name%20BCMID')", Properties.Settings.Default.V2EndPoint, FieldMappings.BCMIDPropertyGUID, MigrationHelper.ContactsFolderID.Replace("/", "-"));
+                        request = LastPageResult;
                     }
                     else
                     {
-                        request = String.Format("{0}/contacts?$top=50&$expand=SingleValueExtendedProperties($filter=PropertyId%20eq%20'String%20{1}%20Name%20BCMID')", Properties.Settings.Default.V2EndPoint, FieldMappings.BCMIDPropertyGUID);
-                    }
-                }
+                        //request = "https://outlook.office.com/api/v2.0/me/contacts?$select=EmailAddresses,GivenName,SurName,DisplayName,CompanyName,JobTitle,BusinessPhones,HomePhones,Birthday,PersonalNotes";
+                        //request = "https://outlook.office.com/api/v2.0/me/contacts?$top=50&$select=EmailAddresses,GivenName,SurName,DisplayName,CompanyName,JobTitle,BusinessPhones,HomePhones,Birthday,PersonalNotes";                  
+                        //request = String.Format("{0}/contacts?$top=50&$expand=SingleValueExtendedProperties($filter=PropertyId%20eq%20'String%20{1}%20Name%20BCMID')&$select=EmailAddresses,GivenName,SurName,DisplayName,CompanyName", Properties.Settings.Default.V2EndPoint, FieldMappings.BCMIDPropertyGUID);
+                        //Get ALL fields
 
-                //Debug.WriteLine("Request to : " + request);
-                PrepareRequest(RequestDataTypes.Contacts, RequestDataFormats.None);
-                using (var response = await _httpClient.GetAsync(request))
-                {
-                    // Check status code.
-                    if (!response.IsSuccessStatusCode)
+                        if (getSharedContacts)
+                        {
+                            //Shared contacts will be in the All Sales Team folder under the default Contacts Folder
+                            //e.g. https://graph.microsoft.com/beta/me/contactfolders/AAMkAGUzNmEzYTBmLTI1NDItNGE0My1iZDk5LWFkMDgxODI3YWNlOQAuAAAAAACK2VEhi72QSaw+u0XV7xUHAQAuH-1UA8tzTYD5jbYriaIUAAJ4xE13AAA=/contacts
+                            request = String.Format("{0}/contactfolders/{2}/contacts?$top=50&$expand=SingleValueExtendedProperties($filter=PropertyId%20eq%20'String%20{1}%20Name%20BCMID')", Settings.Default.V2EndPoint, FieldMappings.BCMIDPropertyGUID, MigrationHelper.ContactsFolderID.Replace("/", "-"));
+                        }
+                        else
+                        {
+                            request = String.Format("{0}/contacts?$top=50&$expand=SingleValueExtendedProperties($filter=PropertyId%20eq%20'String%20{1}%20Name%20BCMID')", Settings.Default.V2EndPoint, FieldMappings.BCMIDPropertyGUID);
+                        }
+                    }
+
+                    //Debug.WriteLine("Request to : " + request);
+                    PrepareRequest(RequestDataTypes.Contacts, RequestDataFormats.None);
+
+                    //using (var response = await _httpClient.GetAsync(request))
+                    //{
+                    //    // Check status code.
+                    //    if (!response.IsSuccessStatusCode)
+                    //    {
+                    //        var responseContent = await response.Content.ReadAsStringAsync();
+                    //        OnError(null, new HelperEventArgs(String.Format("ERROR in GetOCMContactsAsync(): {0}", responseContent), HelperEventArgs.EventTypes.Error));
+                    //        NumberOfErrors += 1;
+                    //        return;
+                    //    }
+
+                    //    // Read and deserialize response.                
+                    //    var content = await response.Content.ReadAsStringAsync();
+
+                    //    OCMContact2 contacts = JsonConvert.DeserializeObject<OCMContact2>(content);
+
+                    //    if (getSharedContacts == true)
+                    //    {
+                    //        foreach (var contact in contacts.value)
+                    //        {
+                    //            if (String.IsNullOrEmpty(contact.BCMID))
+                    //            {
+                    //                //TESTED Must set BCMID for later use if we are fetching existing shared contacts. Should probably call GetBCMID in the class' constructor?
+                    //                contact.BCMID = contact.GetBCMID();
+                    //            }
+                    //        }
+                    //    }
+
+                    //    if (OCMContacts == null)
+                    //    {
+                    //        OCMContacts = contacts.value.ToList(); //contacts2.value.ToList();
+                    //        //Debug.WriteLine(String.Format("{0} OCM Companies retrieved", OCMContacts.Count));
+                    //    }
+                    //    else
+                    //    {
+                    //        //Append result to previously set collection
+                    //        OCMContacts.AddRange(contacts.value.ToList());
+                    //        //Debug.WriteLine(String.Format("Added {0} more OCM Companies", contacts.value.Length));
+                    //    }
+
+                    //    Debug.WriteLine(contacts.odatanextLink);
+                    //    if (!String.IsNullOrEmpty(contacts.odatanextLink))
+                    //    {
+                    //        if (contacts.odatanextLink == LastPageResult) //Done paging
+                    //        {
+                    //            //This doesn't fire
+                    //            OnGetItemComplete(null, new HelperEventArgs(String.Format("Fetched {0} contacts", OCMContacts.Count), HelperEventArgs.EventTypes.Status));
+                    //            return;
+                    //        }
+                    //        //Debug.WriteLine(String.Format("Setting page: {0}", contacts.odatanextLink));
+                    //        LastPageResult = contacts.odatanextLink.ToString();
+                    //    }
+                    //    else
+                    //    {
+                    //        //Done paging
+                    //        //NOTE: This method is actually run twice, and logs 2 total amounts so misleading
+                    //        //OnGetItemComplete(null, new HelperEventArgs(String.Format("Fetched {0} total contacts", OCMContacts.Count), HelperEventArgs.EventTypes.Status));
+                    //        LastPageResult = null;
+                    //    }
+                    //}
+
+                    RestResponse<OCMContact2> contacts = await Get<OCMContact2>(request);
+                    if (contacts.StatusCode == HttpStatusCode.OK)
                     {
-                        var responseContent = await response.Content.ReadAsStringAsync();
-                        OnError(null, new HelperEventArgs(String.Format("ERROR in GetOCMContactsAsync(): {0}", responseContent), HelperEventArgs.EventTypes.Error));
+                        if (getSharedContacts == true)
+                        {
+                            foreach (var contact in contacts.Content.value)
+                            {
+                                if (String.IsNullOrEmpty(contact.BCMID))
+                                {
+                                    //TESTED Must set BCMID for later use if we are fetching existing shared contacts. Should probably call GetBCMID in the class' constructor?
+                                    contact.BCMID = contact.GetBCMID();
+                                }
+                            }
+                        }
+
+                        if (OCMContacts == null)
+                        {
+                            OCMContacts = contacts.Content.value.ToList(); //contacts2.value.ToList();
+                            //Debug.WriteLine(String.Format("{0} OCM Companies retrieved", OCMContacts.Count));
+                        }
+                        else
+                        {
+                            //Append result to previously set collection
+                            OCMContacts.AddRange(contacts.Content.value.ToList());
+                            //Debug.WriteLine(String.Format("Added {0} more OCM Companies", contacts.value.Length));
+                        }
+
+                        Debug.WriteLine(contacts.Content.odatanextLink);
+                        if (!String.IsNullOrEmpty(contacts.Content.odatanextLink))
+                        {
+                            if (contacts.Content.odatanextLink == LastPageResult) //Done paging
+                            {
+                                //This doesn't fire
+                                OnGetItemComplete(null, new HelperEventArgs(String.Format("Fetched {0} contacts", OCMContacts.Count), HelperEventArgs.EventTypes.Status));
+                                return;
+                            }
+                            //Debug.WriteLine(String.Format("Setting page: {0}", contacts.odatanextLink));
+                            LastPageResult = contacts.Content.odatanextLink.ToString();
+                        }
+                        else
+                        {
+                            //Done paging
+                            //NOTE: This method is actually run twice, and logs 2 total amounts so misleading
+                            //OnGetItemComplete(null, new HelperEventArgs(String.Format("Fetched {0} total contacts", OCMContacts.Count), HelperEventArgs.EventTypes.Status));
+                            LastPageResult = null;
+                        }
+                        //OCMContact2 contacts = response.Content.;
+                    }
+                    else
+                    {                        
+                        OnError(null, new HelperEventArgs(String.Format("ERROR in GetOCMContactsAsync(): {1}: {0}", contacts.ErrorContent, contacts.StatusCode), HelperEventArgs.EventTypes.Error));
                         NumberOfErrors += 1;
                         return;
                     }
 
-                    // Read and deserialize response.                
-                    var content = await response.Content.ReadAsStringAsync();
-
-                    OCMContact2 contacts = JsonConvert.DeserializeObject<OCMContact2>(content);
-
-                    if (getSharedContacts == true)
-                    {
-                        foreach (var contact in contacts.value)
-                        {
-                            if (String.IsNullOrEmpty(contact.BCMID))
-                            {
-                                //TESTED Must set BCMID for later use if we are fetching existing shared contacts. Should probably call GetBCMID in the class' constructor?
-                                contact.BCMID = contact.GetBCMID();
-                            }
-                        }
-                    }
-
-                    if (OCMContacts == null)
-                    {
-                        OCMContacts = contacts.value.ToList(); //contacts2.value.ToList();
-                        //Debug.WriteLine(String.Format("{0} OCM Companies retrieved", OCMContacts.Count));
-                    }
-                    else
-                    {
-                        //Append result to previously set collection
-                        OCMContacts.AddRange(contacts.value.ToList());
-                        //Debug.WriteLine(String.Format("Added {0} more OCM Companies", contacts.value.Length));
-                    }
-
-                    Debug.WriteLine(contacts.odatanextLink);
-                    if (!String.IsNullOrEmpty(contacts.odatanextLink))
-                    {
-                        if (contacts.odatanextLink == LastPageResult) //Done paging
-                        {
-                            //This doesn't fire
-                            OnGetItemComplete(null, new HelperEventArgs(String.Format("Fetched {0} contacts", OCMContacts.Count), HelperEventArgs.EventTypes.Status));
-                            return;
-                        }
-                        //Debug.WriteLine(String.Format("Setting page: {0}", contacts.odatanextLink));
-                        LastPageResult = contacts.odatanextLink.ToString();
-                    }
-                    else
-                    {
-                        //Done paging
-                        //NOTE: This method is actually run twice, and logs 2 total amounts so misleading
-                        //OnGetItemComplete(null, new HelperEventArgs(String.Format("Fetched {0} total contacts", OCMContacts.Count), HelperEventArgs.EventTypes.Status));
-                        LastPageResult = null;
-                    }
-                }                
-            }
-            catch(System.Exception ex)
-            {
-                
-                //return null;
+                }
+                catch(Exception ex)
+                {
+                    Debug.Print(ex.ToString());
+                    //TEST Does this get hit?
+                    //return null;
+                }
             }
         }
         private async Task<OCMCompanyTemplate.Rootobject> GetTemplateAsync()
@@ -1044,29 +1153,10 @@ namespace BCM_Migration_Tool.Objects
 
                         try
                         {
-
                             //Changed mapping from BCM CompanyMainPhoneNum to OCM BusinessPhones to BCM WorkPhoneNum to OCM BusinessPhones  
                             //BUGFIXED 1.0.17 Error updating a contact: {"error":{"code":"ErrorInvalidProperty","message":"The multi value property BusinessPhones has 3 entries, that exceeds the max allowed value of 2."}}. However, only one business phone is listed in the UI...don't add multiple, and only update non-null (could be non-null if an existing contact)
                             if (!String.IsNullOrEmpty(contact.WorkPhoneNum) && (ocmContact.BusinessPhones?.Length == 0 || ocmContact.BusinessPhones == null))
                             {                                
-                                //if (ocmContact.BusinessPhones != null)
-                                //{
-                                //    //Existing contact - check if phone number exists
-                                //    if (!ocmContact.BusinessPhones.Contains(contact.WorkPhoneNum) && ocmContact.BusinessPhones.Length < 2)
-                                //    {
-                                //        string[] phones = ocmContact.BusinessPhones;
-                                //        Array.Resize(ref phones, ocmContact.BusinessPhones.Length + 1);
-                                //        //phones[phones.Length + 1] = contact.WorkPhoneNum;
-                                //        //BUGFIXED 1.0.16 Oops! wrong index
-                                //        phones[phones.Length - 1] = contact.WorkPhoneNum;
-                                //        ocmContact.BusinessPhones = phones;
-                                //    }
-                                //}
-                                //else
-                                //{
-                                //    ocmContact.BusinessPhones = new string[1];
-                                //    ocmContact.BusinessPhones[0] = contact.WorkPhoneNum;
-                                //}
                                 ocmContact.BusinessPhones = new string[1];
                                 ocmContact.BusinessPhones[0] = contact.WorkPhoneNum;
                             }
@@ -1080,24 +1170,6 @@ namespace BCM_Migration_Tool.Objects
                             if (!String.IsNullOrEmpty(contact.HomePhoneNum))
                             {
                                 //1.0.18 only one home phone is listed in the UI...don't add multiple, and only update non-null (could be non-null if an existing contact)
-                                //if (ocmContact.HomePhones != null)
-                                //{
-                                //    //Existing contact - check if phone number exists
-                                //    if (!ocmContact.HomePhones.Contains(contact.HomePhoneNum))
-                                //    {
-                                //        string[] phones = ocmContact.HomePhones;
-                                //        Array.Resize(ref phones, ocmContact.HomePhones.Length + 1);
-                                //        //phones[phones.Length + 1] = contact.HomePhoneNum;
-                                //        //BUGFIXED 1.0.16 Oops! wrong index
-                                //        phones[phones.Length - 1] = contact.HomePhoneNum;
-                                //        ocmContact.HomePhones = phones;
-                                //    }
-                                //}
-                                //else
-                                //{
-                                //    ocmContact.HomePhones = new string[1];
-                                //    ocmContact.HomePhones[0] = contact.HomePhoneNum;
-                                //}
                                 if (!String.IsNullOrEmpty(contact.HomePhoneNum) &&
                                     (ocmContact.HomePhones?.Length == 0 || ocmContact.HomePhones == null))
                                 {
@@ -1137,60 +1209,109 @@ namespace BCM_Migration_Tool.Objects
 
                             Log.VerboseFormat("Posting POST (create) call to {1}:{0}", json, uri);
                             PrepareRequest(RequestDataTypes.Contacts, RequestDataFormats.JSON);
-                            using (var response = await _httpClient.PostAsync(uri, new StringContent(json, Encoding.UTF8, "application/json")))
+
+                            RestResponse<OCMContact2Value> newContact = await Post<OCMContact2Value>(uri, new StringContent(json, Encoding.UTF8, "application/json"));
+
+                            if (newContact.StatusCode == HttpStatusCode.Created)
                             {
-                                var content = await response.Content.ReadAsStringAsync();
-                                // Check status code.
-                                if (!response.IsSuccessStatusCode)
+                                Log.DebugFormat("Created Contact '{0}' (BCMID: {1})'", contact.FullName, contact.EntryGUID.ToString());
+                                OnCreateItemComplete(null, new HelperEventArgs(String.Format("Created Contact '{0}'...", contact.FullName), false));
+                                NumberCreated += 1;
+
+                                newContact.Content.BCMID = contact.EntryGUID.ToString();
+                                OCMContacts.Add(newContact.Content);
+
+                                PrepareRequest(RequestDataTypes.Companies, RequestDataFormats.XML);
+                                uri = new Uri(Settings.Default.EWSEndPoint);
+
+                                string id = newContact.Content.Id.Replace("_", "+");
+                                id = id.Replace("-", "/"); //HACK to make the MoveItem operation work (ErrorInvalidIdMalformed)
+                                string xmlRequest = String.Format(Resources.ShareContactsRequest, MigrationHelper.ContactsFolderID,
+                                    id);
+
+                                //To make a Contact or Company shared: make a REST call to ‘/move’ with the folder-id of the sharing child-folder, not the modern-group mailbox guid.
+                                //NOTE If doing a PATCH, do we need to check if it has already been shared so as not to 'move' it again?
+
+                                //REVIEW We could gather all these IDs and do the sharing operation all in one call by creating ItemID elements for each contact to put in the ItemIds element
+
+                                RestResponse<HttpWebResponse> moveRequestResponse = await Post<HttpWebResponse>(uri, new StringContent(xmlRequest, Encoding.UTF8, "text/xml"));
+
+                                if (moveRequestResponse.StatusCode != HttpStatusCode.Created && moveRequestResponse.StatusCode != HttpStatusCode.OK) // Check status code.
                                 {
-                                    Log.ErrorFormat("Error creating '{1}': {0}", content, contact.FullName);
-                                    OnError(null,
-                                        new HelperEventArgs(String.Format("ERROR creating '{1}': {0}", content, contact.FullName),
+                                    Log.ErrorFormat("Error sharing '{1}': {0}", moveRequestResponse.ErrorContent, contact.FullName);
+                                    OnError(null, new HelperEventArgs(String.Format("ERROR sharing '{1}': {0}", moveRequestResponse.ErrorContent, contact.FullName),
                                             HelperEventArgs.EventTypes.Error));
                                     NumberOfErrors += 1;
                                 }
-                                else
-                                {
-                                    //TESTED Get response with Contact details so we can get the ID for use in moving operation to share it
-                                    Log.DebugFormat("Created Contact '{0}' (BCMID: {1})'", contact.FullName, contact.EntryGUID.ToString());
-                                    OnCreateItemComplete(null, new HelperEventArgs(String.Format("Created Contact '{0}'...", contact.FullName), false));
-                                    NumberCreated += 1;
-
-                                    OCMContact2Value newContact = JsonConvert.DeserializeObject<OCMContact2Value>(content);
-                                    newContact.BCMID = contact.EntryGUID.ToString();
-                                    OCMContacts.Add(newContact);
-
-                                    //To make a Contact or Company shared: make a REST call to ‘/move’ with the folder-id of the sharing child-folder, not the modern-group mailbox guid.
-                                    //NOTE If doing a PATCH, do we need to check if it has already been shared so as not to 'move' it again?
-
-                                    //REVIEW We could gather all these IDs and do the sharing operation all in one call by creating ItemID elements for each contact to put in the ItemIds element
-                                    PrepareRequest(RequestDataTypes.Companies, RequestDataFormats.XML);
-                                    uri = new Uri(Settings.Default.EWSEndPoint);
-
-                                    string id = newContact.Id.Replace("_", "+");
-                                    id = id.Replace("-", "/"); //HACK to make the MoveItem operation work (ErrorInvalidIdMalformed)
-                                    string xmlRequest = String.Format(Resources.ShareContactsRequest, MigrationHelper.ContactsFolderID,
-                                        id);
-
-                                    using (var moveResponse = await _httpClient.PostAsync(uri, new StringContent(xmlRequest, Encoding.UTF8, "text/xml")))
-                                    {
-                                        if (!moveResponse.IsSuccessStatusCode) // Check status code.
-                                        {
-                                            var moveResponseContent = await moveResponse.Content.ReadAsStringAsync();
-                                            Log.ErrorFormat("Error sharing '{1}': {0}", moveResponseContent, contact.FullName);
-                                            OnError(null,
-                                                new HelperEventArgs(
-                                                    String.Format("ERROR sharing '{1}': {0}", moveResponseContent, contact.FullName),
-                                                    HelperEventArgs.EventTypes.Error));
-                                            NumberOfErrors += 1;
-                                        }
-                                        else
-                                        {
-                                            //Log message?
-                                        }
-                                    }
-                                }
                             }
+                            else
+                            {
+                                Log.ErrorFormat("Error creating '{1}': {0}", newContact.ErrorContent, contact.FullName);
+                                OnError(null, new HelperEventArgs(String.Format("ERROR creating '{0}': {2}: {1}", contact.FullName, newContact.ErrorContent, newContact.StatusCode), HelperEventArgs.EventTypes.Error));
+                                NumberOfErrors += 1;
+                            }
+
+                            //using (var response = await _httpClient.PostAsync(uri, new StringContent(json, Encoding.UTF8, "application/json")))
+                            //{
+                            //    var content = await response.Content.ReadAsStringAsync();
+                            //    // Check status code.
+                            //    if (!response.IsSuccessStatusCode)
+                            //    {
+                            //        //{StatusCode: 401, ReasonPhrase: 'Unauthorized', Version: 1.1, Content: System.Net.Http.StreamContent, Headers:{  request-id: 160678fb-23c0-4028-81c0-7241fe337679  X-CalculatedBETarget: YQBPR01MB0227.CANPRD01.PROD.OUTLOOK.COM  X-BackEndHttpStatus: 401  x-ms-diagnostics: 2000002;reason="The token has expired.";error_category="invalid_lifetime"  X-DiagInfo: YQBPR01MB0227  X-BEServer: YQBPR01MB0227  X-FEServer: YQBPR01CA0019  X-MSEdge-Ref: Ref A: 778DDEC1525D4D1E95316509EEC4CCAB Ref B: CO1EDGE0215 Ref C: 2018-02-08T03:00:17Z  Date: Thu, 08 Feb 2018 03:00:16 GMT  Set-Cookie: exchangecookie=bd88e09ec26340229b4d206ae1f52ca8; path=/  WWW-Authenticate: Bearer client_id="00000002-0000-0ff1-ce00-000000000000", trusted_issuers="00000001-0000-0000-c000-000000000000@*", token_types="app_asserted_user_v1 service_asserted_app_v1", authorization_uri="https://login.windows.net/common/oauth2/authorize", error="invalid_token"  WWW-Authenticate: Basic Realm=""  WWW-Authenticate: Basic Realm=""  X-Powered-By: ASP.NET  Content-Length: 0}}
+
+                            //        //HIGH Update all error logging for these calls (look for ALL response.StatusCode checks) to include response.? and Unauth chec; content will be empty. Also look for HttpStatusCode.ServiceUnavailable - for that, sleep and retry - it worked
+                            //        if (response.StatusCode == HttpStatusCode.Unauthorized)
+                            //        {
+
+                            //        }
+                            //        Log.ErrorFormat("Error creating '{1}': {0}", response.ReasonPhrase, contact.FullName);
+                            //        OnError(null,
+                            //            new HelperEventArgs(String.Format("ERROR creating '{1}': {0}", content, contact.FullName),
+                            //                HelperEventArgs.EventTypes.Error));
+                            //        NumberOfErrors += 1;
+                            //    }
+                            //    else
+                            //    {
+                            //        //TESTED Get response with Contact details so we can get the ID for use in moving operation to share it
+                            //        Log.DebugFormat("Created Contact '{0}' (BCMID: {1})'", contact.FullName, contact.EntryGUID.ToString());
+                            //        OnCreateItemComplete(null, new HelperEventArgs(String.Format("Created Contact '{0}'...", contact.FullName), false));
+                            //        NumberCreated += 1;
+
+                            //        OCMContact2Value newContact = JsonConvert.DeserializeObject<OCMContact2Value>(content);
+                            //        newContact.BCMID = contact.EntryGUID.ToString();
+                            //        OCMContacts.Add(newContact);
+
+                            //        //To make a Contact or Company shared: make a REST call to ‘/move’ with the folder-id of the sharing child-folder, not the modern-group mailbox guid.
+                            //        //NOTE If doing a PATCH, do we need to check if it has already been shared so as not to 'move' it again?
+
+                            //        //REVIEW We could gather all these IDs and do the sharing operation all in one call by creating ItemID elements for each contact to put in the ItemIds element
+                            //        PrepareRequest(RequestDataTypes.Companies, RequestDataFormats.XML);
+                            //        uri = new Uri(Settings.Default.EWSEndPoint);
+
+                            //        string id = newContact.Id.Replace("_", "+");
+                            //        id = id.Replace("-", "/"); //HACK to make the MoveItem operation work (ErrorInvalidIdMalformed)
+                            //        string xmlRequest = String.Format(Resources.ShareContactsRequest, MigrationHelper.ContactsFolderID,
+                            //            id);
+
+                            //        using (var moveResponse = await _httpClient.PostAsync(uri, new StringContent(xmlRequest, Encoding.UTF8, "text/xml")))
+                            //        {
+                            //            if (!moveResponse.IsSuccessStatusCode) // Check status code.
+                            //            {
+                            //                var moveResponseContent = await moveResponse.Content.ReadAsStringAsync();
+                            //                Log.ErrorFormat("Error sharing '{1}': {0}", moveResponseContent, contact.FullName);
+                            //                OnError(null,
+                            //                    new HelperEventArgs(
+                            //                        String.Format("ERROR sharing '{1}': {0}", moveResponseContent, contact.FullName),
+                            //                        HelperEventArgs.EventTypes.Error));
+                            //                NumberOfErrors += 1;
+                            //            }
+                            //            else
+                            //            {
+                            //                //Log message?
+                            //            }
+                            //        }
+                            //    }
+                            //}
                         }
                         else
                         {
@@ -1200,29 +1321,46 @@ namespace BCM_Migration_Tool.Objects
                             HttpContent httpContent = new StringContent(json, Encoding.UTF8, "application/json");
                             HttpRequestMessage request = new HttpRequestMessage(method, uri) { Content = httpContent };
 
-                            //Debug.WriteLine(String.Format("Patching to {1}:{2}{0}{2}Token:{2}{3}", json, uri, Environment.NewLine, AccessToken));
-
-                            Log.VerboseFormat("Posting PATCH (update) call to {1}:{0}", json, uri);
                             PrepareRequest(RequestDataTypes.Contacts, RequestDataFormats.JSON);
-                            using (var response = await _httpClient.SendAsync(request))
+
+                            if (FullRESTLogging)
+                                Log.VerboseFormat("Posting PATCH (update) call to {1}:{0}", json, uri);
+
+                            //Don't log json/uri in Patch call - do above
+                            RestResponse<HttpWebResponse> response = await Patch<HttpWebResponse>(request, true, null, true, false);
+                            if (response.StatusCode != HttpStatusCode.Created && response.StatusCode != HttpStatusCode.OK)
                             {
-                                if (!response.IsSuccessStatusCode) // Check status code.
-                                {
-                                    //BUGWATCH "{\"error\":{\"code\":\"ErrorIncorrectUpdatePropertyCount\",\"message\":\"An object within a change description must contain one and only one property to modify.\"}}" Happens with Mr. Syed Abbas; was ImportModes.Update; maybe problem with sharing props that aren't needed?    
-                                    //BUGFIXED Was because of DateTime.MinValue in OCMContact.Birthday; it prefers a nullable type, so I made it nullable and voila! No more error
-                                    var content = await response.Content.ReadAsStringAsync();
-                                    Log.ErrorFormat("Error updating '{1}': {0}", content, contact.FullName);
-                                    OnError(null, new HelperEventArgs(String.Format("ERROR updating '{1}': {0}", content, contact.FullName), HelperEventArgs.EventTypes.Error));
-                                    NumberOfErrors += 1;
-                                }
-                                else
-                                {
-                                    OnPatchComplete(null, new HelperEventArgs(String.Format("Updated Contact '{0}'...", contact.FullName), false));
-                                    NumberUpdated += 1;
-                                    //TEST Do we need to set the BCMID on an existing contact?
-                                    existingContact.BCMID = contact.EntryGUID.ToString();
-                                }
+                                Log.ErrorFormat("Error updating '{1}': {0}", response.ErrorContent, contact.FullName);
+                                OnError(null, new HelperEventArgs(String.Format("ERROR updating '{1}': {0}. JSON: {2}", response.ErrorContent, contact.FullName, json), HelperEventArgs.EventTypes.Error));
+                                NumberOfErrors += 1;
                             }
+                            else
+                            {
+                                OnPatchComplete(null, new HelperEventArgs(String.Format("Updated Contact '{0}'...", contact.FullName), false));
+                                NumberUpdated += 1;
+                                //TEST Do we need to set the BCMID on an existing contact?
+                                existingContact.BCMID = contact.EntryGUID.ToString();
+                            }
+
+                            //using (var response = await _httpClient.SendAsync(request))
+                            //{
+                            //    if (!response.IsSuccessStatusCode) // Check status code.
+                            //    {
+                            //        //BUGWATCH "{\"error\":{\"code\":\"ErrorIncorrectUpdatePropertyCount\",\"message\":\"An object within a change description must contain one and only one property to modify.\"}}" Happens with Mr. Syed Abbas; was ImportModes.Update; maybe problem with sharing props that aren't needed?    
+                            //        //BUGFIXED Was because of DateTime.MinValue in OCMContact.Birthday; it prefers a nullable type, so I made it nullable and voila! No more error
+                            //        var content = await response.Content.ReadAsStringAsync();
+                            //        Log.ErrorFormat("Error updating '{1}': {0}", content, contact.FullName);
+                            //        OnError(null, new HelperEventArgs(String.Format("ERROR updating '{1}': {0}", content, contact.FullName), HelperEventArgs.EventTypes.Error));
+                            //        NumberOfErrors += 1;
+                            //    }
+                            //    else
+                            //    {
+                            //        OnPatchComplete(null, new HelperEventArgs(String.Format("Updated Contact '{0}'...", contact.FullName), false));
+                            //        NumberUpdated += 1;
+                            //        //TEST Do we need to set the BCMID on an existing contact?
+                            //        existingContact.BCMID = contact.EntryGUID.ToString();
+                            //    }
+                            //}
                         }
                     }
                     catch (Exception ex)
@@ -1375,9 +1513,12 @@ namespace BCM_Migration_Tool.Objects
         public async Task RunGetTemplateAsync()
         {
 
-            OnStart(null, new HelperEventArgs("Retrieving Contacts template...", HelperEventArgs.EventTypes.Status, HelperEventArgs.ProcessingModes.Mapping));
-            ContactTemplate = await GetTemplateAsync();
-            FieldMappings.OCMBusinessContactFields.ContactTemplate = ContactTemplate;
+            using (Log.VerboseCall())
+            {
+                OnStart(null, new HelperEventArgs("Retrieving Contacts template...", HelperEventArgs.EventTypes.Status, HelperEventArgs.ProcessingModes.Mapping));
+                ContactTemplate = await GetTemplateAsync();
+                FieldMappings.OCMBusinessContactFields.ContactTemplate = ContactTemplate;
+            }
         }        
         //private async Task UpdateContactAsync(OCMContact.Rootobject contact)
         //{

@@ -7,6 +7,7 @@ namespace BCM_Migration_Tool
     static class Program
     {
         public static bool LogFileOpened = false;
+        public static MigrationAssistant migrationAssistant;
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
@@ -15,18 +16,11 @@ namespace BCM_Migration_Tool
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            //Application.Run(new Form1());            
-//#if DEBUG
-//            if (Environment.MachineName == "PRECISION")
-//            {
-//                Application.Run(new frmLogin());
-//                return;
-//            }
-//#endif
-
-            //Application.Run(new MigrationWizard("", ""));
+        
             InitLogging();
-            Application.Run(new MigrationAssistant());
+            //Application.Run(new MigrationAssistant());
+            migrationAssistant = new MigrationAssistant();
+            Application.Run(migrationAssistant);
         }
         internal static bool InitLogging()
         {
@@ -36,10 +30,10 @@ namespace BCM_Migration_Tool
 
                 Logger.DefaultBinaryFile.Name = "BCM_MT_Log";
                 Logger.DefaultBinaryFile.Directory = filePath;
-                Logger.DefaultBinaryFile.MaxSizeMb = 2; //MB
+                Logger.DefaultBinaryFile.MaxSizeMb = 100; //MB
                 Logger.DefaultBinaryFile.CircularStartSizeKb = 0;
                 Logger.DefaultBinaryFile.CircularStartDelaySeconds = 0;
-                Logger.DefaultBinaryFile.Archives = 1;
+                Logger.DefaultBinaryFile.Archives = 3;
                 Logger.DefaultBinaryFile.AppendIfSmallerThanMb = 0;
 
 #if DEBUG

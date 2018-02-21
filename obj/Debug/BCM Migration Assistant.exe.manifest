@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <asmv1:assembly xsi:schemaLocation="urn:schemas-microsoft-com:asm.v1 assembly.adaptive.xsd" manifestVersion="1.0" xmlns:asmv1="urn:schemas-microsoft-com:asm.v1" xmlns="urn:schemas-microsoft-com:asm.v2" xmlns:asmv2="urn:schemas-microsoft-com:asm.v2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:co.v1="urn:schemas-microsoft-com:clickonce.v1" xmlns:asmv3="urn:schemas-microsoft-com:asm.v3" xmlns:dsig="http://www.w3.org/2000/09/xmldsig#" xmlns:co.v2="urn:schemas-microsoft-com:clickonce.v2">
-  <asmv1:assemblyIdentity name="BCM Migration Assistant.exe" version="1.0.11.0" publicKeyToken="0000000000000000" language="neutral" processorArchitecture="msil" type="win32" />
+  <asmv1:assemblyIdentity name="BCM Migration Assistant.exe" version="1.0.18.0" publicKeyToken="0000000000000000" language="neutral" processorArchitecture="msil" type="win32" />
   <description asmv2:iconFile="BCMtool.ico" xmlns="urn:schemas-microsoft-com:asm.v1" />
   <application />
   <entryPoint>
-    <assemblyIdentity name="BCM Migration Assistant" version="1.0.11.0" publicKeyToken="368516D1A5B59F01" language="neutral" processorArchitecture="msil" />
+    <assemblyIdentity name="BCM Migration Assistant" version="1.0.18.0" publicKeyToken="368516D1A5B59F01" language="neutral" processorArchitecture="msil" />
     <commandLine file="BCM Migration Assistant.exe" parameters="" />
   </entryPoint>
   <trustInfo>
@@ -43,14 +43,19 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="BCM Migration Assistant.exe" size="9280664">
-      <assemblyIdentity name="BCM Migration Assistant" version="1.0.11.0" publicKeyToken="368516D1A5B59F01" language="neutral" processorArchitecture="msil" />
+    <dependentAssembly dependencyType="preRequisite" allowDelayedBinding="true">
+      <assemblyIdentity name="Microsoft.IdentityModel" version="3.5.0.0" publicKeyToken="31BF3856AD364E35" language="neutral" processorArchitecture="msil" />
+    </dependentAssembly>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="BCM Migration Assistant.exe" size="9303704">
+      <assemblyIdentity name="BCM Migration Assistant" version="1.0.18.0" publicKeyToken="368516D1A5B59F01" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>IEjjdvF6/nwivl4dEqiYBlenrjkRogHRjwbwno0Qi/M=</dsig:DigestValue>
+        <dsig:DigestValue>RkNptcphch4dDdhcC/OUz+qlT3GFUuy2/CmfjPF7sWQ=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -79,6 +84,30 @@
     </dependentAssembly>
   </dependency>
   <dependency>
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Microsoft.Exchange.WebServices.dll" size="1130264">
+      <assemblyIdentity name="Microsoft.Exchange.WebServices" version="15.0.0.0" publicKeyToken="31BF3856AD364E35" language="neutral" processorArchitecture="msil" />
+      <hash>
+        <dsig:Transforms>
+          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+        </dsig:Transforms>
+        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+        <dsig:DigestValue>D+gCW5puaQfQvkgQ+/vGHxruO6FOhVu/XDXw87i5E84=</dsig:DigestValue>
+      </hash>
+    </dependentAssembly>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Microsoft.Exchange.WebServices.Auth.dll" size="43824">
+      <assemblyIdentity name="Microsoft.Exchange.WebServices.Auth" version="15.0.0.0" publicKeyToken="31BF3856AD364E35" language="neutral" processorArchitecture="msil" />
+      <hash>
+        <dsig:Transforms>
+          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+        </dsig:Transforms>
+        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+        <dsig:DigestValue>EMfR2Wp6XGwLxifeZJknsa5Mqi5Y3MieJLG3cWMHE5w=</dsig:DigestValue>
+      </hash>
+    </dependentAssembly>
+  </dependency>
+  <dependency>
     <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Microsoft.IdentityModel.Clients.ActiveDirectory.dll" size="187160">
       <assemblyIdentity name="Microsoft.IdentityModel.Clients.ActiveDirectory" version="2.14.0.0" publicKeyToken="31BF3856AD364E35" language="neutral" processorArchitecture="msil" />
       <hash>
@@ -103,6 +132,18 @@
     </dependentAssembly>
   </dependency>
   <dependency>
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Microsoft.IdentityModel.Extensions.dll" size="59664">
+      <assemblyIdentity name="Microsoft.IdentityModel.Extensions" version="2.0.0.0" publicKeyToken="69C3241E6F0468CA" language="neutral" processorArchitecture="msil" />
+      <hash>
+        <dsig:Transforms>
+          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+        </dsig:Transforms>
+        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+        <dsig:DigestValue>Sa+L4cPQpCWRs1+1tkRF4WDSZOk6rt/iKkVU3AoN1bE=</dsig:DigestValue>
+      </hash>
+    </dependentAssembly>
+  </dependency>
+  <dependency>
     <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Newtonsoft.Json.dll" size="526336">
       <assemblyIdentity name="Newtonsoft.Json" version="9.0.0.0" publicKeyToken="30AD4FE6B2A6AEED" language="neutral" processorArchitecture="msil" />
       <hash>
@@ -122,7 +163,7 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>IPir6v8bER8CnVFGGeiy75sdXqjC+Umrcqw2JBklUSg=</dsig:DigestValue>
+        <dsig:DigestValue>4pZSFGIWnIyHmgRllBHozWbNg7soLsppy7WWVtYWZgk=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -160,96 +201,6 @@
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
       <dsig:DigestValue>+k3afoTH8TIUTeabEsj9GE+xR+pejjT+OyLawNRA7m4=</dsig:DigestValue>
-    </hash>
-  </file>
-  <file name="Scripts\BCM_Accounts_Core.sql" size="2164">
-    <hash>
-      <dsig:Transforms>
-        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
-      </dsig:Transforms>
-      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>U1oojnk594H5m38blqyQh/oriBdCQsP3y4IAWqXxpb4=</dsig:DigestValue>
-    </hash>
-  </file>
-  <file name="Scripts\BCM_Activities.sql" size="1524">
-    <hash>
-      <dsig:Transforms>
-        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
-      </dsig:Transforms>
-      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>Gy3eLPeDyeE82BofOGuSKDoWtFHmnRmuEeU8mns7srQ=</dsig:DigestValue>
-    </hash>
-  </file>
-  <file name="Scripts\BCM_BusinessContacts_Core.sql" size="5190">
-    <hash>
-      <dsig:Transforms>
-        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
-      </dsig:Transforms>
-      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>C55j6xV3uKLxjUlquf0JoBxX0uKkYscRWUdmYFPRdmc=</dsig:DigestValue>
-    </hash>
-  </file>
-  <file name="Scripts\BCM_CustomFields.sql" size="4292">
-    <hash>
-      <dsig:Transforms>
-        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
-      </dsig:Transforms>
-      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>NBaW4i/Ti7ihcfcICDk28sICUbg6m9VoQ8PpP5ZOg/c=</dsig:DigestValue>
-    </hash>
-  </file>
-  <file name="Scripts\BCM_CustomFields_Accounts.sql" size="4364">
-    <hash>
-      <dsig:Transforms>
-        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
-      </dsig:Transforms>
-      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>pZMtZMTMNNyTls4VKfcNaWKn5rmKXeLb1aCbx5e/LGs=</dsig:DigestValue>
-    </hash>
-  </file>
-  <file name="Scripts\BCM_CustomFields_Contacts.sql" size="4354">
-    <hash>
-      <dsig:Transforms>
-        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
-      </dsig:Transforms>
-      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>T+fZlB1C0S2MJwZqB1wbDbhM5EKsm2MHREZH3BdScbY=</dsig:DigestValue>
-    </hash>
-  </file>
-  <file name="Scripts\BCM_CustomFields_Opportunities.sql" size="4204">
-    <hash>
-      <dsig:Transforms>
-        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
-      </dsig:Transforms>
-      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>IrbLyc8avUHWB9n9DBs/ZIyYXo5PQnFJQiJ988XY+NE=</dsig:DigestValue>
-    </hash>
-  </file>
-  <file name="Scripts\BCM_Opportunity_Core.sql" size="2376">
-    <hash>
-      <dsig:Transforms>
-        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
-      </dsig:Transforms>
-      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>Y2HQrYAw4JinV30b9LPPlL2HGCSE5931I7HgGVa6Xmw=</dsig:DigestValue>
-    </hash>
-  </file>
-  <file name="Scripts\BCM_SalesStage.sql" size="886">
-    <hash>
-      <dsig:Transforms>
-        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
-      </dsig:Transforms>
-      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>olORuY0K8gskYlcAv3/yXVBeofmV0/YHYHHeaV+/79I=</dsig:DigestValue>
-    </hash>
-  </file>
-  <file name="Scripts\BCM_UserFields.sql" size="1356">
-    <hash>
-      <dsig:Transforms>
-        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
-      </dsig:Transforms>
-      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>rcHTQC3aEmeiX4/kk6rPP6wEzy5iT9SoaWk9l49sauU=</dsig:DigestValue>
     </hash>
   </file>
 </asmv1:assembly>

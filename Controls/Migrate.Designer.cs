@@ -33,6 +33,7 @@
             this.cmdStop = new System.Windows.Forms.Button();
             this.txtLog = new System.Windows.Forms.TextBox();
             this.lblMigrationStatus = new System.Windows.Forms.Label();
+            this.lblWarnings = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // progressBar1
@@ -93,16 +94,27 @@
             this.lblMigrationStatus.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(117)))), ((int)(((byte)(182)))));
             this.lblMigrationStatus.Location = new System.Drawing.Point(165, 41);
             this.lblMigrationStatus.Name = "lblMigrationStatus";
-            this.lblMigrationStatus.Size = new System.Drawing.Size(52, 21);
+            this.lblMigrationStatus.Size = new System.Drawing.Size(0, 21);
             this.lblMigrationStatus.TabIndex = 4;
-            this.lblMigrationStatus.Text = "label1";
             this.lblMigrationStatus.Visible = false;
+            // 
+            // lblWarnings
+            // 
+            this.lblWarnings.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblWarnings.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(117)))), ((int)(((byte)(182)))));
+            this.lblWarnings.Location = new System.Drawing.Point(165, 36);
+            this.lblWarnings.Name = "lblWarnings";
+            this.lblWarnings.Size = new System.Drawing.Size(326, 45);
+            this.lblWarnings.TabIndex = 5;
+            this.lblWarnings.Text = "For maximum performance, please don\'t use OCM while running this tool.";
+            this.lblWarnings.Visible = false;
             // 
             // Migrate
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.Color.White;
+            this.Controls.Add(this.lblWarnings);
             this.Controls.Add(this.lblMigrationStatus);
             this.Controls.Add(this.txtLog);
             this.Controls.Add(this.cmdStop);
@@ -122,5 +134,6 @@
         internal System.Windows.Forms.Button cmdStart;
         internal System.Windows.Forms.Button cmdStop;
         internal System.Windows.Forms.Label lblMigrationStatus;
+        internal System.Windows.Forms.Label lblWarnings;
     }
 }
