@@ -258,7 +258,7 @@ namespace BCM_Migration_Tool.Objects
                 {
                     List<OCMField> result = new List<OCMField>();
                     //Return all manual fields as default collection of unmapped fields
-                    //HIGH NOTE Update manual fields here if they change
+                    //NOTE Update manual fields here if they change
                     result.AddRange(GetCustomFields());
                     return result;
                 }
@@ -379,7 +379,7 @@ namespace BCM_Migration_Tool.Objects
                 {
                     List<OCMField> result = new List<OCMField>();
                     //Return all manual fields as default collection of unmapped fields
-                    //HIGH NOTE Update manual fields here if they change
+                    //NOTE Update manual fields here if they change
                     result.AddRange(GetCustomFields());
                     return result;
                 }
@@ -488,7 +488,7 @@ namespace BCM_Migration_Tool.Objects
                 {
                     List<OCMField> result = new List<OCMField>();
                     //Return all manual fields as default collection of unmapped fields
-                    //HIGH NOTE Update manual fields here if they change
+                    //NOTE Update manual fields here if they change
                     //result.Add(Probability);
                     result.AddRange(GetCustomFields());
                     return result;
@@ -546,7 +546,7 @@ namespace BCM_Migration_Tool.Objects
             public static List<OCMField> GetCustomFields()
             {
                 List<OCMField> result = new List<OCMField>();
-                //HIGH Get OCM custom fields
+                //Get OCM custom fields
 
                 if (DealTemplate == null)
                     return result;

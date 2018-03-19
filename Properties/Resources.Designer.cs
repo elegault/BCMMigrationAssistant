@@ -19,7 +19,7 @@ namespace BCM_Migration_Tool.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -68,15 +68,14 @@ namespace BCM_Migration_Tool.Properties {
         ///		AT.[ActivityID]
         ///	   ,AC.ContactID
         ///	   ,CMT.EntryGUID
-        ///	   ,CMT.Subject
+        ///	   ,CMT.Subject as EntityName
         ///      ,AT.[ActivityGUID]
         ///      ,AT.[Subject]
         ///      ,AT.[ActivityNote]
         ///      ,AT.[ActivityDate] as CreatedOn
         ///      ,AT.[ActivityType] 
         ///  FROM   [dbo].[ActivitiesTable] AT
-        ///  INNER JOIN  [dbo].[ActivityContacts] AC ON AT.ActivityID = AC.ActivityID
-        ///  INNER JOI [rest of string was truncated]&quot;;.
+        ///  INNER JOIN  [dbo].[ActivityContacts] AC ON AT.ActivityID = AC.ActivityI [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string BCM_Activities {
             get {
@@ -216,6 +215,23 @@ namespace BCM_Migration_Tool.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+        ///&lt;soap:Envelope xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns:m=&quot;http://schemas.microsoft.com/exchange/services/2006/messages&quot; xmlns:t=&quot;http://schemas.microsoft.com/exchange/services/2006/types&quot; xmlns:soap=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;&gt;
+        ///  &lt;soap:Header&gt;
+        ///    &lt;t:RequestServerVersion Version=&quot;V2016_04_13&quot; /&gt;
+        ///  &lt;/soap:Header&gt;
+        ///  &lt;soap:Body&gt;
+        ///    &lt;m:CreateXrmGraphRelationship&gt;
+        ///      &lt;m:FromEntityId&gt;{0}&lt;/m:FromEntityId&gt;
+        ///      &lt;m:FromEntityType [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string CreateXrmGraphRelationshipRequest2 {
+            get {
+                return ResourceManager.GetString("CreateXrmGraphRelationshipRequest2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap Deal_Stages {
@@ -339,6 +355,26 @@ namespace BCM_Migration_Tool.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+        ///&lt;soap:Envelope xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+        ///xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot;
+        ///xmlns:soap=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;
+        ///xmlns:m=&quot;http://schemas.microsoft.com/exchange/services/2006/messages&quot;
+        ///xmlns:t=&quot;http://schemas.microsoft.com/exchange/services/2006/types&quot;&gt;
+        ///	&lt;soap:Header&gt;
+        ///		&lt;t:RequestServerVersion Version=&quot;V2016_04_13&quot; /&gt;
+        ///	&lt;/soap:Header&gt;
+        ///	&lt;soap:Body&gt;
+        ///		&lt;m:UpdateItem ConflictResolution=&quot;AlwaysOverwrite&quot;&gt;
+        ///			&lt; [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string SetExtendedPropertiesOnContactRequest {
+            get {
+                return ResourceManager.GetString("SetExtendedPropertiesOnContactRequest", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap Settings_Blue {
@@ -355,6 +391,25 @@ namespace BCM_Migration_Tool.Properties {
             get {
                 object obj = ResourceManager.GetObject("Settings_Gray", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+        ///&lt;soap:Envelope xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+        ///xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot;
+        ///xmlns:soap=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;
+        ///xmlns:t=&quot;http://schemas.microsoft.com/exchange/services/2006/types&quot;&gt;
+        ///  &lt;soap:Header&gt;
+        ///    &lt;t:RequestServerVersion Version=&quot;V2016_04_13&quot; /&gt;
+        ///  &lt;/soap:Header&gt;
+        ///  &lt;soap:Body&gt;
+        ///    &lt;CopyItem xmlns=&quot;http://schemas.microsoft.com/exchange/services/2006/messages&quot;
+        ///    xmlns:t=&quot;http://schemas.microsoft.com/ [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string ShareContactByCopyingRequest {
+            get {
+                return ResourceManager.GetString("ShareContactByCopyingRequest", resourceCulture);
             }
         }
         

@@ -898,13 +898,21 @@ namespace BCM_Migration_Tool.Objects
 
                         try
                         {
+                            if (response.Content == null)
+                            {
+                                Log.Warn("Response content is null");
+                                return;
+                            }
+
                             Deal newDeal = response.Content;
-                            newDeal.BCMID = opportunity.EntryGUID.ToString();
+                            newDeal.BCMID = opportunity.EntryGUID?.ToString();
+                            if (OCMDeals == null)
+                                OCMDeals = new List<Deal>();
                             OCMDeals.Add(newDeal);
                             if (OCMDealsCreated == null)
                                 OCMDealsCreated = new List<Deal>();
                             OCMDealsCreated.Add(newDeal);
-
+                            Log.VerboseFormat("{0} OCMDeals, {1} OCMDealsCreated", OCMDeals.Count, OCMDealsCreated.Count);
                             //HIGH Bypass patching deal to store the custom BCMID prop and value, until the bug with SingleValueExtendedProperties on deals is resolved
                             //await PatchDeal(ocmDeal, newDeal.Id, newDeal.BCMID);
                         }
@@ -914,48 +922,7 @@ namespace BCM_Migration_Tool.Objects
                             OnError(null, new HelperEventArgs(String.Format("Unexpected error patching deal '{0}'", opportunity.OpportunityName),
                                     HelperEventArgs.EventTypes.Error));
                         }
-                    }
-
-                    //using (var response = await _httpClient.PostAsync(uri, new StringContent(json, Encoding.UTF8, "application/json")))
-                    //{
-                    //    var content = await response.Content.ReadAsStringAsync();
-                    //    // Check status code.
-                    //    if (!response.IsSuccessStatusCode)
-                    //    {
-                    //        //BUGWATCH with hashtag InterestedinMountainBikes47ofthenewmodelMountain400andMountain400WDeal
-                    //        Log.ErrorFormat("ERROR creating deal '{1} (Hashtag: {2})': {0}", content, opportunity.OpportunityName, ocmDeal.AppliedHashtags[0].Hashtag);
-                    //        OnError(null,
-                    //            new HelperEventArgs(String.Format("ERROR creating deal '{1} (Hashtag: {2})': {3}:{0}", content, opportunity.OpportunityName, ocmDeal.AppliedHashtags[0].Hashtag, response.ReasonPhrase),
-                    //                HelperEventArgs.EventTypes.Error));
-                    //        NumberOfErrors += 1;
-                    //    }
-                    //    else
-                    //    {
-                    //        //TESTED Get response with deal details and add to in-memory collection
-                    //        Log.DebugFormat("Created Deal '{0}' (Hashtag: {1})", opportunity.OpportunityName, ocmDeal.AppliedHashtags[0].Hashtag);
-                    //        OnCreateItemComplete(null, new HelperEventArgs(String.Format("Created Deal '{0}' (Hashtag: {1})", opportunity.OpportunityName, ocmDeal.AppliedHashtags[0].Hashtag), false));
-                    //        NumberCreated += 1;
-
-                    //        try
-                    //        {
-                    //            Deal newDeal = JsonConvert.DeserializeObject<Deal>(content);
-                    //            newDeal.BCMID = opportunity.EntryGUID.ToString();
-                    //            OCMDeals.Add(newDeal);
-                    //            if (OCMDealsCreated == null)
-                    //                OCMDealsCreated = new List<Deal>();
-                    //            OCMDealsCreated.Add(newDeal);
-
-                    //            //HIGH Bypass patching deal to store the custom BCMID prop and value, until the bug with SingleValueExtendedProperties on deals is resolved
-                    //            //await PatchDeal(ocmDeal, newDeal.Id, newDeal.BCMID);
-                    //        }
-                    //        catch (System.Exception ex)
-                    //        {
-                    //            Log.Error(ex);
-                    //            OnError(null,new HelperEventArgs(String.Format("ERROR sharing '{1}': {0}", content, opportunity.OpportunityName),
-                    //                    HelperEventArgs.EventTypes.Error));
-                    //        }
-                    //    }
-                    //}
+                    }                   
                 }
                 else
                 {
@@ -1147,6 +1114,13 @@ namespace BCM_Migration_Tool.Objects
 
                     PrepareRequest(RequestDataTypes.Deals, RequestDataFormats.None);
                     RestResponse<OCMDeal> deals = await Get<OCMDeal>(request);
+
+                    if (deals == null)
+                    {
+                        //No existing deals
+                        Log.Warn("No OCM deals found");
+                        return;
+                    }
 
                     if (deals.StatusCode == HttpStatusCode.OK)
                     {
@@ -1369,6 +1343,7 @@ namespace BCM_Migration_Tool.Objects
                         if (TestMode)
                         {
                             NumberToProcess = TestingMaximum;
+                            Log.DebugFormat("Test mode - importing to {0} maximum", TestingMaximum);
                             OnStart(null, new HelperEventArgs(String.Format("Importing Opportunities (max {0} - TESTING MODE)", TestingMaximum), false));
                         }
                         else

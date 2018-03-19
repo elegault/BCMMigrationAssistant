@@ -38,7 +38,7 @@ namespace BCM_Migration_Tool.Objects
         internal List<AccountsFullView> BCMAccountsFullView { get; set; }
         internal OCMCompanyTemplate.Rootobject CompanyTemplate { get;set; }
         private int PageSkip { get; set; }
-        internal static List<OCMCompany2Value> OCMAccounts { get; set; } 
+        internal static List<OCMCompany2Value> OCMCompanies { get; set; } 
 
         #endregion
         #region Methods
@@ -87,16 +87,16 @@ namespace BCM_Migration_Tool.Objects
         {
             using (Log.VerboseCall())
             {
-                OCMAccounts = new List<OCMCompany2Value>();
+                OCMCompanies = new List<OCMCompany2Value>();
                 await RunGetOCMCompaniesAsync(); //NOTE: Do NOT use .Wait() unless the caller is an async method, or else it will hang
 
                 //OnGetComplete(null, new HelperEventArgs(String.Format("Found {0} existing OCM Companies (* = previously imported):", OCMAccounts?.Count), HelperEventArgs.EventTypes.Status));
-                Log.InfoFormat("Found {0} existing OCM Companies", OCMAccounts?.Count);
+                Log.InfoFormat("Found {0} existing OCM Companies", OCMCompanies?.Count);
 
-                OnGetComplete(null, new HelperEventArgs(String.Format("Found {0} existing OCM Companies", OCMAccounts?.Count), HelperEventArgs.EventTypes.Status));
+                OnGetComplete(null, new HelperEventArgs(String.Format("Found {0} existing OCM Companies", OCMCompanies?.Count), HelperEventArgs.EventTypes.Status));
 
                 bool headerShown = false;
-                foreach (OCMCompany2Value item in OCMAccounts)
+                foreach (OCMCompany2Value item in OCMCompanies)
                 {
                     if (item.SingleValueExtendedProperties != null)
                     {
@@ -164,8 +164,8 @@ namespace BCM_Migration_Tool.Objects
                     //    }                        
                     //}
 
-                    if (OCMAccounts == null)
-                        OCMAccounts = new List<OCMCompany2Value>();
+                    if (OCMCompanies == null)
+                        OCMCompanies = new List<OCMCompany2Value>();
 
                     if (contacts2.StatusCode != HttpStatusCode.OK)
                     {
@@ -177,14 +177,14 @@ namespace BCM_Migration_Tool.Objects
                     {
                         foreach (var company in contacts2.Content.value)
                         {
-                            OCMAccounts.Add(company);
+                            OCMCompanies.Add(company);
                         }
 
                         if (contacts2.Content.value.Length < 50)
                         {
                             //No more items to get
                             PageSkip = 0;
-                            OnGetItemComplete(null, new HelperEventArgs(String.Format("Fetched {0} OCM Companies", OCMAccounts.Count), HelperEventArgs.EventTypes.Status));
+                            OnGetItemComplete(null, new HelperEventArgs(String.Format("Fetched {0} OCM Companies", OCMCompanies.Count), HelperEventArgs.EventTypes.Status));
                         }
                         else
                         {
@@ -203,7 +203,7 @@ namespace BCM_Migration_Tool.Objects
 
         internal static OCMCompany2Value GetOCMCompany(string val, UpdateKeyTypes keyType)
         {
-            if (OCMAccounts == null)
+            if (OCMCompanies == null)
                 return null;
 
             try
@@ -211,7 +211,7 @@ namespace BCM_Migration_Tool.Objects
                 switch (keyType)
                 {
                     case UpdateKeyTypes.BCMID:
-                        foreach (var account in OCMAccounts)
+                        foreach (var account in OCMCompanies)
                         {
                             if (account.SingleValueExtendedProperties != null)
                             {
@@ -234,7 +234,7 @@ namespace BCM_Migration_Tool.Objects
                         }
                         break;
                     case UpdateKeyTypes.EmailAddress:
-                        foreach (var account in OCMAccounts)
+                        foreach (var account in OCMCompanies)
                         {
                             if (account.EmailAddresses != null)
                             {
@@ -249,7 +249,7 @@ namespace BCM_Migration_Tool.Objects
                         break;
                     case UpdateKeyTypes.Name:
                         //var contacts = from contact in OCMAccounts where contact.CompanyName.ToString() == val select contact;
-                        var mycontact = OCMAccounts.FirstOrDefault(contacts => contacts.DisplayName == val);
+                        var mycontact = OCMCompanies.FirstOrDefault(contacts => contacts.DisplayName == val);
                         return mycontact;
                 }
 
@@ -707,7 +707,7 @@ namespace BCM_Migration_Tool.Objects
                         //    }
                         //}
 
-                        //TEST New global REST methods
+                        //TESTED New global REST methods
 
                         PrepareRequest(RequestDataTypes.Companies, RequestDataFormats.JSON);
                         RestResponse<OCMCompany2Value> result = null;
@@ -718,16 +718,17 @@ namespace BCM_Migration_Tool.Objects
                         //newCompany = await Post<OCMCompany2Value>(uri, new StringContent(json, Encoding.UTF8, "application/json"), json, true, 10000, 5, false, null, false, false);
                         if (result.StatusCode == HttpStatusCode.Created)
                         {
+                            NumberCreated += 1;
+
                             newCompany = result.Content;
                             Log.DebugFormat("Created Company '{0}' (BCMID: {1})'", company.FullName, company.EntryGUID.ToString());
-                            OnCreateItemComplete(null, new HelperEventArgs(String.Format("Created Company '{0}'...", company.FullName), false));
-                            NumberCreated += 1;
+                            OnCreateItemComplete(null, new HelperEventArgs(String.Format("Created Company '{0}' ({1}/{2})...", company.FullName, NumberCreated, NumberToProcess), false));
 
                             try
                             {
                                 //TESTED Get response with Contact details so we can get the ID for use in moving operation to share it; move with contacts/{ID}/move call
                                 newCompany.BCMID = company.EntryGUID.ToString();
-                                OCMAccounts.Add(newCompany);
+                                OCMCompanies.Add(newCompany);
 
                                 //HIGH: No need to make /move calls with new sharing changes in 2018 Q1
                                 //NOTE To make a Contact or Company shared: make a REST call to ‘/move’ with the folder-id of the sharing child-folder, not the modern-group mailbox guid.
@@ -738,9 +739,10 @@ namespace BCM_Migration_Tool.Objects
 
                                 string id = newCompany.Id.Replace("_", "+");
                                 id = id.Replace("-", "/"); //HIGH HACK to make the MoveItem operation work (ErrorInvalidIdMalformed)
-                                string xmlRequest = String.Format(Resources.ShareContactsRequest, MigrationHelper.CompaniesFolderID,
-                                    id);
 
+                                //TESTED Do a COPY for Companies as well instead of a MOVE, like the change to Contacts?? NO - keep as move
+                                string xmlRequest = String.Format(Resources.ShareContactsRequest, MigrationHelper.CompaniesFolderID, id);
+                                
                                 //RestResponse<HttpWebResponse> response = await Post<HttpWebResponse>(uri, new StringContent(xmlRequest, Encoding.UTF8, "text/xml"), null, true, 10000, 5, false, null, false, false);
 
                                 RestResponse<HttpWebResponse> response = await Post<HttpWebResponse>(uri, new StringContent(xmlRequest, Encoding.UTF8, "text/xml"));
@@ -766,6 +768,7 @@ namespace BCM_Migration_Tool.Objects
                         }
                         else
                         {
+                            Log.ErrorFormat("Error creating '{1}': {0}", result.ErrorContent, company.FullName);
                             OnError(null, new HelperEventArgs(String.Format("ERROR creating '{0}': {2}: {1}", company.FullName, result.ErrorContent, result.StatusCode), HelperEventArgs.EventTypes.Error));
                             NumberOfErrors += 1;
                         }
@@ -857,6 +860,7 @@ namespace BCM_Migration_Tool.Objects
                         if (TestMode)
                         {
                             NumberToProcess = TestingMaximum;
+                            Log.DebugFormat("Test mode - importing to {0} maximum", TestingMaximum);
                             OnStart(null, new HelperEventArgs(String.Format("Importing {0} Accounts of {1} (TESTING MODE)", accountCount, TestingMaximum), false));
                         }
                         else
@@ -875,6 +879,7 @@ namespace BCM_Migration_Tool.Objects
                                 Log.Warn("Cancelled!");
                                 break;
                             }                     
+
                             //TESTED Check to see if there is an existing previously imported BCM contact (using only BCM ID) – if it exists, then update it.
                             //TESTED If there is no contact with BCM ID, then if a contact exists with same email address – if it exists, then update it + add the BCM ID to that contact
                             //TESTED If there is no contact with email OR BCM ID, then create the contact 
@@ -934,7 +939,6 @@ namespace BCM_Migration_Tool.Objects
                                 }
 
                                 importMode = ImportModes.Create;
-                                cnt += 1;
                             }
 
                             await ImportCompanyAsync(account, importMode, ocmCompany);

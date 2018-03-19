@@ -364,4 +364,102 @@ xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types"&gt;
   <data name="rightbuttonred" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Graphics\rightbuttonred.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="SetExtendedPropertiesOnContactRequest" xml:space="preserve">
+    <value>&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+xmlns:m="http://schemas.microsoft.com/exchange/services/2006/messages"
+xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types"&gt;
+	&lt;soap:Header&gt;
+		&lt;t:RequestServerVersion Version="V2016_04_13" /&gt;
+	&lt;/soap:Header&gt;
+	&lt;soap:Body&gt;
+		&lt;m:UpdateItem ConflictResolution="AlwaysOverwrite"&gt;
+			&lt;m:ItemChanges&gt;
+				&lt;t:ItemChange&gt;
+					&lt;t:ItemId Id="{0}" ChangeKey="{1}" /&gt;
+					&lt;t:Updates&gt;
+						&lt;t:SetItemField&gt;
+							&lt;t:ExtendedFieldURI PropertySetId="1a417774-4779-47c1-9851-e42057495fca" PropertyName="XrmSharingSourceUser" PropertyType="String" xmlns="http://schemas.microsoft.com/exchange/services/2006/messages" /&gt;
+							&lt;t:Contact&gt;
+								&lt;t:ExtendedProperty&gt;
+									&lt;t:ExtendedFieldURI PropertySetId="1a417774-4779-47c1-9851-e42057495fca" PropertyName="XrmSharingSourceUser" PropertyType="String" xmlns="http://schemas.microsoft.com/exchange/services/2006/messages" /&gt;
+									&lt;t:Value&gt;{2}&lt;/t:Value&gt;
+								&lt;/t:ExtendedProperty&gt;
+							&lt;/t:Contact&gt;
+						&lt;/t:SetItemField&gt;
+						&lt;t:SetItemField&gt;
+							&lt;t:ExtendedFieldURI PropertySetId="1a417774-4779-47c1-9851-e42057495fca" PropertyName="XrmSharingSourceUserDisplayName" PropertyType="String" xmlns="http://schemas.microsoft.com/exchange/services/2006/messages" /&gt;
+							&lt;t:Contact&gt;
+								&lt;t:ExtendedProperty&gt;
+									&lt;t:ExtendedFieldURI PropertySetId="1a417774-4779-47c1-9851-e42057495fca" PropertyName="XrmSharingSourceUserDisplayName" PropertyType="String" xmlns="http://schemas.microsoft.com/exchange/services/2006/messages" /&gt;
+									&lt;t:Value&gt;{3}&lt;/t:Value&gt;
+								&lt;/t:ExtendedProperty&gt;
+							&lt;/t:Contact&gt;
+						&lt;/t:SetItemField&gt;
+						&lt;t:SetItemField&gt;
+							&lt;t:ExtendedFieldURI PropertySetId="bdba944b-fc2b-47a1-8ba4-cafc4ae13ea2" PropertyName="BusinessType" PropertyType="String" xmlns="http://schemas.microsoft.com/exchange/services/2006/messages" /&gt;
+							&lt;t:Contact&gt;
+								&lt;t:ExtendedProperty&gt;
+									&lt;t:ExtendedFieldURI PropertySetId="bdba944b-fc2b-47a1-8ba4-cafc4ae13ea2" PropertyName="BusinessType" PropertyType="String" xmlns="http://schemas.microsoft.com/exchange/services/2006/messages" /&gt;
+									&lt;t:Value&gt;{4}&lt;/t:Value&gt;
+								&lt;/t:ExtendedProperty&gt;
+							&lt;/t:Contact&gt;
+						&lt;/t:SetItemField&gt;
+						&lt;t:SetItemField&gt;
+							&lt;t:ExtendedFieldURI PropertySetId="47ac1412-279b-41cb-891e-58904a94a48b" PropertyName="IsCustomer" PropertyType="Integer" xmlns="http://schemas.microsoft.com/exchange/services/2006/messages" /&gt;
+							&lt;t:Contact&gt;
+								&lt;t:ExtendedProperty&gt;
+									&lt;t:ExtendedFieldURI PropertySetId="47ac1412-279b-41cb-891e-58904a94a48b" PropertyName="IsCustomer" PropertyType="Integer" xmlns="http://schemas.microsoft.com/exchange/services/2006/messages" /&gt;
+									&lt;t:Value&gt;{5}&lt;/t:Value&gt;
+								&lt;/t:ExtendedProperty&gt;
+							&lt;/t:Contact&gt;
+						&lt;/t:SetItemField&gt;						
+					&lt;/t:Updates&gt;
+				&lt;/t:ItemChange&gt;
+			&lt;/m:ItemChanges&gt;
+		&lt;/m:UpdateItem&gt;	
+	&lt;/soap:Body&gt;
+&lt;/soap:Envelope&gt;</value>
+  </data>
+  <data name="ShareContactByCopyingRequest" xml:space="preserve">
+    <value>&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types"&gt;
+  &lt;soap:Header&gt;
+    &lt;t:RequestServerVersion Version="V2016_04_13" /&gt;
+  &lt;/soap:Header&gt;
+  &lt;soap:Body&gt;
+    &lt;CopyItem xmlns="http://schemas.microsoft.com/exchange/services/2006/messages"
+    xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types"&gt;
+      &lt;ToFolderId&gt;
+        &lt;t:FolderId Id="{0}"/&gt;
+      &lt;/ToFolderId&gt;
+      &lt;ItemIds&gt;
+        &lt;t:ItemId Id="{1}"/&gt;
+      &lt;/ItemIds&gt;
+    &lt;/CopyItem&gt;
+  &lt;/soap:Body&gt;
+&lt;/soap:Envelope&gt;</value>
+  </data>
+  <data name="CreateXrmGraphRelationshipRequest2" xml:space="preserve">
+    <value>&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:m="http://schemas.microsoft.com/exchange/services/2006/messages" xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"&gt;
+  &lt;soap:Header&gt;
+    &lt;t:RequestServerVersion Version="V2016_04_13" /&gt;
+  &lt;/soap:Header&gt;
+  &lt;soap:Body&gt;
+    &lt;m:CreateXrmGraphRelationship&gt;
+      &lt;m:FromEntityId&gt;{0}&lt;/m:FromEntityId&gt;
+      &lt;m:FromEntityType&gt;{1}&lt;/m:FromEntityType&gt;
+      &lt;m:ToEntityId&gt;{2}&lt;/m:ToEntityId&gt;
+      &lt;m:ToEntityType&gt;{3}&lt;/m:ToEntityType&gt;
+      &lt;m:LinkType&gt;{4}&lt;/m:LinkType&gt;
+    &lt;/m:CreateXrmGraphRelationship&gt;
+  &lt;/soap:Body&gt;
+&lt;/soap:Envelope&gt;</value>
+  </data>
 </root>

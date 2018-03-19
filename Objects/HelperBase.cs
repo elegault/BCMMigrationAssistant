@@ -295,6 +295,7 @@ namespace BCM_Migration_Tool.Objects
                             result = new RestResponse<T>();
                             result.StatusCode = response.StatusCode;
                             result.Content = objResponse as T;
+                            tokenRetry = false;
                             break;
                         case HttpStatusCode.Unauthorized:
                             //result = new RestResponse<T>() { StatusCode = response.StatusCode };
@@ -307,13 +308,17 @@ namespace BCM_Migration_Tool.Objects
                                     AccessToken = authenticationResult.AccessToken;
                                     Log.WarnFormat("Retrying with refreshed token {0}", AccessToken);
                                     tokenRetry = true; //Only retry once
-                                    goto retry;
+                                    //goto retry;
                                 }
                                 else
                                 {
                                     result = new RestResponse<T>() { StatusCode = response.StatusCode };
                                 }
-                            }                            
+                            }
+                            else
+                            {
+                                tokenRetry = false; //Only retry once
+                            }
                             break;
                         case HttpStatusCode.ServiceUnavailable:
                             lastStatusCode = response.StatusCode;
@@ -322,11 +327,13 @@ namespace BCM_Migration_Tool.Objects
                                 Log.WarnFormat("ServiceUnavailable; sleeping for {0} (retry count: {1})", timeOut, retryCnt);
                                 Thread.Sleep(timeOut);
                                 retryCnt++;
-                                goto retry;
+                                //goto retry;
+                                tokenRetry = true; //Only retry once
                             }
                             else
                             {
-                                result = new RestResponse<T>() { StatusCode = response.StatusCode };   
+                                result = new RestResponse<T>() { StatusCode = response.StatusCode };
+                                tokenRetry = false;
                             }
                             break;
                         default:
@@ -335,9 +342,14 @@ namespace BCM_Migration_Tool.Objects
                             result.ErrorContent = content;
                             if (!doNotLogErrors)
                                 Log.ErrorFormat("{0}: {1}", response.StatusCode, content);
+                            tokenRetry = false;
                             break;
                     }
                 }
+
+                if (tokenRetry)
+                    goto retry;
+
                 return result;
             }            
         }
@@ -411,7 +423,7 @@ namespace BCM_Migration_Tool.Objects
                                 result = new RestResponse<T>() { StatusCode = response.StatusCode };
                             }
                             finally
-                            { }
+                            { tokenRetry = false; } 
                             break;
                         case HttpStatusCode.Unauthorized:
                             //result = new RestResponse<T>() { StatusCode = response.StatusCode };
@@ -424,12 +436,16 @@ namespace BCM_Migration_Tool.Objects
                                     AccessToken = authenticationResult.AccessToken;
                                     Log.WarnFormat("Retrying with refreshed token {0}", AccessToken);
                                     tokenRetry = true; //Only retry once
-                                    goto retry;
+                                    //goto retry;
                                 }
                                 else
                                 {
                                     result = new RestResponse<T>() { StatusCode = response.StatusCode };
                                 }
+                            }
+                            else
+                            {
+                                tokenRetry = false; //Only retry once
                             }
                             break;
                         case HttpStatusCode.ServiceUnavailable:
@@ -439,11 +455,13 @@ namespace BCM_Migration_Tool.Objects
                                 Log.WarnFormat("ServiceUnavailable; sleeping for {0} (retry count: {1})", timeOut, retryCnt);
                                 Thread.Sleep(timeOut);
                                 retryCnt++;
-                                goto retry;
+                                //goto retry;
+                                tokenRetry = true; //Only retry once
                             }
                             else
                             {
                                 result = new RestResponse<T>() { StatusCode = response.StatusCode };
+                                tokenRetry = false;
                             }
                             break;
                         default:
@@ -452,9 +470,14 @@ namespace BCM_Migration_Tool.Objects
                             result.ErrorContent = content;
                             if (!doNotLogErrors)
                                 Log.ErrorFormat("{0}: {1}", response.StatusCode, content);
+                            tokenRetry = false;
                             break;
                     }
                 }
+
+                if (tokenRetry)
+                    goto retry;
+
                 return result;
             }
         }
@@ -487,6 +510,8 @@ namespace BCM_Migration_Tool.Objects
 
                 retry:
 
+                //BUG 3/17/2018 When retrying, starting this again throws Exception type: System.ObjectDisposedException on payload (HttpContent) param. Should pass json string instead and create HttpContent object here before the using loop
+                
                 using (var response = await _httpClient.PostAsync(request, payload))
                 {
                     if (response == null)
@@ -536,50 +561,94 @@ namespace BCM_Migration_Tool.Objects
                                 result = new RestResponse<T>() { StatusCode = response.StatusCode };
                             }
                             finally
-                            { }
+                            { tokenRetry = false; }
                             break;
                         case HttpStatusCode.Unauthorized:
                             //result = new RestResponse<T>() { StatusCode = response.StatusCode };
+
+                            if (!doNotLogErrors)
+                                Log.ErrorFormat("{0}: {1}", response.StatusCode, content);
+
                             lastStatusCode = response.StatusCode;
                             if (!tokenRetry)
                             {
                                 AuthenticationResult authenticationResult = MigrationHelper.GetAccessToken(true);
-                                if (authenticationResult != null && !String.IsNullOrEmpty(authenticationResult.AccessToken))
+                                if (authenticationResult != null &&
+                                    !String.IsNullOrEmpty(authenticationResult.AccessToken))
                                 {
                                     AccessToken = authenticationResult.AccessToken;
                                     Log.WarnFormat("Retrying with refreshed token {0}", AccessToken);
                                     tokenRetry = true; //Only retry once
-                                    goto retry;
+                                    //goto retry;
                                 }
                                 else
                                 {
-                                    result = new RestResponse<T>() { StatusCode = response.StatusCode };
+                                    result = new RestResponse<T>() {StatusCode = response.StatusCode};
                                 }
+                            }
+                            else
+                            {
+                                tokenRetry = false; //Only retry once
                             }
                             break;
                         case HttpStatusCode.ServiceUnavailable:
+
+                            if (!doNotLogErrors)
+                                Log.ErrorFormat("{0}: {1}", response.StatusCode, content);
+
                             lastStatusCode = response.StatusCode;
                             if (retryUntilTimeout && retries != 0 && retryCnt <= retries)
-                            {
+                            {                                
                                 Log.WarnFormat("ServiceUnavailable; sleeping for {0} (retry count: {1})", timeOut, retryCnt);
                                 Thread.Sleep(timeOut);
                                 retryCnt++;
-                                goto retry;
+                                //goto retry;
+                                tokenRetry = true; //Only retry once
                             }
                             else
                             {
                                 result = new RestResponse<T>() { StatusCode = response.StatusCode };
+                                tokenRetry = false;
                             }
                             break;
+                        case HttpStatusCode.InternalServerError:
+                            //New 3/17
+                            //BUG Should grab BackOffMilliseconds count and use that for timeout val, but hardcode to 300 seconds (300000 ms) for now                                                                 
+                            //InternalServerError: <?xml version="1.0" encoding="utf-8"?><s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"><s:Body><s:Fault><faultcode xmlns:a="http://schemas.microsoft.com/exchange/services/2006/types">a:ErrorServerBusy</faultcode><faultstring xml:lang="en-US">The server cannot service this request right now. Try again later.</faultstring><detail><e:ResponseCode xmlns:e="http://schemas.microsoft.com/exchange/services/2006/errors">ErrorServerBusy</e:ResponseCode><e:Message xmlns:e="http://schemas.microsoft.com/exchange/services/2006/errors">The server cannot service this request right now. Try again later.</e:Message><t:MessageXml xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types"><t:Value Name="BackOffMilliseconds">299718</t:Value></t:MessageXml></detail></s:Fault></s:Body></s:Envelope>
+
+                            if (!doNotLogErrors)
+                                Log.ErrorFormat("{0}: {1}", response.StatusCode, content);
+
+                            lastStatusCode = response.StatusCode;
+                            if (retryUntilTimeout && retries != 0 && retryCnt <= retries)
+                            {
+                                Log.WarnFormat("InternalServerError; sleeping for {0} (retry count: {1})", 300000, retryCnt);
+                                Thread.Sleep(300000);
+                                retryCnt++;
+                                //goto retry;
+                                tokenRetry = true; //Only retry once
+                            }
+                            else
+                            {
+                                result = new RestResponse<T>() { StatusCode = response.StatusCode };
+                                tokenRetry = false;
+                            }
+                            break;
+
                         default:
                             result = new RestResponse<T>();
                             result.StatusCode = response.StatusCode;
                             result.ErrorContent = content;
                             if (!doNotLogErrors)
                                 Log.ErrorFormat("{0}: {1}", response.StatusCode, content);
+                            tokenRetry = false;
                             break;
                     }
                 }
+
+                if (tokenRetry)
+                    goto retry;
+                
                 return result;
             }
         }

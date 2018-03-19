@@ -30,7 +30,7 @@ namespace BCM_Migration_Tool.Objects
         internal static string GroupMailboxID { get; set; }
         internal static bool IsSharingEnabled
         {        
-            //HIGH Turn sharing on by default (for now)
+            //Turn sharing on by default (for now)
             get { return _isSharingEnabled; }
             set { _isSharingEnabled = value; }
         } 
@@ -322,18 +322,29 @@ namespace BCM_Migration_Tool.Objects
                                                        select errorCode;
                     foreach (var errorCode in errorCodes)
                     {
+                        
                         //"ErrorAllSalesTeamSyncJobCreationFailed"
+
+                        if (errorCode.Value == "ErrorAccessDenied")
+                        {
+                            Log.ErrorFormat("Error: {0} ({1})", errorCode.Value, responseEnvelope.Value);//error = node.Value;
+                            MessageBox.Show("The logged in user does not have the necessary permissions or an Outlook Customer Manager license. Please restart the application and log in with an authorized user account.", "Access Denied",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return false;
+                        }
+
                         if (errorCode.Value != "NoError")
                         {
+                            Log.ErrorFormat("Error: {0} ({1})", errorCode.Value, responseEnvelope.Value);//error = node.Value;
                             //responseEnvelope.Value = "Failed to create 'All Sales Team' sync job
                             IEnumerable<XElement> messageNodes = from messageNode in responseEnvelope.Descendants
 ("{http://schemas.microsoft.com/exchange/services/2006/messages}MessageText")
                                                                select messageNode;
                             foreach (var node in messageNodes)
                             {
-                                Log.Error(responseEnvelope.Value, node.Value);//error = node.Value;
+                                Log.ErrorFormat(responseEnvelope.Value, node.Value);//error = node.Value;
                                 break;
-                            }
+                            }                            
                             MessageBox.Show("Could not initialize a session with OCM. Please try again later.", "OCM Error",
                             MessageBoxButtons.OK, MessageBoxIcon.Error);
                             return false;

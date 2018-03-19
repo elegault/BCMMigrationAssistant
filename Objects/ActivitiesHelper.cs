@@ -23,183 +23,186 @@ namespace BCM_Migration_Tool.Objects
         #region Methods
         internal async Task<int> CreateActivity(string bcmEntityGUID, string itemID, string displayName, FieldMappings.BCMDataSetTypes entityType)
         {
-            //NOTE: OCMCompany use XrmId; other types use the ItemLinkID
-            //NOTE Use ItemLinkId from Persona for Contact activities
+            using (Log.VerboseCall())
+            {
+                //NOTE: OCMCompany use XrmId; other types use the ItemLinkID
+                //NOTE Use ItemLinkId from Persona for Contact activities
 
-            int result = 0;
+                int result = 0;
 
-            try
-            {            
-                string sql = $"{Resources.BCM_Activities} AND CMT.EntryGUID = '{bcmEntityGUID}'";
-                using (SqlConnection con = new SqlConnection(ConnectionString))
-                {
-                    using (SqlCommand com = new SqlCommand(sql, con))
+                try
+                {            
+                    string sql = $"{Resources.BCM_Activities} AND CMT.EntryGUID = '{bcmEntityGUID}'";
+                    using (SqlConnection con = new SqlConnection(ConnectionString))
                     {
-                        con.Open();
-
-                        using (DbDataReader reader = com.ExecuteReader())
+                        using (SqlCommand com = new SqlCommand(sql, con))
                         {
-                            try
+                            con.Open();
+
+                            using (DbDataReader reader = com.ExecuteReader())
                             {
-                                if (reader.HasRows)
+                                try
                                 {
-                                    while (reader.Read())
+                                    if (reader.HasRows)
                                     {
-                                        OCMActivity ocmActivity = new OCMActivity();
-
-                                        try
+                                        while (reader.Read())
                                         {
-                                            ocmActivity.ActionVerb = "Post";
-                                            //ocmActivity.DisplayName = Convert.ToString(reader["EntityName"]);
-                                            ocmActivity.DisplayName = displayName;
-                                            //BUGFIXED: {"error":{"code":"RequestBodyRead","message":"Cannot convert the literal '11/21/2016 6:26:28 PM' to the expected type 'Edm.DateTimeOffset'."}}
-                                            //Use format as per: EventTime=2016-11-30T19:00:00Z
-                                            string activityDate = Convert.ToDateTime(reader["CreatedOn"])
-                                                .ToString("yyyy-MM-ddTHH:MM:ssZ");
-                                            ocmActivity.EventTime = activityDate;
+                                            OCMActivity ocmActivity = new OCMActivity();
 
-                                            //REVIEW Is CreatedOn needed for activities?
-                                            //TESTED Date format 2016-12-08T18:59:53.463Z                                                                                    
-                                            string keyType = "";
-                                            switch (entityType)
+                                            try
                                             {
-                                                case FieldMappings.BCMDataSetTypes.Accounts:
-                                                    keyType = "IPM.Contact.Company";
-                                                    break;
-                                                case FieldMappings.BCMDataSetTypes.BusinessContacts:
-                                                    keyType = "IPM.Contact";
-                                                    break;
-                                                case FieldMappings.BCMDataSetTypes.Opportunities:
-                                                    keyType = "IPM.XrmProject.Deal";
-                                                    break;
+                                                ocmActivity.ActionVerb = "Post";
+                                                //ocmActivity.DisplayName = Convert.ToString(reader["EntityName"]);
+                                                ocmActivity.DisplayName = displayName;
+                                                //BUGFIXED: {"error":{"code":"RequestBodyRead","message":"Cannot convert the literal '11/21/2016 6:26:28 PM' to the expected type 'Edm.DateTimeOffset'."}}
+                                                //Use format as per: EventTime=2016-11-30T19:00:00Z
+                                                string activityDate = Convert.ToDateTime(reader["CreatedOn"])
+                                                    .ToString("yyyy-MM-ddTHH:MM:ssZ");
+                                                ocmActivity.EventTime = activityDate;
+
+                                                //REVIEW Is CreatedOn needed for activities?
+                                                //TESTED Date format 2016-12-08T18:59:53.463Z                                                                                    
+                                                string keyType = "";
+                                                switch (entityType)
+                                                {
+                                                    case FieldMappings.BCMDataSetTypes.Accounts:
+                                                        keyType = "IPM.Contact.Company";
+                                                        break;
+                                                    case FieldMappings.BCMDataSetTypes.BusinessContacts:
+                                                        keyType = "IPM.Contact";
+                                                        break;
+                                                    case FieldMappings.BCMDataSetTypes.Opportunities:
+                                                        keyType = "IPM.XrmProject.Deal";
+                                                        break;
+                                                }
+                                                //string keyProp = String.Format("[{{\"key\":\"{0}\",\"value\":{{\"key\":\"{1}\",\"value\":\"\"}}]", entityType == FieldMappings.BCMDataSetTypes.Accounts ? "IPM.Contact.Company" : "IPM.Contact", entityType == FieldMappings.BCMDataSetTypes.Accounts ? itemID : bcmEntityGUID);
+
+                                                //BUGFIXED Wrong format!
+                                                string keyProp = "";
+                                                // = String.Format("[{{\"key\":\"{0}\",\"value\":{{\"key\":\"{1}\",\"value\":\"\"}}]", keyType, itemID);
+                                                keyProp =
+                                                    $"[{{\"key\":\"{keyType}\",\"value\":{{\"key\":\"{itemID}\",\"value\":\"\"}}}}]";
+
+                                                //"[{\"key\":\"IPM.Contact\",\"value\":{\"key\":\"AAQkAGUzNmEzYTBmLTI1NDItNGE0My1iZDk5LWFkMDgxODI3YWNlOQAQAP1JgjndmL1PlZaF3njr2AA=\",\"value\":\"\"}]"
+
+                                                ocmActivity.ModifiedProperties = keyProp;
+                                                ocmActivity.SourceUser = MigrationHelper.CurrentUser.Id;
+                                                //TESTED Verify SourceUser value source
+
+                                                string subType = "";
+                                                switch (Convert.ToString(reader["ActivityType"]))
+                                                {
+                                                    case "14":
+                                                        subType = "TextPost";
+                                                        break;
+                                                    case "15":
+                                                        subType = "CallLog";
+                                                        break;
+                                                    default:
+                                                        subType = "MeetingLog";
+                                                        break;
+                                                }
+                                                ocmActivity.Subtype = subType;
+                                                ocmActivity.Text = Convert.ToString(reader["Subject"]);
+                                                if (!String.IsNullOrEmpty(Convert.ToString(reader["ActivityNote"])))
+                                                    ocmActivity.Text = String.Concat(ocmActivity.Text, Environment.NewLine,
+                                                        Convert.ToString(reader["ActivityNote"]));
+
+                                                var json = JsonConvert.SerializeObject(ocmActivity);
+
+                                                Uri uri =
+                                                    new Uri($"{Settings.Default.BetaEndPoint}/XrmActivityStreams");
+
+                                                if (FullRESTLogging)
+                                                {
+                                                    Log.VerboseFormat("Posting to {1}: {0}", json, uri);
+                                                }
+                                                else
+                                                {
+                                                    Log.VerboseFormat("Posting to {0}", uri);
+                                                }
+
+                                                PrepareRequest(RequestDataTypes.Activities, RequestDataFormats.JSON);
+
+                                                RestResponse<HttpWebResponse> response = await Post<HttpWebResponse>(uri, new StringContent(json, Encoding.UTF8, "application/json"));
+
+                                                if (response.StatusCode != HttpStatusCode.Created && response.StatusCode != HttpStatusCode.OK)
+                                                {
+                                                    Log.ErrorFormat("ERROR creating activity '{1}': {0}", response.Content, ocmActivity.Text);
+                                                    OnError(null, new HelperEventArgs(String.Format("ERROR creating activity '{1}': {0}", response.Content, ocmActivity.Text.Substring(0, ocmActivity.Text.Length < 25 ? ocmActivity.Text.Length : 25)), HelperEventArgs.EventTypes.Error));
+                                                    NumberOfErrors += 1;
+                                                }
+                                                else
+                                                {
+                                                    Log.DebugFormat("Imported {0} ({2}) activity for '{1}'...", ocmActivity.Subtype, ocmActivity.DisplayName, ocmActivity.ActionVerb);
+                                                    OnCreateItemComplete(null, new HelperEventArgs($"Imported {ocmActivity.Subtype} activity for '{ocmActivity.DisplayName}'...", false));
+                                                    NumberCreated += 1;
+                                                    result += 1;
+                                                }
+
+                                                //using (var response = await _httpClient.PostAsync(uri, new StringContent(json, Encoding.UTF8, "application/json")))
+                                                //{
+                                                //    //BUGFIXED {"error":{"code":"ErrorInternalServerError","message":"ItemLinkId (AAMkAGUzNmEzYTBmLTI1NDItNGE0My1iZDk5LWFkMDgxODI3YWNlOQBGAAAAAACK2VEhi72QSaw_u0XV7xUHBwCMotTyA3QkQ7TPAmcrRt4FAAAALwVNAAAuH-1UA8tzTYD5jbYriaIUAANZ-MJ5AAA=) specified in ModifiedProperties for Activity Post linking is not of Guid format."}}
+
+                                                //    //BUGFIXED Creating activities: {"error":{"code":"ErrorInternalServerError","message":"An error occured : Failed to create 'ActivityPertainsTo' link. Error: Failed to retrieve ToNode: Person (Guid: c30bf69f-9f87-4711-a581-f4e04a25a08f).\r\n"}}
+                                                //    //For: {"Id":null,"Subtype":"TextPost","ActionVerb":"Post","DisplayName":"Mr. Robert E. Ahlering","EventTime":"2016-11-21T17:11:08Z","SourceUser":"1320a731-7b00-45de-a94f-320a646be41c@09c30aae-5947-41b4-b312-3886ba8f95f3","ModifiedProperties":"[{\"key\":\"IPM.Contact\",\"value\":{\"key\":\"c30bf69f-9f87-4711-a581-f4e04a25a08f\",\"value\":\"\"}]","Text":"Note Title 1\r\n11/21/2016 4:59:37 PM:This is a note detail 1A\r\n11/21/2016 4:59:59 PM:This is note detail 1B\r\n"}
+
+                                                //    //Nick's example:
+                                                //    //{ "Id":null,"Subtype":"CallLog","ActionVerb":"Post","DisplayName":"Armando Pinto (XRM)","EventTime":"2017-05-01T23:00:00Z","SourceUser":"9cb807e1-2cda-49da-bfeb-e0c4d2986fc4","InlineLinks":{ "Relationships":[]},"ModifiedProperties":"[{\"key\":\"IPM.Contact\",\"value\":{\"key\":\"b4103d19-f80b-479d-b21a-f0f697825fcc\",\"value\":\"\"}}]","LinkType":"","LinkedEntityNames":"","TargetEntities":[],"OtherRelatedEntities":[],"Text":"a call log","XrmId":null} 
+
+                                                //    // Check status code.
+                                                //    if (!response.IsSuccessStatusCode)
+                                                //    {
+
+                                                //        var content = await response.Content.ReadAsStringAsync();
+                                                //        Log.ErrorFormat("ERROR creating activity '{1}': {0}", content, ocmActivity.Text);
+                                                //        OnError(null, new HelperEventArgs(String.Format("ERROR creating activity '{1}': {0}", content, ocmActivity.Text.Substring(0, ocmActivity.Text.Length < 25 ? ocmActivity.Text.Length : 25)), HelperEventArgs.EventTypes.Error));
+                                                //        NumberOfErrors += 1;
+                                                //    }
+                                                //    else
+                                                //    {
+                                                //        Log.DebugFormat("Imported {0} ({2}) activity for '{1}'...", ocmActivity.Subtype, ocmActivity.DisplayName, ocmActivity.ActionVerb);
+                                                //        OnCreateItemComplete(null, new HelperEventArgs(
+                                                //            $"Imported {ocmActivity.Subtype} activity for '{ocmActivity.DisplayName}'...", false));
+                                                //        NumberCreated += 1;
+                                                //        result += 1;
+                                                //    }
+                                                //}
                                             }
-                                            //string keyProp = String.Format("[{{\"key\":\"{0}\",\"value\":{{\"key\":\"{1}\",\"value\":\"\"}}]", entityType == FieldMappings.BCMDataSetTypes.Accounts ? "IPM.Contact.Company" : "IPM.Contact", entityType == FieldMappings.BCMDataSetTypes.Accounts ? itemID : bcmEntityGUID);
-
-                                            //BUGFIXED Wrong format!
-                                            string keyProp = "";
-                                            // = String.Format("[{{\"key\":\"{0}\",\"value\":{{\"key\":\"{1}\",\"value\":\"\"}}]", keyType, itemID);
-                                            keyProp =
-                                                $"[{{\"key\":\"{keyType}\",\"value\":{{\"key\":\"{itemID}\",\"value\":\"\"}}}}]";
-
-                                            //"[{\"key\":\"IPM.Contact\",\"value\":{\"key\":\"AAQkAGUzNmEzYTBmLTI1NDItNGE0My1iZDk5LWFkMDgxODI3YWNlOQAQAP1JgjndmL1PlZaF3njr2AA=\",\"value\":\"\"}]"
-
-                                            ocmActivity.ModifiedProperties = keyProp;
-                                            ocmActivity.SourceUser = MigrationHelper.CurrentUser.Id;
-                                            //TESTED Verify SourceUser value source
-
-                                            string subType = "";
-                                            switch (Convert.ToString(reader["ActivityType"]))
+                                            catch (Exception ex)
                                             {
-                                                case "14":
-                                                    subType = "TextPost";
-                                                    break;
-                                                case "15":
-                                                    subType = "CallLog";
-                                                    break;
-                                                default:
-                                                    subType = "MeetingLog";
-                                                    break;
-                                            }
-                                            ocmActivity.Subtype = subType;
-                                            ocmActivity.Text = Convert.ToString(reader["Subject"]);
-                                            if (!String.IsNullOrEmpty(Convert.ToString(reader["ActivityNote"])))
-                                                ocmActivity.Text = String.Concat(ocmActivity.Text, Environment.NewLine,
-                                                    Convert.ToString(reader["ActivityNote"]));
-
-                                            var json = JsonConvert.SerializeObject(ocmActivity);
-
-                                            Uri uri =
-                                                new Uri($"{Properties.Settings.Default.BetaEndPoint}/XrmActivityStreams");
-
-                                            if (FullRESTLogging)
-                                            {
-                                                Log.VerboseFormat("Posting to {1}: {0}", json, uri);
-                                            }
-                                            else
-                                            {
-                                                Log.VerboseFormat("Posting to {0}", uri);
-                                            }
-
-                                            PrepareRequest(RequestDataTypes.Activities, RequestDataFormats.JSON);
-
-                                            RestResponse<HttpWebResponse> response = await Post<HttpWebResponse>(uri, new StringContent(json, Encoding.UTF8, "application/json"));
-
-                                            if (response.StatusCode != HttpStatusCode.Created && response.StatusCode != HttpStatusCode.OK)
-                                            {
-                                                Log.ErrorFormat("ERROR creating activity '{1}': {0}", response.Content, ocmActivity.Text);
-                                                OnError(null, new HelperEventArgs(String.Format("ERROR creating activity '{1}': {0}", response.Content, ocmActivity.Text.Substring(0, ocmActivity.Text.Length < 25 ? ocmActivity.Text.Length : 25)), HelperEventArgs.EventTypes.Error));
+                                                Log.Error(ex);
                                                 NumberOfErrors += 1;
+                                                //OnError(null, new HelperEventArgs( String.Format("Unknown error (C) in CreateActivity for item '{0}'", displayName), HelperEventArgs.EventTypes.Error, ex));
                                             }
-                                            else
-                                            {
-                                                Log.DebugFormat("Imported {0} ({2}) activity for '{1}'...", ocmActivity.Subtype, ocmActivity.DisplayName, ocmActivity.ActionVerb);
-                                                OnCreateItemComplete(null, new HelperEventArgs($"Imported {ocmActivity.Subtype} activity for '{ocmActivity.DisplayName}'...", false));
-                                                NumberCreated += 1;
-                                                result += 1;
-                                            }
-
-                                            //using (var response = await _httpClient.PostAsync(uri, new StringContent(json, Encoding.UTF8, "application/json")))
-                                            //{
-                                            //    //BUGFIXED {"error":{"code":"ErrorInternalServerError","message":"ItemLinkId (AAMkAGUzNmEzYTBmLTI1NDItNGE0My1iZDk5LWFkMDgxODI3YWNlOQBGAAAAAACK2VEhi72QSaw_u0XV7xUHBwCMotTyA3QkQ7TPAmcrRt4FAAAALwVNAAAuH-1UA8tzTYD5jbYriaIUAANZ-MJ5AAA=) specified in ModifiedProperties for Activity Post linking is not of Guid format."}}
-
-                                            //    //BUGFIXED Creating activities: {"error":{"code":"ErrorInternalServerError","message":"An error occured : Failed to create 'ActivityPertainsTo' link. Error: Failed to retrieve ToNode: Person (Guid: c30bf69f-9f87-4711-a581-f4e04a25a08f).\r\n"}}
-                                            //    //For: {"Id":null,"Subtype":"TextPost","ActionVerb":"Post","DisplayName":"Mr. Robert E. Ahlering","EventTime":"2016-11-21T17:11:08Z","SourceUser":"1320a731-7b00-45de-a94f-320a646be41c@09c30aae-5947-41b4-b312-3886ba8f95f3","ModifiedProperties":"[{\"key\":\"IPM.Contact\",\"value\":{\"key\":\"c30bf69f-9f87-4711-a581-f4e04a25a08f\",\"value\":\"\"}]","Text":"Note Title 1\r\n11/21/2016 4:59:37 PM:This is a note detail 1A\r\n11/21/2016 4:59:59 PM:This is note detail 1B\r\n"}
-
-                                            //    //Nick's example:
-                                            //    //{ "Id":null,"Subtype":"CallLog","ActionVerb":"Post","DisplayName":"Armando Pinto (XRM)","EventTime":"2017-05-01T23:00:00Z","SourceUser":"9cb807e1-2cda-49da-bfeb-e0c4d2986fc4","InlineLinks":{ "Relationships":[]},"ModifiedProperties":"[{\"key\":\"IPM.Contact\",\"value\":{\"key\":\"b4103d19-f80b-479d-b21a-f0f697825fcc\",\"value\":\"\"}}]","LinkType":"","LinkedEntityNames":"","TargetEntities":[],"OtherRelatedEntities":[],"Text":"a call log","XrmId":null} 
-
-                                            //    // Check status code.
-                                            //    if (!response.IsSuccessStatusCode)
-                                            //    {
-
-                                            //        var content = await response.Content.ReadAsStringAsync();
-                                            //        Log.ErrorFormat("ERROR creating activity '{1}': {0}", content, ocmActivity.Text);
-                                            //        OnError(null, new HelperEventArgs(String.Format("ERROR creating activity '{1}': {0}", content, ocmActivity.Text.Substring(0, ocmActivity.Text.Length < 25 ? ocmActivity.Text.Length : 25)), HelperEventArgs.EventTypes.Error));
-                                            //        NumberOfErrors += 1;
-                                            //    }
-                                            //    else
-                                            //    {
-                                            //        Log.DebugFormat("Imported {0} ({2}) activity for '{1}'...", ocmActivity.Subtype, ocmActivity.DisplayName, ocmActivity.ActionVerb);
-                                            //        OnCreateItemComplete(null, new HelperEventArgs(
-                                            //            $"Imported {ocmActivity.Subtype} activity for '{ocmActivity.DisplayName}'...", false));
-                                            //        NumberCreated += 1;
-                                            //        result += 1;
-                                            //    }
-                                            //}
-                                        }
-                                        catch (System.Exception ex)
-                                        {
-                                            Log.Error(ex);
-                                            NumberOfErrors += 1;
-                                            //OnError(null, new HelperEventArgs( String.Format("Unknown error (C) in CreateActivity for item '{0}'", displayName), HelperEventArgs.EventTypes.Error, ex));
                                         }
                                     }
+                                    else
+                                    {
+                                        //Log.VerboseFormat("No results for query: {0}", sql);
+                                        //leave; no activities to create
+                                        return 0;
+                                    }
                                 }
-                                else
+                                catch (Exception ex)
                                 {
-                                    //Log.VerboseFormat("No results for query: {0}", sql);
-                                    //leave; no activities to create
-                                    return 0;
+                                    Log.Error(ex);
+                                    NumberOfErrors += 1;
+                                    //OnError(null, new HelperEventArgs( String.Format("Unknown error (A) in CreateActivity for item '{0}'", displayName), HelperEventArgs.EventTypes.Error, ex));
                                 }
-                            }
-                            catch (System.Exception ex)
-                            {
-                                Log.Error(ex);
-                                NumberOfErrors += 1;
-                                //OnError(null, new HelperEventArgs( String.Format("Unknown error (A) in CreateActivity for item '{0}'", displayName), HelperEventArgs.EventTypes.Error, ex));
                             }
                         }
-                    }
-                }                
-            }
-            catch (System.Exception ex)
-            {
-                Log.Error(ex);
-                NumberOfErrors += 1;
-                //OnError(null, new HelperEventArgs(String.Format("Unknown error (B) in CreateActivity for item '{0}'", displayName), HelperEventArgs.EventTypes.Error, ex));
-            }
+                    }                
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex);
+                    NumberOfErrors += 1;
+                    //OnError(null, new HelperEventArgs(String.Format("Unknown error (B) in CreateActivity for item '{0}'", displayName), HelperEventArgs.EventTypes.Error, ex));
+                }
 
-            return result;
+                return result;
+            }
         }
 
         internal async Task CreateCompanyActivities()
@@ -212,12 +215,12 @@ namespace BCM_Migration_Tool.Objects
 
                 try
                 {
-                    NumberToProcess = AccountsHelper.OCMAccounts.Count;
+                    NumberToProcess = AccountsHelper.OCMCompanies.Count;
                     //Log.InfoFormat("Importing ");
                     OnStart(null, new HelperEventArgs(
-                        $"Looking for activities to import from {AccountsHelper.OCMAccounts.Count} accounts", HelperEventArgs.EventTypes.Status));
+                        $"Looking for activities to import from {AccountsHelper.OCMCompanies.Count} accounts", HelperEventArgs.EventTypes.Status));
 
-                    foreach (OCMCompany2Value company in AccountsHelper.OCMAccounts)
+                    foreach (OCMCompany2Value company in AccountsHelper.OCMCompanies)
                     {
                         try
                         {
@@ -233,6 +236,7 @@ namespace BCM_Migration_Tool.Objects
                             }
                             else
                             {
+                                //Previously imported Company - don't create activity as could create duplicate
                                 Log.VerboseFormat("Not creating activity (no BCM ID for company '{0}' (ID: {1}))", company.DisplayName, company.Id);
                                 //Not an error!
                                 //OnError(null, new HelperEventArgs(String.Format("No BCM ID for company '{0}' (XRM ID: {1})", company.DisplayName, company.XrmId), HelperEventArgs.EventTypes.Error));
@@ -302,6 +306,7 @@ namespace BCM_Migration_Tool.Objects
                             }
                             else
                             {
+                                //Previously imported Contact - don't create activity as could create duplicate
                                 Log.VerboseFormat("Not creating activity (no BCM ID for contact '{0}' (ID: {1}))", contact.DisplayName, contact.Id);
                             }
                         }
@@ -319,7 +324,7 @@ namespace BCM_Migration_Tool.Objects
                 }
 
                 OnHelperComplete(null, new HelperEventArgs(
-                    $"{totalCreated} total contact activities created ({errors} errors).", HelperEventArgs.EventTypes.Status));
+                    $"{totalCreated} total contact activities created ({NumberOfErrors} errors).", HelperEventArgs.EventTypes.Status));
             }
         }
         internal async Task CreateDealActivities()
@@ -364,6 +369,7 @@ namespace BCM_Migration_Tool.Objects
                                 }
                                 else
                                 {
+                                    //Previously imported Deal - don't create activity as could create duplicate
                                     Log.VerboseFormat("Not creating activity (no BCM ID for deal '{0}' (ID: {1}))",
                                         deal.Name, deal.Id);
                                 }

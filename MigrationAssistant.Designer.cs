@@ -284,7 +284,17 @@
             // numericUpDownMaxRecords
             // 
             this.numericUpDownMaxRecords.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.numericUpDownMaxRecords.Increment = new decimal(new int[] {
+            50,
+            0,
+            0,
+            0});
             this.numericUpDownMaxRecords.Location = new System.Drawing.Point(386, 50);
+            this.numericUpDownMaxRecords.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
             this.numericUpDownMaxRecords.Name = "numericUpDownMaxRecords";
             this.numericUpDownMaxRecords.Size = new System.Drawing.Size(50, 22);
             this.numericUpDownMaxRecords.TabIndex = 4;

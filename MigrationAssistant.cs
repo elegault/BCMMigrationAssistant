@@ -73,13 +73,16 @@ namespace BCM_Migration_Tool
             {
                 navigationBar1.BringToFront();
                 LoadSettings();
+#if !DEBUG
+                ToggleTestModeControls(false);
+#endif
 
-//#if !DEBUG
-//                numericUpDown1.Visible = false;
-//                chkGetOnly.Visible = false;
-//                chkTestMode.Visible = false;
-//                chkDebugMode.Visible = false;
-//#endif
+                //#if !DEBUG
+                //                numericUpDown1.Visible = false;
+                //                chkGetOnly.Visible = false;
+                //                chkTestMode.Visible = false;
+                //                chkDebugMode.Visible = false;
+                //#endif
 #if DEBUG
                 //TestDBConnection();
                 configure1.chkEnableTestMode.Checked = true;
@@ -210,20 +213,30 @@ namespace BCM_Migration_Tool
 
                 Debug.WriteLine("Calling GetBCMAccounts");
                 migrate1.progressBar1.PerformStep();
+
+                //Load BCM Accounts
                 await accountsHelper.GetBCMAccounts();
+
                 migrate1.progressBar1.PerformStep();
                 Debug.WriteLine("GetBCMAccounts returned; calling GetOCMCompanies");
+
+                //Load existing OCM Company contacts
                 await accountsHelper.GetOCMCompanies();
+
                 migrate1.progressBar1.PerformStep();
 
                 if (!chkGetOnly.Checked)
                 {
                     Debug.WriteLine("GetOCMCompanies returned; calling CreateCompanies");
-                    //migrate1.progressBar1.Maximum = accountsHelper.BCMAccountsFullView.Count;
+                    
+                    //Load import Accounts as OCM Companies
                     await accountsHelper.CreateCompanies();
-                    //migrate1.progressBar1.Maximum = 100;
+                    
                     Debug.WriteLine("CreateCompanies returned; calling CreateCompanyActivities");
+
+                    //Import activities from Accounts
                     await activitiesHelper.CreateCompanyActivities();
+
                     Debug.WriteLine("CreateCompanyActivities returned");
                 }
                 else
@@ -266,29 +279,46 @@ namespace BCM_Migration_Tool
                     Debug.WriteLine("Calling GetBCMContacts");
                     migrate1.progressBar1.Value = 0;
                     migrate1.progressBar1.PerformStep();
+
+                    //Load BCM Contacts from database
                     await contactsHelper.GetBCMContacts();
+
                     migrate1.progressBar1.PerformStep();
                     Debug.WriteLine("GetBCMContacts returned; calling GetOCMContacts");
+
+                    //Load existing OCM Contacts
                     await contactsHelper.GetOCMContacts();
+
                     migrate1.progressBar1.PerformStep();
                     if (!chkGetOnly.Checked)
                     {
                         Debug.WriteLine("GetOCMContacts returned; calling CreateContacts");
-                        //migrate1.progressBar1.Maximum = contactsHelper.BCMContacts.Count;
+                        
+                        //Import Contacts
                         await contactsHelper.CreateContacts();
+
                         Debug.WriteLine("CreateContacts returned; calling FindPeople");
                         migrate1.progressBar1.Value = 0;
                         migrate1.progressBar1.Maximum = 100;
                         migrate1.progressBar1.PerformStep();
+
+                        //Load Contacts again but via EWS to get ItemLinkID values for use in linking Contacts to Companies
                         await contactsHelper.FindPeople(); //TESTED New FindPeople call that retrieves ItemLinkID as well!
+                        
                         Debug.WriteLine("FindPeople returned; calling CreateContactActivities");
                         migrate1.progressBar1.Value = 0;
                         migrate1.progressBar1.PerformStep();
+
+                        //Create activities
                         await activitiesHelper.CreateContactActivities();
+
                         migrate1.progressBar1.Value = 0;
                         migrate1.progressBar1.PerformStep();
                         Debug.WriteLine("CreateContactActivities returned; calling CreateCompanyLinks");
+
+                        //Link Contacts to Companies
                         await contactsHelper.CreateCompanyLinks(); //HIGH Use progress bar during linking
+
                         Debug.WriteLine("CreateCompanyLinks returned");
                     }
                     else
@@ -620,6 +650,7 @@ namespace BCM_Migration_Tool
                     migrate1.UpdateStatus("Initializing...");
                     if (MigrationHelper.StartXRMSession(AccessToken) == false)
                     {
+                        Log.Error("StartXRMSession returned false");                        
                         return;
                     }
 
@@ -688,27 +719,6 @@ namespace BCM_Migration_Tool
                         {
                             await dealsHelper.UpdateTemplate();
                         }
-                        //switch (cboTestMode.Text)
-                        //{
-                        //    case "Accounts":
-                        //        Debug.WriteLine("Calling MigrateAccounts");
-                        //        await MigrateAccounts();
-                        //        Debug.WriteLine("MigrateAccounts returned");
-                        //        break;
-                        //    case "Contacts":
-                        //        Debug.WriteLine("Calling MigrateBusinessContacts");
-                        //        await MigrateBusinessContacts();
-                        //        Debug.WriteLine("MigrateBusinessContacts returned");
-                        //        break;
-                        //    case "Opportunities":
-                        //        Debug.WriteLine("Calling MigrateOpportunities");
-                        //        await MigrateOpportunities();
-                        //        Debug.WriteLine("MigrateOpportunities returned");
-                        //        break;
-                        //    case "Deal Stages":
-                        //        await dealsHelper.UpdateTemplate();
-                        //        break;
-                        //}
 
                         migrate1.UpdateText("***********MIGRATION COMPLETE***********");
                         migrate1.UpdateText(String.Format("Companies created: {0}", accountsHelper.NumberCreated));
