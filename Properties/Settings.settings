@@ -38,5 +38,11 @@
     <Setting Name="LoginMode" Type="System.String" Scope="User">
       <Value Profile="(Default)">Refresh</Value>
     </Setting>
+    <Setting Name="UseManualConnectionString" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="ManualConnectionString" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
   </Settings>
 </SettingsFile>

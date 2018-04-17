@@ -76,6 +76,7 @@ namespace BCM_Migration_Tool.Objects
         internal static List<Deal> OCMDeals { get; set; }
         internal static List<Deal> OCMDealsCreated { get; set; }
         private int PageSkip { get; set; }
+        internal bool TemplateUpdated { get; set; }
 
         #endregion
 
@@ -96,7 +97,10 @@ namespace BCM_Migration_Tool.Objects
             {
                 PrepareRequest(RequestDataTypes.Links, RequestDataFormats.XML);
 
-                RestResponse<HttpWebResponse> response = await Post<HttpWebResponse>(uri, new StringContent(xmlRequest, Encoding.UTF8, "text/xml"));
+                //RestResponse<HttpWebResponse> response = await Post<HttpWebResponse>(uri, new StringContent(xmlRequest, Encoding.UTF8, "text/xml"));
+                RestResponse<HttpWebResponse> response = await Post<HttpWebResponse>(uri, xmlRequest,
+    RequestDataFormats.XML);
+
                 if (response.StatusCode != HttpStatusCode.Created && response.StatusCode != HttpStatusCode.OK)
                 {
                     OnError(null, new HelperEventArgs(String.Format("ERROR: {0}", response.ErrorContent), HelperEventArgs.EventTypes.Error));
@@ -880,7 +884,9 @@ namespace BCM_Migration_Tool.Objects
 
                     //BUGFIXED ErrorInternalServerError: "Invalid custom property id\"; happens when trying to add BCMID custom prop. Can add it with a subsequent PATCH request with the BCM ID - as below
 
-                    RestResponse<Deal> response = await Post<Deal>(uri, new StringContent(json, Encoding.UTF8, "application/json"));
+                    //RestResponse<Deal> response = await Post<Deal>(uri, new StringContent(json, Encoding.UTF8, "application/json"));
+                    RestResponse<Deal> response = await Post<Deal>(uri, json, RequestDataFormats.JSON);
+
                     if (response.StatusCode != HttpStatusCode.Created && response.StatusCode != HttpStatusCode.OK)
                     {
                         Log.ErrorFormat("ERROR creating deal '{1} (Hashtag: {2})': {0}", response.ErrorContent, opportunity.OpportunityName, ocmDeal.AppliedHashtags[0].Hashtag);
@@ -967,6 +973,12 @@ namespace BCM_Migration_Tool.Objects
             {
                 try
                 {
+                    if (BCMDataLogged)
+                    {
+                        Log.Debug("Previously run - skipping");
+                        return;
+                    }
+
                     OnStart(null, new HelperEventArgs("Getting BCM Opportunities data", HelperEventArgs.EventTypes.Status));
 
                     using (var context = new MSSampleBusinessEntities())
@@ -988,6 +1000,8 @@ namespace BCM_Migration_Tool.Objects
                             OnGetItemComplete(null, new HelperEventArgs(String.Format(" -'{0}'", opp.OpportunityName), HelperEventArgs.EventTypes.Status));
                         }
                     }
+
+                    BCMDataLogged = true;
                 }
                 catch (Exception ex)
                 {
@@ -1070,6 +1084,12 @@ namespace BCM_Migration_Tool.Objects
         {
             using (Log.VerboseCall())
             {
+                if (OCMDataRetrieved)
+                {
+                    Log.Debug("Previously retrieved - skipping");
+                    return;
+                }
+
                 OCMDeals = null;
                 do
                 {
@@ -1081,6 +1101,8 @@ namespace BCM_Migration_Tool.Objects
                 Log.InfoFormat("Found {0} existing OCM Deals:", OCMDeals?.Count);
                 
                 OnGetComplete(null, new HelperEventArgs(String.Format("Found {0} existing OCM Deals", OCMDeals?.Count), HelperEventArgs.EventTypes.Status));
+
+                OCMDataRetrieved = true;
 
                 //foreach (var item in OCMDeals)
                 //{
@@ -1542,6 +1564,12 @@ namespace BCM_Migration_Tool.Objects
                 //TESTED Should only update ALL templates when there is a change!
                 try
                 {
+                    if (TemplateUpdated)
+                    {
+                        Log.Debug("Previously updated - skipping");
+                        return;
+                    }
+
                     OCMDealTemplate.Statuslist openStatusList;
                     OCMDealTemplate.Stage[] ocmStages;
 
@@ -1604,6 +1632,8 @@ namespace BCM_Migration_Tool.Objects
                     DealTemplate.Version += 1;                
                     DealTemplate.Template._Version = DealTemplate.Version;
                     await UpdateTemplateAsync();
+
+                    TemplateUpdated = true;
                 }
                 catch (Exception ex)
                 {

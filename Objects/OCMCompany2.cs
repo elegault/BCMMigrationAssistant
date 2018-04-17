@@ -105,31 +105,4 @@ namespace BCM_Migration_Tool.Objects
 
         public string XrmId { get; set; }
     }
-    //public class Businessaddress
-    //{
-    //    public string Type { get; set; }
-    //    public string Street { get; set; }
-    //    public string City { get; set; }
-    //    public string State { get; set; }
-    //    public string CountryOrRegion { get; set; }
-    //    public string PostalCode { get; set; }
-    //}
-
-    //public class Inlinelinks
-    //{
-    //    public Relationship[] Relationships { get; set; }
-    //}
-
-    //public class Relationship
-    //{
-    //    public string ItemLinkId { get; set; }
-    //    public string ItemType { get; set; }
-    //    public string LinkId { get; set; }
-    //    public string LinkType { get; set; }
-    //    public DateTime CreationTime { get; set; }
-    //    public string SourceMailboxId { get; set; }
-    //    public string DisplayName { get; set; }
-    //    public bool Bidirectional { get; set; }
-    //    public bool Derived { get; set; }
-    //}
 }

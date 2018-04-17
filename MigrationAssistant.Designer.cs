@@ -37,6 +37,8 @@
             this.tabPageMap = new System.Windows.Forms.TabPage();
             this.map1 = new BCM_Migration_Tool.Controls.Map();
             this.tabPageMigrate = new System.Windows.Forms.TabPage();
+            this.numericUpDownRepeatCount = new System.Windows.Forms.NumericUpDown();
+            this.chkRepeatBatch = new System.Windows.Forms.CheckBox();
             this.lblRESTRetries = new System.Windows.Forms.Label();
             this.numericUpDownRetryMax = new System.Windows.Forms.NumericUpDown();
             this.lblRetryDelay = new System.Windows.Forms.Label();
@@ -60,6 +62,7 @@
             this.tabPageConnect.SuspendLayout();
             this.tabPageMap.SuspendLayout();
             this.tabPageMigrate.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownRepeatCount)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownRetryMax)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownRetryDelay)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMaxRecords)).BeginInit();
@@ -92,7 +95,7 @@
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.Padding = new System.Drawing.Point(0, 0);
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(719, 481);
+            this.tabControl1.Size = new System.Drawing.Size(756, 393);
             this.tabControl1.TabIndex = 2;
             // 
             // tabPageConnect
@@ -102,7 +105,7 @@
             this.tabPageConnect.Location = new System.Drawing.Point(4, 22);
             this.tabPageConnect.Name = "tabPageConnect";
             this.tabPageConnect.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageConnect.Size = new System.Drawing.Size(711, 455);
+            this.tabPageConnect.Size = new System.Drawing.Size(748, 367);
             this.tabPageConnect.TabIndex = 0;
             this.tabPageConnect.Text = "Connect";
             // 
@@ -110,13 +113,16 @@
             // 
             this.connect1.BackColor = System.Drawing.Color.White;
             this.connect1.Connected = false;
+            this.connect1.ConnectionString = null;
             this.connect1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.connect1.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.connect1.Location = new System.Drawing.Point(3, 3);
+            this.connect1.ManualConnectionString = "";
             this.connect1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.connect1.Name = "connect1";
-            this.connect1.Size = new System.Drawing.Size(705, 449);
+            this.connect1.Size = new System.Drawing.Size(742, 361);
             this.connect1.TabIndex = 0;
+            this.connect1.UseManualConnectionString = false;
             // 
             // tabPageMap
             // 
@@ -125,7 +131,7 @@
             this.tabPageMap.Location = new System.Drawing.Point(4, 22);
             this.tabPageMap.Name = "tabPageMap";
             this.tabPageMap.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageMap.Size = new System.Drawing.Size(711, 455);
+            this.tabPageMap.Size = new System.Drawing.Size(748, 367);
             this.tabPageMap.TabIndex = 1;
             this.tabPageMap.Text = "Map";
             this.tabPageMap.UseVisualStyleBackColor = true;
@@ -140,11 +146,13 @@
             this.map1.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.map1.Location = new System.Drawing.Point(3, 3);
             this.map1.Name = "map1";
-            this.map1.Size = new System.Drawing.Size(705, 449);
+            this.map1.Size = new System.Drawing.Size(742, 361);
             this.map1.TabIndex = 0;
             // 
             // tabPageMigrate
             // 
+            this.tabPageMigrate.Controls.Add(this.numericUpDownRepeatCount);
+            this.tabPageMigrate.Controls.Add(this.chkRepeatBatch);
             this.tabPageMigrate.Controls.Add(this.lblRESTRetries);
             this.tabPageMigrate.Controls.Add(this.numericUpDownRetryMax);
             this.tabPageMigrate.Controls.Add(this.lblRetryDelay);
@@ -158,27 +166,54 @@
             this.tabPageMigrate.Location = new System.Drawing.Point(4, 22);
             this.tabPageMigrate.Name = "tabPageMigrate";
             this.tabPageMigrate.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageMigrate.Size = new System.Drawing.Size(711, 455);
+            this.tabPageMigrate.Size = new System.Drawing.Size(748, 367);
             this.tabPageMigrate.TabIndex = 2;
             this.tabPageMigrate.Text = "Migrate";
             this.tabPageMigrate.UseVisualStyleBackColor = true;
+            // 
+            // numericUpDownRepeatCount
+            // 
+            this.numericUpDownRepeatCount.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.numericUpDownRepeatCount.Location = new System.Drawing.Point(486, 59);
+            this.numericUpDownRepeatCount.Maximum = new decimal(new int[] {
+            50,
+            0,
+            0,
+            0});
+            this.numericUpDownRepeatCount.Name = "numericUpDownRepeatCount";
+            this.numericUpDownRepeatCount.Size = new System.Drawing.Size(50, 22);
+            this.numericUpDownRepeatCount.TabIndex = 9;
+            this.toolTip1.SetToolTip(this.numericUpDownRepeatCount, "The number of times to repeat the import");
+            // 
+            // chkRepeatBatch
+            // 
+            this.chkRepeatBatch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.chkRepeatBatch.AutoSize = true;
+            this.chkRepeatBatch.Location = new System.Drawing.Point(381, 60);
+            this.chkRepeatBatch.Name = "chkRepeatBatch";
+            this.chkRepeatBatch.Size = new System.Drawing.Size(99, 17);
+            this.chkRepeatBatch.TabIndex = 8;
+            this.chkRepeatBatch.Text = "Repeat Import";
+            this.toolTip1.SetToolTip(this.chkRepeatBatch, "Will restart the migration after completion (use if you want to migrate in small " +
+        "batches and have it re-run automatically)");
+            this.chkRepeatBatch.UseVisualStyleBackColor = true;
             // 
             // lblRESTRetries
             // 
             this.lblRESTRetries.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lblRESTRetries.AutoSize = true;
-            this.lblRESTRetries.Location = new System.Drawing.Point(459, 59);
+            this.lblRESTRetries.Location = new System.Drawing.Point(573, 59);
             this.lblRESTRetries.Name = "lblRESTRetries";
-            this.lblRESTRetries.Size = new System.Drawing.Size(166, 13);
-            this.lblRESTRetries.TabIndex = 11;
-            this.lblRESTRetries.Text = "Max REST call retries on failure:";
+            this.lblRESTRetries.Size = new System.Drawing.Size(113, 13);
+            this.lblRESTRetries.TabIndex = 10;
+            this.lblRESTRetries.Text = "Max REST call retries:";
             this.toolTip1.SetToolTip(this.lblRESTRetries, "How many retries to attempt before aborting the call (this setting is also used w" +
         "hen Test Mode is off)");
             // 
             // numericUpDownRetryMax
             // 
             this.numericUpDownRetryMax.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.numericUpDownRetryMax.Location = new System.Drawing.Point(631, 57);
+            this.numericUpDownRetryMax.Location = new System.Drawing.Point(692, 57);
             this.numericUpDownRetryMax.Maximum = new decimal(new int[] {
             10,
             0,
@@ -186,7 +221,7 @@
             0});
             this.numericUpDownRetryMax.Name = "numericUpDownRetryMax";
             this.numericUpDownRetryMax.Size = new System.Drawing.Size(50, 22);
-            this.numericUpDownRetryMax.TabIndex = 10;
+            this.numericUpDownRetryMax.TabIndex = 11;
             this.toolTip1.SetToolTip(this.numericUpDownRetryMax, "How many retries to attempt before aborting the call (this setting is also used w" +
         "hen Test Mode is off)");
             this.numericUpDownRetryMax.Value = new decimal(new int[] {
@@ -199,17 +234,17 @@
             // 
             this.lblRetryDelay.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lblRetryDelay.AutoSize = true;
-            this.lblRetryDelay.Location = new System.Drawing.Point(511, 34);
+            this.lblRetryDelay.Location = new System.Drawing.Point(573, 34);
             this.lblRetryDelay.Name = "lblRetryDelay";
             this.lblRetryDelay.Size = new System.Drawing.Size(115, 13);
-            this.lblRetryDelay.TabIndex = 9;
+            this.lblRetryDelay.TabIndex = 5;
             this.lblRetryDelay.Text = "REST retry delay (sec):";
             this.toolTip1.SetToolTip(this.lblRetryDelay, "The amount of time in seconds to wait before any failed REST calls are retried");
             // 
             // numericUpDownRetryDelay
             // 
             this.numericUpDownRetryDelay.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.numericUpDownRetryDelay.Location = new System.Drawing.Point(631, 32);
+            this.numericUpDownRetryDelay.Location = new System.Drawing.Point(692, 32);
             this.numericUpDownRetryDelay.Maximum = new decimal(new int[] {
             1800,
             0,
@@ -222,7 +257,7 @@
             0});
             this.numericUpDownRetryDelay.Name = "numericUpDownRetryDelay";
             this.numericUpDownRetryDelay.Size = new System.Drawing.Size(50, 22);
-            this.numericUpDownRetryDelay.TabIndex = 8;
+            this.numericUpDownRetryDelay.TabIndex = 6;
             this.toolTip1.SetToolTip(this.numericUpDownRetryDelay, "The amount of time in seconds to wait before any failed REST calls are retried (t" +
         "his setting is also used when Test Mode is off)");
             this.numericUpDownRetryDelay.Value = new decimal(new int[] {
@@ -235,10 +270,10 @@
             // 
             this.lblMaxRecords.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lblMaxRecords.AutoSize = true;
-            this.lblMaxRecords.Location = new System.Drawing.Point(383, 34);
+            this.lblMaxRecords.Location = new System.Drawing.Point(378, 33);
             this.lblMaxRecords.Name = "lblMaxRecords";
             this.lblMaxRecords.Size = new System.Drawing.Size(72, 13);
-            this.lblMaxRecords.TabIndex = 7;
+            this.lblMaxRecords.TabIndex = 3;
             this.lblMaxRecords.Text = "Max records:";
             this.toolTip1.SetToolTip(this.lblMaxRecords, "Limits the number of records to create (per checked item)");
             // 
@@ -250,20 +285,23 @@
             "Accounts",
             "Contacts",
             "Opportunities",
-            "Deal Stages"});
-            this.chkLBDebugMode.Location = new System.Drawing.Point(252, 34);
+            "Deal Stages",
+            "Account Activities",
+            "Contact Activities",
+            "Opportunity Activities"});
+            this.chkLBDebugMode.Location = new System.Drawing.Point(254, 27);
             this.chkLBDebugMode.Name = "chkLBDebugMode";
-            this.chkLBDebugMode.Size = new System.Drawing.Size(120, 38);
-            this.chkLBDebugMode.TabIndex = 6;
+            this.chkLBDebugMode.Size = new System.Drawing.Size(118, 55);
+            this.chkLBDebugMode.TabIndex = 2;
             // 
             // chkGetOnly
             // 
             this.chkGetOnly.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.chkGetOnly.AutoSize = true;
-            this.chkGetOnly.Location = new System.Drawing.Point(168, 57);
+            this.chkGetOnly.Location = new System.Drawing.Point(170, 55);
             this.chkGetOnly.Name = "chkGetOnly";
             this.chkGetOnly.Size = new System.Drawing.Size(69, 17);
-            this.chkGetOnly.TabIndex = 2;
+            this.chkGetOnly.TabIndex = 7;
             this.chkGetOnly.Text = "Get only";
             this.toolTip1.SetToolTip(this.chkGetOnly, "Will not create records if checked");
             this.chkGetOnly.UseVisualStyleBackColor = true;
@@ -272,7 +310,7 @@
             // 
             this.chkTestMode.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.chkTestMode.AutoSize = true;
-            this.chkTestMode.Location = new System.Drawing.Point(168, 34);
+            this.chkTestMode.Location = new System.Drawing.Point(170, 33);
             this.chkTestMode.Name = "chkTestMode";
             this.chkTestMode.Size = new System.Drawing.Size(78, 17);
             this.chkTestMode.TabIndex = 1;
@@ -289,7 +327,7 @@
             0,
             0,
             0});
-            this.numericUpDownMaxRecords.Location = new System.Drawing.Point(386, 50);
+            this.numericUpDownMaxRecords.Location = new System.Drawing.Point(486, 31);
             this.numericUpDownMaxRecords.Maximum = new decimal(new int[] {
             10000,
             0,
@@ -307,7 +345,7 @@
             this.migrate1.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.migrate1.Location = new System.Drawing.Point(3, 3);
             this.migrate1.Name = "migrate1";
-            this.migrate1.Size = new System.Drawing.Size(705, 449);
+            this.migrate1.Size = new System.Drawing.Size(742, 361);
             this.migrate1.TabIndex = 0;
             // 
             // tabPageConfig
@@ -316,7 +354,7 @@
             this.tabPageConfig.Location = new System.Drawing.Point(4, 22);
             this.tabPageConfig.Name = "tabPageConfig";
             this.tabPageConfig.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageConfig.Size = new System.Drawing.Size(711, 455);
+            this.tabPageConfig.Size = new System.Drawing.Size(748, 367);
             this.tabPageConfig.TabIndex = 3;
             this.tabPageConfig.Text = "Configure";
             this.tabPageConfig.UseVisualStyleBackColor = true;
@@ -329,7 +367,7 @@
             this.configure1.Location = new System.Drawing.Point(3, 3);
             this.configure1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.configure1.Name = "configure1";
-            this.configure1.Size = new System.Drawing.Size(705, 449);
+            this.configure1.Size = new System.Drawing.Size(742, 361);
             this.configure1.TabIndex = 0;
             // 
             // panel1
@@ -344,7 +382,7 @@
             this.panel1.Controls.Add(this.labelApp);
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(709, 89);
+            this.panel1.Size = new System.Drawing.Size(746, 89);
             this.panel1.TabIndex = 0;
             // 
             // lblWebSite
@@ -385,7 +423,7 @@
             this.lblCurrentUser.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(117)))), ((int)(((byte)(182)))));
             this.lblCurrentUser.Location = new System.Drawing.Point(414, 9);
             this.lblCurrentUser.Name = "lblCurrentUser";
-            this.lblCurrentUser.Size = new System.Drawing.Size(283, 21);
+            this.lblCurrentUser.Size = new System.Drawing.Size(320, 21);
             this.lblCurrentUser.TabIndex = 1;
             this.lblCurrentUser.Text = "Signed in as:";
             this.lblCurrentUser.TextAlign = System.Drawing.ContentAlignment.TopRight;
@@ -400,6 +438,7 @@
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
             this.pictureBox1.TabIndex = 1;
             this.pictureBox1.TabStop = false;
+            this.pictureBox1.Click += new System.EventHandler(this.pictureBox1_Click);
             // 
             // navigationBar1
             // 
@@ -414,7 +453,7 @@
             this.navigationBar1.MigrateEnabled = false;
             this.navigationBar1.Name = "navigationBar1";
             this.navigationBar1.NavigationBarState = BCM_Migration_Tool.Controls.NavigationBar.NavigationBarStates.Configuration;
-            this.navigationBar1.Size = new System.Drawing.Size(706, 42);
+            this.navigationBar1.Size = new System.Drawing.Size(743, 42);
             this.navigationBar1.TabIndex = 1;
             // 
             // MigrationAssistant
@@ -423,7 +462,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.AutoScroll = true;
             this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(709, 592);
+            this.ClientSize = new System.Drawing.Size(746, 504);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.navigationBar1);
@@ -440,6 +479,7 @@
             this.tabPageMap.PerformLayout();
             this.tabPageMigrate.ResumeLayout(false);
             this.tabPageMigrate.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownRepeatCount)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownRetryMax)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownRetryDelay)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMaxRecords)).EndInit();
@@ -479,5 +519,7 @@
         internal System.Windows.Forms.Label lblRetryDelay;
         internal System.Windows.Forms.NumericUpDown numericUpDownRetryDelay;
         internal System.Windows.Forms.NumericUpDown numericUpDownMaxRecords;
+        internal System.Windows.Forms.NumericUpDown numericUpDownRepeatCount;
+        private System.Windows.Forms.CheckBox chkRepeatBatch;
     }
 }

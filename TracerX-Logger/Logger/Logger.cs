@@ -1199,7 +1199,7 @@ namespace TracerX {
 
                 if (!cancelled)
                 {
-                    if (BinaryFileTraceLevel >= msgLevel)
+                     if (BinaryFileTraceLevel >= msgLevel)
                     {
                         CommitToBinaryFile();
                         BinaryFile.LogMsg(this, threadData, msgLevel, msg);

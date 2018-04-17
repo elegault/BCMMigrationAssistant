@@ -122,14 +122,20 @@ namespace BCM_Migration_Tool.Objects
         #endregion
         #region Properties
         protected internal string AccessToken { get; set; }
+        internal bool BCMDataLogged { get; set; }
         internal bool Cancelled { get; set; }
         internal string ConnectionString { get; private set; }
-        internal bool FullRESTLogging { get; set; }
+        internal bool DisableCustomFields { get; set; }
+        internal bool FullRESTLogging { get; set; }        
         internal bool LogRecordNames { get; set; }
         internal int NumberCreated { get; set; }
         internal int NumberOfErrors { get; set; }
         internal int NumberToProcess { get; set; }
         internal int NumberUpdated { get; set; }
+        /// <summary>
+        /// Set to true after existing OCM data (for the Company, Contact or Deal) has already been retrieved and not to re-fetch if running a subsequent migration in the same session
+        /// </summary>
+        internal bool OCMDataRetrieved { get; set; }
         internal int RESTRetryDelay { get; set; }
         internal int RESTRetryMax { get; set; }
         internal int TestingMaximum { get; set; }
@@ -236,6 +242,18 @@ namespace BCM_Migration_Tool.Objects
             if (FullRESTLogging)
                 Log.VerboseFormat("POST request to {0}", request);
             return ParseJsonResponseForPOST<T>(request, payload, true, RESTRetryDelay, RESTRetryMax, FullRESTLogging, null, false);
+        }
+        public Task<RestResponse<T>> Post<T>(Uri request, string requestData, RequestDataFormats format, bool logContent, string logMessage, bool doNotLogRequest, bool doNotLogErrors) where T : class
+        {
+            if (!doNotLogRequest)
+                Log.VerboseFormat("POST request to {0}{1}", request, requestData != null ? ": " + requestData : null);
+            return ParseJsonResponseForPOST<T>(request, requestData, format, logContent, logMessage, doNotLogErrors);
+        }
+        public Task<RestResponse<T>> Post<T>(Uri request, string requestData, RequestDataFormats format) where T : class
+        {
+            if (FullRESTLogging)
+                Log.VerboseFormat("POST request to {0}", request);
+            return ParseJsonResponseForPOST<T>(request, requestData, format, true, RESTRetryDelay, RESTRetryMax, FullRESTLogging, null, false);
         }
         private async Task<RestResponse<T>> ParseJsonResponseForGET<T>(string request, bool logContent, string logMessage, bool doNotLogErrors) where T : class
         {
@@ -486,6 +504,11 @@ namespace BCM_Migration_Tool.Objects
             return await ParseJsonResponseForPOST<T>(request, payload, true, RESTRetryDelay, RESTRetryMax, logContent, logMessage,
                 doNotLogErrors);
         }
+        private async Task<RestResponse<T>> ParseJsonResponseForPOST<T>(Uri request, string requestData, RequestDataFormats format, bool logContent, string logMessage, bool doNotLogErrors) where T : class
+        {
+            return await ParseJsonResponseForPOST<T>(request, requestData, format, true, RESTRetryDelay, RESTRetryMax, logContent, logMessage,
+                doNotLogErrors);
+        }
         /// <summary>
         /// Use if you want to override any testing settings
         /// </summary>
@@ -509,6 +532,9 @@ namespace BCM_Migration_Tool.Objects
                 bool tokenRetry = false;
 
                 retry:
+
+                if (tokenRetry)
+                    Log.Debug("Retrying...");
 
                 //BUG 3/17/2018 When retrying, starting this again throws Exception type: System.ObjectDisposedException on payload (HttpContent) param. Should pass json string instead and create HttpContent object here before the using loop
                 
@@ -622,8 +648,20 @@ namespace BCM_Migration_Tool.Objects
                             lastStatusCode = response.StatusCode;
                             if (retryUntilTimeout && retries != 0 && retryCnt <= retries)
                             {
-                                Log.WarnFormat("InternalServerError; sleeping for {0} (retry count: {1})", 300000, retryCnt);
-                                Thread.Sleep(300000);
+                                if (content.Contains("ErrorServerBusy"))
+                                {
+                                    OnError(null, new HelperEventArgs(String.Format("Server is busy/overloaded - must pause for 5 minutes (at: {0})", DateTime.Now.ToLongTimeString()), HelperEventArgs.EventTypes.Error));
+                                    Log.WarnFormat("Server is busy - sleeping for {0} (retry count: {1})", 300000,
+                                        retryCnt);
+                                    Thread.Sleep(300000);
+                                }
+                                else
+                                {
+                                    Log.WarnFormat("InternalServerError; sleeping for {0} (retry count: {1})", timeOut,
+    retryCnt);
+                                    Thread.Sleep(timeOut);
+                                }
+
                                 retryCnt++;
                                 //goto retry;
                                 tokenRetry = true; //Only retry once
@@ -649,6 +687,201 @@ namespace BCM_Migration_Tool.Objects
                 if (tokenRetry)
                     goto retry;
                 
+                return result;
+            }
+        }
+        /// <summary>
+        /// Use to build HttpContent inline so it is not disposed if a retry is need. Use if you want to override any testing settings.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="request"></param>
+        /// <param name="requestData"></param>
+        /// <param name="format"></param>
+        /// <param name="retryUntilTimeout"></param>
+        /// <param name="timeOut"></param>
+        /// <param name="retries"></param>
+        /// <param name="logContent"></param>
+        /// <param name="logMessage"></param>
+        /// <param name="doNotLogErrors"></param>
+        /// <returns></returns>
+        private async Task<RestResponse<T>> ParseJsonResponseForPOST<T>(Uri request, string requestData, RequestDataFormats format, bool retryUntilTimeout, int timeOut, int retries, bool logContent, string logMessage, bool doNotLogErrors = false) where T : class
+        {
+            HttpContent payload = null;
+
+            using (Log.VerboseCall())
+            {
+                RestResponse<T> result = null;
+                HttpStatusCode lastStatusCode;
+                int retryCnt = 0;
+                bool tokenRetry = false;
+
+                retry:
+
+                payload = null;
+                switch (format)
+                {
+                    case RequestDataFormats.JSON:
+                        payload = new StringContent(requestData, Encoding.UTF8, "application/json");
+                        break;
+                    case RequestDataFormats.XML:
+                        payload = new StringContent(requestData, Encoding.UTF8, "text/xml");
+                        break;
+                }
+
+                if (tokenRetry)
+                    Log.Debug("Retrying...");
+
+                //BUG 3/17/2018 When retrying, starting this again throws Exception type: System.ObjectDisposedException on payload (HttpContent) param. Should pass json string instead and create HttpContent object here before the using loop
+
+                using (var response = await _httpClient.PostAsync(request, payload))
+                {
+                    if (response == null)
+                    {
+                        //return new RestResponse<T> {StatusCode = HttpStatusCode.ServiceUnavailable};
+                        return new RestResponse<T> { FatalError = true };
+                    }
+
+                    var content = await response.Content.ReadAsStringAsync();
+
+                    if (logContent)
+                    {
+                        Log.VerboseFormat("{0}{1}{2}", logMessage, String.IsNullOrEmpty(logMessage) ? "" : Environment.NewLine, content);
+                    }
+
+                    switch (response.StatusCode)
+                    {
+                        case HttpStatusCode.Created:
+                        case HttpStatusCode.OK:
+                            object objResponse;
+                            try
+                            {
+                                objResponse = JsonConvert.DeserializeObject<T>(content); //jsonSerializer.ReadObject(content);
+                            }
+                            catch
+                            {
+                                //This is okay for some POST requests, like those that return XML that we don't need to parse/Deserialize. Only with OK responses??
+                                objResponse = null;
+                            }
+                            try
+                            {
+                                result = new RestResponse<T>();
+                                result.StatusCode = response.StatusCode;
+                                if (payload.Headers.ContentType.MediaType == "text/xml")
+                                {
+                                    //There must be a better way to return string in the content if the caller is passing <string> as T...
+                                    result.StringContent = content;
+                                }
+                                else
+                                {
+                                    result.Content = objResponse as T;
+                                }
+                            }
+                            catch (System.Exception ex)
+                            {
+                                Log.Error(ex);
+                                result = new RestResponse<T>() { StatusCode = response.StatusCode };
+                            }
+                            finally
+                            { tokenRetry = false; }
+                            break;
+                        case HttpStatusCode.Unauthorized:
+                            //result = new RestResponse<T>() { StatusCode = response.StatusCode };
+
+                            if (!doNotLogErrors)
+                                Log.ErrorFormat("{0}: {1}", response.StatusCode, content);
+
+                            lastStatusCode = response.StatusCode;
+                            if (!tokenRetry)
+                            {
+                                AuthenticationResult authenticationResult = MigrationHelper.GetAccessToken(true);
+                                if (authenticationResult != null &&
+                                    !String.IsNullOrEmpty(authenticationResult.AccessToken))
+                                {
+                                    AccessToken = authenticationResult.AccessToken;
+                                    Log.WarnFormat("Retrying with refreshed token {0}", AccessToken);
+                                    tokenRetry = true; //Only retry once
+                                    //goto retry;
+                                }
+                                else
+                                {
+                                    result = new RestResponse<T>() { StatusCode = response.StatusCode };
+                                }
+                            }
+                            else
+                            {
+                                tokenRetry = false; //Only retry once
+                            }
+                            break;
+                        case HttpStatusCode.ServiceUnavailable:
+
+                            if (!doNotLogErrors)
+                                Log.ErrorFormat("{0}: {1}", response.StatusCode, content);
+
+                            lastStatusCode = response.StatusCode;
+                            if (retryUntilTimeout && retries != 0 && retryCnt <= retries)
+                            {
+                                Log.WarnFormat("ServiceUnavailable; sleeping for {0} (retry count: {1})", timeOut, retryCnt);
+                                Thread.Sleep(timeOut);
+                                retryCnt++;
+                                //goto retry;
+                                tokenRetry = true; //Only retry once
+                            }
+                            else
+                            {
+                                result = new RestResponse<T>() { StatusCode = response.StatusCode };
+                                tokenRetry = false;
+                            }
+                            break;
+                        case HttpStatusCode.InternalServerError:
+                            //New 3/17
+                            //BUG Should grab BackOffMilliseconds count and use that for timeout val, but hardcode to 300 seconds (300000 ms) for now                                                                 
+                            //InternalServerError: <?xml version="1.0" encoding="utf-8"?><s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"><s:Body><s:Fault><faultcode xmlns:a="http://schemas.microsoft.com/exchange/services/2006/types">a:ErrorServerBusy</faultcode><faultstring xml:lang="en-US">The server cannot service this request right now. Try again later.</faultstring><detail><e:ResponseCode xmlns:e="http://schemas.microsoft.com/exchange/services/2006/errors">ErrorServerBusy</e:ResponseCode><e:Message xmlns:e="http://schemas.microsoft.com/exchange/services/2006/errors">The server cannot service this request right now. Try again later.</e:Message><t:MessageXml xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types"><t:Value Name="BackOffMilliseconds">299718</t:Value></t:MessageXml></detail></s:Fault></s:Body></s:Envelope>
+
+                            if (!doNotLogErrors)
+                                Log.ErrorFormat("{0}: {1}", response.StatusCode, content);
+
+                            lastStatusCode = response.StatusCode;
+                            if (retryUntilTimeout && retries != 0 && retryCnt <= retries)
+                            {
+                                if (content.Contains("ErrorServerBusy"))
+                                {
+                                    OnError(null, new HelperEventArgs(String.Format("Server is busy/overloaded - must pause for 5 minutes (at: {0})", DateTime.Now.ToLongTimeString()), HelperEventArgs.EventTypes.Error));
+                                    Log.WarnFormat("Server is busy - sleeping for {0} (retry count: {1})", 300000,
+                                        retryCnt);
+                                    Thread.Sleep(300000);
+                                }
+                                else
+                                {
+                                    Log.WarnFormat("InternalServerError; sleeping for {0} (retry count: {1})", timeOut,
+    retryCnt);
+                                    Thread.Sleep(timeOut);
+                                }
+
+                                retryCnt++;
+                                //goto retry;
+                                tokenRetry = true; //Only retry once
+                            }
+                            else
+                            {
+                                result = new RestResponse<T>() { StatusCode = response.StatusCode };
+                                tokenRetry = false;
+                            }
+                            break;
+
+                        default:
+                            result = new RestResponse<T>();
+                            result.StatusCode = response.StatusCode;
+                            result.ErrorContent = content;
+                            if (!doNotLogErrors)
+                                Log.ErrorFormat("{0}: {1}", response.StatusCode, content);
+                            tokenRetry = false;
+                            break;
+                    }
+                }
+
+                if (tokenRetry)
+                    goto retry;
+
                 return result;
             }
         }

@@ -124,7 +124,8 @@ namespace BCM_Migration_Tool.Objects
 
                                                 PrepareRequest(RequestDataTypes.Activities, RequestDataFormats.JSON);
 
-                                                RestResponse<HttpWebResponse> response = await Post<HttpWebResponse>(uri, new StringContent(json, Encoding.UTF8, "application/json"));
+                                                //RestResponse<HttpWebResponse> response = await Post<HttpWebResponse>(uri, new StringContent(json, Encoding.UTF8, "application/json"));
+                                                RestResponse<HttpWebResponse> response = await Post<HttpWebResponse>(uri, json, RequestDataFormats.JSON);
 
                                                 if (response.StatusCode != HttpStatusCode.Created && response.StatusCode != HttpStatusCode.OK)
                                                 {
@@ -179,7 +180,7 @@ namespace BCM_Migration_Tool.Objects
                                     }
                                     else
                                     {
-                                        //Log.VerboseFormat("No results for query: {0}", sql);
+                                        Log.VerboseFormat("No results for query: {0}", sql);
                                         //leave; no activities to create
                                         return 0;
                                     }
@@ -239,8 +240,6 @@ namespace BCM_Migration_Tool.Objects
                                 //Previously imported Company - don't create activity as could create duplicate
                                 Log.VerboseFormat("Not creating activity (no BCM ID for company '{0}' (ID: {1}))", company.DisplayName, company.Id);
                                 //Not an error!
-                                //OnError(null, new HelperEventArgs(String.Format("No BCM ID for company '{0}' (XRM ID: {1})", company.DisplayName, company.XrmId), HelperEventArgs.EventTypes.Error));
-                                //errors += 1;
                                 continue;
                             }
                         }

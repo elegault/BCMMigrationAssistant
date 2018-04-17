@@ -30,7 +30,7 @@ namespace BCM_Migration_Tool
 
                 Logger.DefaultBinaryFile.Name = "BCM_MT_Log";
                 Logger.DefaultBinaryFile.Directory = filePath;
-                Logger.DefaultBinaryFile.MaxSizeMb = 100; //MB
+                Logger.DefaultBinaryFile.MaxSizeMb = 500; //MB
                 Logger.DefaultBinaryFile.CircularStartSizeKb = 0;
                 Logger.DefaultBinaryFile.CircularStartDelaySeconds = 0;
                 Logger.DefaultBinaryFile.Archives = 3;

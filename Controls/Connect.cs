@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Drawing;
 using System.Windows.Forms;
 using BCM_Migration_Tool.Objects;
+using Microsoft.Data.ConnectionUI;
+using TracerX;
 
 namespace BCM_Migration_Tool.Controls
 {
@@ -20,12 +23,15 @@ namespace BCM_Migration_Tool.Controls
         #region Fields
 
         private bool _connected;
+        private SqlFileConnectionProperties cp;
+        private SqlConnectionUIControl uic;
+        private DataConnectionDialog dcd;
+        private static Logger Log = Logger.GetLogger("Connect");
         public event EventHandler<ConnectEventArgs> AuthenticationChanged;
         public event EventHandler LoginClicked;
-        public event EventHandler TestDBConnectionClicked;
+        public event EventHandler ConnectToDBClicked;
         #endregion
-        #region Properties
-
+        #region Properties        
         public bool Connected
         {
             get { return _connected; }
@@ -43,7 +49,29 @@ namespace BCM_Migration_Tool.Controls
                 Invalidate();
             }
         }
-
+        public string ConnectionString { get; set; }
+        public string ManualConnectionString
+        {
+            get
+            {
+                return txtConnectionString.Text;
+            }
+            set
+            {
+                txtConnectionString.Text = value;
+            }
+        }
+        public bool UseManualConnectionString
+        {
+            get
+            {
+                return chkUseConnectionString.Checked;
+            }
+            set
+            {
+                chkUseConnectionString.Checked = value;
+            }
+        }
         #endregion
         #region Control Events
         private void cboAuthentication_SelectedIndexChanged(object sender, EventArgs e)
@@ -69,23 +97,54 @@ namespace BCM_Migration_Tool.Controls
             OnAuthenticationChanged(args);
         }
 
+        private void chkUseConnectionString_CheckedChanged(object sender, EventArgs e)
+        {
+            //UseManualConnectionString = chkUseConnectionString.Checked;
+        }
+
         private void lblAppRegHelp_Click(object sender, EventArgs e)
         {
             Process.Start("https://developer.microsoft.com/en-us/graph/docs/concepts/auth_register_app_v2");
         }
 
+        private void lblAdvancedConfiguration_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                dcd = new DataConnectionDialog();
+
+                chkUseConnectionString.Visible = true;
+                txtConnectionString.Visible = true;
+                dcd.DataSources.Add(DataSource.SqlDataSource);
+                if (Microsoft.Data.ConnectionUI.DataConnectionDialog.Show(dcd) == System.Windows.Forms.DialogResult.OK)
+                {
+                    //ConnectionString = dcd.ConnectionString;
+                    chkUseConnectionString.Checked = true;
+                    txtConnectionString.Text = ConnectionString;
+                    Log.InfoFormat("Advanced connection string: {0}", ConnectionString);
+                }
+            }
+            catch (System.Exception ex)
+            {
+                Log.Error(ex);
+            }
+            finally
+            { }
+        }
+
         private void lblConnect_Click(object sender, EventArgs e)
         {
-            lblConnectionString.Visible = !lblConnectionString.Visible;
+            //lblConnectionString.Visible = !lblConnectionString.Visible;
+            //lblBuildConnectionString.Visible = !lblBuildConnectionString.Visible;
         }
         private void lblLogin_Click(object sender, EventArgs e)
         {
             OnLoginClicked();
         }
 
-        private void lblTestConnection_Click(object sender, EventArgs e)
+        private void lblConnectToDB_Click(object sender, EventArgs e)
         {
-            OnTestDBConnectionClicked();
+            OnConnectToDBClicked();
         }
         #endregion
         #region Methods
@@ -129,9 +188,9 @@ namespace BCM_Migration_Tool.Controls
             LoginClicked?.Invoke(this, EventArgs.Empty);
         }
 
-        protected virtual void OnTestDBConnectionClicked()
+        protected virtual void OnConnectToDBClicked()
         {
-            TestDBConnectionClicked?.Invoke(this, EventArgs.Empty);
+            ConnectToDBClicked?.Invoke(this, EventArgs.Empty);
         }
         #endregion
     }

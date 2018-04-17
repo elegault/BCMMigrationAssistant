@@ -41,10 +41,12 @@
             this.txtPassword = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.txtUserName = new System.Windows.Forms.TextBox();
-            this.lblTestConnection = new System.Windows.Forms.Label();
+            this.lblAdvancedConfiguration = new System.Windows.Forms.Label();
+            this.chkUseConnectionString = new System.Windows.Forms.CheckBox();
+            this.txtConnectionString = new System.Windows.Forms.TextBox();
+            this.lblConnectToDB = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.lblLogin = new System.Windows.Forms.Label();
-            this.lblConnectionString = new System.Windows.Forms.Label();
             this.cboLoginOptions = new System.Windows.Forms.ComboBox();
             this.label3 = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
@@ -132,11 +134,14 @@
             // flowLayoutPanel1
             // 
             this.flowLayoutPanel1.Controls.Add(this.panelDBLogin);
-            this.flowLayoutPanel1.Controls.Add(this.lblTestConnection);
+            this.flowLayoutPanel1.Controls.Add(this.lblAdvancedConfiguration);
+            this.flowLayoutPanel1.Controls.Add(this.chkUseConnectionString);
+            this.flowLayoutPanel1.Controls.Add(this.txtConnectionString);
+            this.flowLayoutPanel1.Controls.Add(this.lblConnectToDB);
             this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(8, 207);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(244, 157);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(503, 257);
             this.flowLayoutPanel1.TabIndex = 11;
             // 
             // panelDBLogin
@@ -191,19 +196,56 @@
             this.txtUserName.Size = new System.Drawing.Size(196, 25);
             this.txtUserName.TabIndex = 1;
             // 
-            // lblTestConnection
+            // lblAdvancedConfiguration
             // 
-            this.lblTestConnection.AutoSize = true;
-            this.lblTestConnection.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.lblTestConnection.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblTestConnection.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(117)))), ((int)(((byte)(182)))));
-            this.lblTestConnection.Location = new System.Drawing.Point(0, 121);
-            this.lblTestConnection.Margin = new System.Windows.Forms.Padding(0, 10, 3, 0);
-            this.lblTestConnection.Name = "lblTestConnection";
-            this.lblTestConnection.Size = new System.Drawing.Size(168, 17);
-            this.lblTestConnection.TabIndex = 1;
-            this.lblTestConnection.Text = "Test Database Connection";
-            this.lblTestConnection.Click += new System.EventHandler(this.lblTestConnection_Click);
+            this.lblAdvancedConfiguration.AutoSize = true;
+            this.lblAdvancedConfiguration.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.lblAdvancedConfiguration.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblAdvancedConfiguration.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(117)))), ((int)(((byte)(182)))));
+            this.lblAdvancedConfiguration.Location = new System.Drawing.Point(0, 121);
+            this.lblAdvancedConfiguration.Margin = new System.Windows.Forms.Padding(0, 10, 3, 0);
+            this.lblAdvancedConfiguration.Name = "lblAdvancedConfiguration";
+            this.lblAdvancedConfiguration.Size = new System.Drawing.Size(170, 17);
+            this.lblAdvancedConfiguration.TabIndex = 15;
+            this.lblAdvancedConfiguration.Text = "Advanced Configuration...";
+            this.lblAdvancedConfiguration.Click += new System.EventHandler(this.lblAdvancedConfiguration_Click);
+            // 
+            // chkUseConnectionString
+            // 
+            this.chkUseConnectionString.AutoSize = true;
+            this.chkUseConnectionString.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkUseConnectionString.Location = new System.Drawing.Point(3, 141);
+            this.chkUseConnectionString.Name = "chkUseConnectionString";
+            this.chkUseConnectionString.Size = new System.Drawing.Size(156, 21);
+            this.chkUseConnectionString.TabIndex = 16;
+            this.chkUseConnectionString.Text = "Use connection string:";
+            this.chkUseConnectionString.UseVisualStyleBackColor = true;
+            this.chkUseConnectionString.Visible = false;
+            this.chkUseConnectionString.CheckedChanged += new System.EventHandler(this.chkUseConnectionString_CheckedChanged);
+            // 
+            // txtConnectionString
+            // 
+            this.txtConnectionString.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtConnectionString.Location = new System.Drawing.Point(3, 168);
+            this.txtConnectionString.Multiline = true;
+            this.txtConnectionString.Name = "txtConnectionString";
+            this.txtConnectionString.Size = new System.Drawing.Size(481, 52);
+            this.txtConnectionString.TabIndex = 16;
+            this.txtConnectionString.Visible = false;
+            // 
+            // lblConnectToDB
+            // 
+            this.lblConnectToDB.AutoSize = true;
+            this.lblConnectToDB.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.lblConnectToDB.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblConnectToDB.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(117)))), ((int)(((byte)(182)))));
+            this.lblConnectToDB.Location = new System.Drawing.Point(0, 233);
+            this.lblConnectToDB.Margin = new System.Windows.Forms.Padding(0, 10, 3, 0);
+            this.lblConnectToDB.Name = "lblConnectToDB";
+            this.lblConnectToDB.Size = new System.Drawing.Size(136, 17);
+            this.lblConnectToDB.TabIndex = 1;
+            this.lblConnectToDB.Text = "Connect to Database";
+            this.lblConnectToDB.Click += new System.EventHandler(this.lblConnectToDB_Click);
             // 
             // label2
             // 
@@ -222,24 +264,13 @@
             this.lblLogin.Enabled = false;
             this.lblLogin.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblLogin.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(117)))), ((int)(((byte)(182)))));
-            this.lblLogin.Location = new System.Drawing.Point(309, 95);
+            this.lblLogin.Location = new System.Drawing.Point(309, 41);
             this.lblLogin.Margin = new System.Windows.Forms.Padding(3, 10, 3, 0);
             this.lblLogin.Name = "lblLogin";
             this.lblLogin.Size = new System.Drawing.Size(126, 17);
             this.lblLogin.TabIndex = 7;
             this.lblLogin.Text = "Login to Office 365";
             this.lblLogin.Click += new System.EventHandler(this.lblLogin_Click);
-            // 
-            // lblConnectionString
-            // 
-            this.lblConnectionString.AutoEllipsis = true;
-            this.lblConnectionString.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblConnectionString.Location = new System.Drawing.Point(309, 154);
-            this.lblConnectionString.Name = "lblConnectionString";
-            this.lblConnectionString.Size = new System.Drawing.Size(347, 210);
-            this.lblConnectionString.TabIndex = 12;
-            this.lblConnectionString.Text = "DB Connection string:";
-            this.lblConnectionString.Visible = false;
             // 
             // cboLoginOptions
             // 
@@ -251,20 +282,22 @@
             "Always Prompt",
             "Automatic",
             "Refresh"});
-            this.cboLoginOptions.Location = new System.Drawing.Point(312, 57);
+            this.cboLoginOptions.Location = new System.Drawing.Point(312, 91);
             this.cboLoginOptions.Name = "cboLoginOptions";
             this.cboLoginOptions.Size = new System.Drawing.Size(199, 25);
             this.cboLoginOptions.TabIndex = 5;
+            this.cboLoginOptions.Visible = false;
             // 
             // label3
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(309, 37);
+            this.label3.Location = new System.Drawing.Point(309, 71);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(90, 17);
             this.label3.TabIndex = 3;
             this.label3.Text = "Login Options";
+            this.label3.Visible = false;
             // 
             // pictureBox1
             // 
@@ -295,7 +328,6 @@
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.cboLoginOptions);
-            this.Controls.Add(this.lblConnectionString);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.lblLogin);
             this.Controls.Add(this.flowLayoutPanel1);
@@ -309,7 +341,7 @@
             this.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "Connect";
-            this.Size = new System.Drawing.Size(680, 391);
+            this.Size = new System.Drawing.Size(680, 474);
             this.flowLayoutPanel1.ResumeLayout(false);
             this.flowLayoutPanel1.PerformLayout();
             this.panelDBLogin.ResumeLayout(false);
@@ -336,13 +368,15 @@
         internal System.Windows.Forms.TextBox txtServer;
         internal System.Windows.Forms.TextBox txtUserName;
         internal System.Windows.Forms.ComboBox cboAuthentication;
-        private System.Windows.Forms.Label lblTestConnection;
         private System.Windows.Forms.Label label2;
-        internal System.Windows.Forms.Label lblConnectionString;
         internal System.Windows.Forms.ComboBox cboLoginOptions;
         private System.Windows.Forms.Label label3;
         internal System.Windows.Forms.Label lblLogin;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.PictureBox pictureBox2;
+        private System.Windows.Forms.Label lblAdvancedConfiguration;
+        private System.Windows.Forms.CheckBox chkUseConnectionString;
+        private System.Windows.Forms.TextBox txtConnectionString;
+        internal System.Windows.Forms.Label lblConnectToDB;
     }
 }

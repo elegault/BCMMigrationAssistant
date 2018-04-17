@@ -98,23 +98,24 @@ namespace BCM_Migration_Tool.Objects
                     //Authority e.g.: https://login.microsoftonline.com/common/mydomain.onmicrosoft.com/
                     var authenticationContext = new AuthenticationContext(Authority);
 
-                    PromptBehavior promptBehavior;
+                    PromptBehavior promptBehavior = PromptBehavior.Auto;
 
-                    switch (Settings.Default.LoginMode)
-                    {
-                        case "Always":
-                            promptBehavior = PromptBehavior.Always;
-                            break;
-                        case "Automatic":
-                            promptBehavior = PromptBehavior.Auto;
-                            break;
-                        case "Refresh":
-                            promptBehavior = PromptBehavior.RefreshSession;
-                            break;
-                        default:
-                            promptBehavior = PromptBehavior.RefreshSession;
-                            break;
-                    }
+                    //These settings don't seem to change any behaviour; remove for now
+                    //switch (Settings.Default.LoginMode)
+                    //{
+                    //    case "Always":
+                    //        promptBehavior = PromptBehavior.Always;
+                    //        break;
+                    //    case "Automatic":
+                    //        promptBehavior = PromptBehavior.Auto;
+                    //        break;
+                    //    case "Refresh":
+                    //        promptBehavior = PromptBehavior.RefreshSession;
+                    //        break;
+                    //    default:
+                    //        promptBehavior = PromptBehavior.RefreshSession;
+                    //        break;
+                    //}
 
                     // Get the access token       
                     if (silent)

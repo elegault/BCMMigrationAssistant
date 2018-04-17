@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Data.Common;
+using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using BcmMigrationTool;
@@ -29,7 +32,7 @@ namespace BCM_Migration_Tool
             navigationBar1.ConfigClicked += navigationBar1_ConfigClicked;
             connect1.LoginClicked += connect1_LoginClicked;
             connect1.AuthenticationChanged += connect1_AuthenticationChanged;
-            connect1.TestDBConnectionClicked += connect1_TestDBConnectionClicked;
+            connect1.ConnectToDBClicked += connect1_ConnectToDBClicked;
             migrate1.StartClicked += migrate1_StartClicked;
             migrate1.StopClicked += migrate1_StopClicked;
             configure1.cmdDeleteDeals.Click += cmdDeleteDeals_Click;            
@@ -60,10 +63,12 @@ namespace BCM_Migration_Tool
         private ActivitiesHelper activitiesHelper { get; set; }
         private ContactsHelper contactsHelper { get; set; }
         private DealsHelper dealsHelper { get; set; }
-        //private AccountsHelper accountsHelper { get { return MigrationHelper.accountsHelper; } }
-        private string ConnectionString { get; set; }        
+        private TesterHelper testerHelper { get; set; }
+        private string ConnectionString { get { return connect1.ConnectionString; }}
+        private bool DisableCustomContactFields { get; set; }
+        private int ImportRepeatCount { get; set; }
         private bool MappingsInitialized { get; set; }
-        private bool MigrateClicked { get; set; }
+        private bool MigrateClicked { get; set; }        
         #endregion
 
         #region Form Events
@@ -114,6 +119,7 @@ namespace BCM_Migration_Tool
                 if (contactsHelper == null)
                 {
                     contactsHelper = new ContactsHelper(AccessToken, ConnectionString);
+                    contactsHelper.DisableCustomFields = DisableCustomContactFields;
                     contactsHelper.CreateItemComplete += contactsHelper_CreateItemComplete;
                     contactsHelper.GetComplete += contactsHelper_GetComplete;
                     contactsHelper.GetItemComplete += contactsHelper_GetItemComplete;
@@ -169,9 +175,13 @@ namespace BCM_Migration_Tool
                     Assembly entryAssembly = Assembly.GetEntryAssembly();
                     FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(entryAssembly.Location);
                     lblVersion.Text = String.Format("Version {0}", fvi.FileVersion);
+                    connect1.UseManualConnectionString = Settings.Default.UseManualConnectionString;
+                    connect1.ManualConnectionString = Settings.Default.ManualConnectionString;
 #if DEBUG
-//connect1.txtDatabase.Text = "AQUARIASERVERDB2011";
-//connect1.txtServer.Text = ".\\SQLEXPRESS";
+                    if (String.IsNullOrEmpty(Settings.Default.BCMDBName))
+                        connect1.txtDatabase.Text = "FLOBCMV2016";
+                    if (String.IsNullOrEmpty(Settings.Default.DBInstance))
+                        connect1.txtServer.Text = ".\\SQLEXPRESS";
 #endif
                 }
                 catch (Exception ex)
@@ -254,6 +264,7 @@ namespace BCM_Migration_Tool
                     if (contactsHelper == null)
                     {
                         contactsHelper = new ContactsHelper(AccessToken, ConnectionString);
+                        contactsHelper.DisableCustomFields = DisableCustomContactFields;
                         contactsHelper.CreateItemComplete += contactsHelper_CreateItemComplete;
                         contactsHelper.GetComplete += contactsHelper_GetComplete;
                         contactsHelper.GetItemComplete += contactsHelper_GetItemComplete;
@@ -276,7 +287,7 @@ namespace BCM_Migration_Tool
 
                     migrate1.UpdateStatus("Migrating Contacts...");
 
-                    Debug.WriteLine("Calling GetBCMContacts");
+                    Log.Debug("Calling GetBCMContacts");
                     migrate1.progressBar1.Value = 0;
                     migrate1.progressBar1.PerformStep();
 
@@ -284,7 +295,7 @@ namespace BCM_Migration_Tool
                     await contactsHelper.GetBCMContacts();
 
                     migrate1.progressBar1.PerformStep();
-                    Debug.WriteLine("GetBCMContacts returned; calling GetOCMContacts");
+                    Log.Debug("GetBCMContacts returned; calling GetOCMContacts");
 
                     //Load existing OCM Contacts
                     await contactsHelper.GetOCMContacts();
@@ -292,12 +303,12 @@ namespace BCM_Migration_Tool
                     migrate1.progressBar1.PerformStep();
                     if (!chkGetOnly.Checked)
                     {
-                        Debug.WriteLine("GetOCMContacts returned; calling CreateContacts");
+                        Log.Debug("GetOCMContacts returned; calling CreateContacts");
                         
                         //Import Contacts
                         await contactsHelper.CreateContacts();
 
-                        Debug.WriteLine("CreateContacts returned; calling FindPeople");
+                        Log.Debug("CreateContacts returned; calling FindPeople");
                         migrate1.progressBar1.Value = 0;
                         migrate1.progressBar1.Maximum = 100;
                         migrate1.progressBar1.PerformStep();
@@ -305,7 +316,7 @@ namespace BCM_Migration_Tool
                         //Load Contacts again but via EWS to get ItemLinkID values for use in linking Contacts to Companies
                         await contactsHelper.FindPeople(); //TESTED New FindPeople call that retrieves ItemLinkID as well!
                         
-                        Debug.WriteLine("FindPeople returned; calling CreateContactActivities");
+                        Log.Debug("FindPeople returned; calling CreateContactActivities");
                         migrate1.progressBar1.Value = 0;
                         migrate1.progressBar1.PerformStep();
 
@@ -314,19 +325,19 @@ namespace BCM_Migration_Tool
 
                         migrate1.progressBar1.Value = 0;
                         migrate1.progressBar1.PerformStep();
-                        Debug.WriteLine("CreateContactActivities returned; calling CreateCompanyLinks");
+                        Log.Debug("CreateContactActivities returned; calling CreateCompanyLinks");
 
                         //Link Contacts to Companies
                         await contactsHelper.CreateCompanyLinks(); //HIGH Use progress bar during linking
 
-                        Debug.WriteLine("CreateCompanyLinks returned");
+                        Log.Debug("CreateCompanyLinks returned");
                     }
                     else
                     {
-                        Debug.WriteLine("GetOCMContacts returned; calling FindPeople");
+                        Log.Debug("GetOCMContacts returned; calling FindPeople");
                         //Must run to get ItemLinkID even if not creating Contacts; needed for creating links on Deals if we are importing those
                         await contactsHelper.FindPeople();
-                        Debug.WriteLine("FindPeople returned");
+                        Log.Debug("FindPeople returned");
                     }
                 }
                 catch (System.Exception ex)
@@ -448,6 +459,8 @@ namespace BCM_Migration_Tool
                     Settings.Default.DBAuthMode = connect1.cboAuthentication.Text;
                     Settings.Default.LoginMode = connect1.cboLoginOptions.Text;
                     Settings.Default.DBInstance = connect1.txtServer.Text;
+                    Settings.Default.UseManualConnectionString = connect1.UseManualConnectionString;
+                    Settings.Default.ManualConnectionString = ConnectionString;
                     Settings.Default.Save();
                 }
                 catch (Exception ex)
@@ -458,30 +471,106 @@ namespace BCM_Migration_Tool
             }
 
         }
-        private void TestDBConnection()
+        private void ConnectToDB()
         {
             using (Log.VerboseCall())
             {
+                Cursor.Current = Cursors.WaitCursor;
+                //connect1.lblConnectToDB.Text = "Trying to connect...";
+                //string connectionString = "";
+
+                if (connect1.UseManualConnectionString)
+                {
+                    //Use manual connection string
+                    connect1.ConnectionString = connect1.ManualConnectionString;
+                }
+                else
+                {
+                    connect1.ConnectionString = connect1.GetConnectionString();
+                }
+
                 try
                 {
-                    Cursor.Current = Cursors.WaitCursor;
-                    string connectionString = connect1.GetConnectionString();
+                    //using (var context = new MSSampleBusinessEntities())
+                    //{
+                    //    //Test DB connection by getting Sharing setting
+                    //    context.Database.Connection.ConnectionString = ConnectionString;
+                    //    Log.Debug("Checking connection with PickLists table");
+                    //    //var sharing = context.OrgTables.ToList(); This table could have different columns in different DB versions and would throw an error; PickLists is simple with just ID, Version and DefaultValue
+                    //    var test = context.Picklists.ToList();
+                    //    Cursor.Current = Cursors.Default;
+                    //    Log.InfoFormat("Connected to DB: {0}", ConnectionString);
+                    //    MessageBox.Show("Database connection successful!", "Connection Test Complete",
+                    //        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    //    connect1.lblLogin.Enabled = true;
+                    //}
+
                     using (var context = new MSSampleBusinessEntities())
                     {
                         //Test DB connection by getting Sharing setting
-                        context.Database.Connection.ConnectionString = connectionString;
-                        var sharing = context.OrgTables.ToList();
+                        context.Database.Connection.ConnectionString = ConnectionString;
+                        Log.Debug("Checking connection with PickLists table");
+                        var test = context.Picklists.ToList();
                         Cursor.Current = Cursors.Default;
-                        Log.InfoFormat("Connected to DB: {0}", connectionString);
-                        MessageBox.Show("Database connection successful!", "Connection Test Complete", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        connect1.lblConnectionString.Text = "DB connection string: " + connectionString;
-                        connect1.lblLogin.Enabled = true;
+                        Log.InfoFormat("Connected to DB: {0}", ConnectionString);
+                        connect1.lblLogin.Enabled = true;                        
+                    }
+
+                    using (SqlConnection con = new SqlConnection(ConnectionString))
+                    {
+                        using (SqlCommand com = new SqlCommand("SELECT [DBVersionMajor] FROM [OrgTable]", con))
+                        {
+                            con.Open();
+
+                            using (DbDataReader reader = com.ExecuteReader())
+                            {
+                                while (reader.Read())
+                                {
+                                    int version = Convert.ToInt32(reader["DBVersionMajor"]);
+                                    if (version >= 4)
+                                    {
+                                        MessageBox.Show("Database connection successful!", "Connection Test Complete",
+                                            MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                    }
+                                    else
+                                    {
+                                        Log.WarnFormat("Unsupported version {0}", version);
+                                        if (MessageBox.Show(
+                                                "Connection successful.  However, this version of Business Contact Manager is not currently supported by the tool. You can download the BCM Database Tool (https://www.microsoft.com/en-ca/download/details.aspx?id=658) to upgrade the database, then try the migration again. If you would like to try testing this version anyway or the database has been upgraded, click Yes and ensure Test mode is enabled (on the settings page) and select 'Get only' with the testing controls. This will verify if the data can be retrieved from the datatbase. Regardless, migrating custom Contact fields is not currently supported for older versions of the database (only for Accounts and Opportunities).",
+                                                "Incompatible Version", MessageBoxButtons.YesNo, MessageBoxIcon.Error) ==
+                                            DialogResult.Yes)
+                                        {
+                                            connect1.lblLogin.Enabled = true;
+                                            DisableCustomContactFields = true;
+                                        }
+                                        else
+                                        {
+                                            connect1.lblLogin.Enabled = false;
+                                        }                                    
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
                 catch (Exception ex)
                 {
                     Cursor.Current = Cursors.Default;
-                    MessageBox.Show(ex.Message, "Database Connection Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    Log.ErrorFormat("{0}: {1}", ex.Message, ex.InnerException);
+                    Log.ErrorFormat("Connection string: {0}", ConnectionString);
+                    MessageBox.Show(
+                        $"{ex.Message}{Environment.NewLine}{Environment.NewLine}Connection string: {ConnectionString}{Environment.NewLine}{ex.InnerException?.Message}",
+                        "Database Connection Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    if (
+                        MessageBox.Show("Do you want to try connecting to this database anyway?", "Ignore Error?",
+                            MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                    {
+                        connect1.lblLogin.Enabled = true;
+                    }
+                }
+                finally
+                {
+                    //connect1.lblConnectToDB.Text = "Connect To Database";
                 }
             }
         }
@@ -601,8 +690,7 @@ namespace BCM_Migration_Tool
                 {
                     AccessToken = authenticationResult.AccessToken;
                     connect1.Connected = true;
-                    //Prevent clicking Map or Migrate if connection details not configured
-                    navigationBar1.MapEnabled = true;
+                    navigationBar1.MapEnabled = true;                    
 
                     await MigrationHelper.GetUserAsync(AccessToken);
 
@@ -615,11 +703,11 @@ namespace BCM_Migration_Tool
             }
         }
 
-        private void connect1_TestDBConnectionClicked(object sender, EventArgs e)
+        private void connect1_ConnectToDBClicked(object sender, EventArgs e)
         {
             using (Log.VerboseCall())
             {
-                TestDBConnection();
+                ConnectToDB();
             }
         }
 
@@ -648,6 +736,7 @@ namespace BCM_Migration_Tool
                     migrate1.progressBar1.PerformStep();
                     migrate1.UpdateText("Starting import...");
                     migrate1.UpdateStatus("Initializing...");
+
                     if (MigrationHelper.StartXRMSession(AccessToken) == false)
                     {
                         Log.Error("StartXRMSession returned false");                        
@@ -673,7 +762,7 @@ namespace BCM_Migration_Tool
                     //Get sharing state:
                     //Set Shared = True (if DBType = 1), False (I DBType=0) SELECT [DbType] FROM [dbo].[OrgTable]
                     //HIGH Default sharing to true for now; ignore DB setting = Convert.ToBoolean(sharing[0].DbType);
-                    MigrationHelper.IsSharingEnabled = true;
+                    MigrationHelper.IsSharingEnabled = true;                    
 
                     if (chkTestMode.Checked == false)
                     {
@@ -697,6 +786,8 @@ namespace BCM_Migration_Tool
                     }
                     else
                     {
+                        repeat:
+
                         if (chkLBDebugMode.CheckedItems.Contains("Accounts"))
                         {
                             Debug.WriteLine("Calling MigrateAccounts");
@@ -718,6 +809,15 @@ namespace BCM_Migration_Tool
                         if (chkLBDebugMode.CheckedItems.Contains("Deal Stages"))
                         {
                             await dealsHelper.UpdateTemplate();
+                        }
+
+                        if (chkRepeatBatch.Checked && ImportRepeatCount < numericUpDownRepeatCount.Value)
+                        {
+                            ImportRepeatCount += 1;
+                            migrate1.UpdateText($"***********Repeating migration (batch {ImportRepeatCount}/{numericUpDownRepeatCount.Value}); pausing for two minutes (at {DateTime.Now.ToLongTimeString()})");
+                            Log.InfoFormat("Repeating migration (count: {0}); pausing for two minutes", ImportRepeatCount);
+                            Thread.Sleep(120000); //Sleep for two minutes
+                            goto repeat;
                         }
 
                         migrate1.UpdateText("***********MIGRATION COMPLETE***********");
@@ -767,12 +867,14 @@ namespace BCM_Migration_Tool
             chkGetOnly.Visible = enable;
             chkLBDebugMode.Visible = enable;
             chkTestMode.Visible = enable;
+            chkRepeatBatch.Visible = enable;
             lblMaxRecords.Visible = enable;
             lblRESTRetries.Visible = enable;
             lblRetryDelay.Visible = enable;
             numericUpDownMaxRecords.Visible = enable;
             numericUpDownRetryDelay.Visible = enable;
             numericUpDownRetryMax.Visible = enable;
+            numericUpDownRepeatCount.Visible = enable;
         }
 
         private async void migrate1_StopClicked(object sender, EventArgs e)
@@ -813,7 +915,7 @@ namespace BCM_Migration_Tool
             {
                 navigationBar1.MigrateEnabled = true;
                 configure1.cmdDeleteDeals.Enabled = true;
-                ConnectionString = connect1.GetConnectionString();
+                //ConnectionString = connect1.GetConnectionString();
                 tabControl1.SelectTab(tabPageMap);
                 if (!MappingsInitialized)
                 {
@@ -908,7 +1010,7 @@ namespace BCM_Migration_Tool
                     migrate1.txtLog.Text = map1.txtLog.Text;
                     MigrateClicked = true;
                 }
-                ConnectionString = connect1.GetConnectionString();
+                //ConnectionString = connect1.GetConnectionString();
                 tabControl1.SelectTab(tabPageMigrate);
             }
         }
@@ -1206,7 +1308,15 @@ namespace BCM_Migration_Tool
 
         private void lblVersion_Click(object sender, EventArgs e)
         {
+            
+        }
 
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+            //testerHelper = new TesterHelper(AccessToken, ConnectionString);
+            //GraphTester graphTester = new GraphTester();
+            //graphTester.TesterHelper = testerHelper;
+            //graphTester.Show();
         }
     }
 }

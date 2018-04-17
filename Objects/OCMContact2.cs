@@ -103,6 +103,11 @@ namespace BCM_Migration_Tool.Objects
         public string JobTitle { get; set; } //was object
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public DateTime LastModifiedDateTime { get; set; }
+        /// <summary>
+        /// Use to store an in-memory state that the Contact was linked (or processed without a link) to a company in the current session
+        /// </summary>
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public bool Linked { get; set; }
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public object Manager { get; set; }
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]

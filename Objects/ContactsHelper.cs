@@ -62,8 +62,9 @@ namespace BCM_Migration_Tool.Objects
                     if (FullRESTLogging)
                         Log.VerboseFormat("EWS query: {0}", xmlRequest);
                         PrepareRequest(RequestDataTypes.Links, RequestDataFormats.XML);
-                    RestResponse<HttpWebResponse> response = await Post<HttpWebResponse>(uri, new StringContent(xmlRequest, Encoding.UTF8,
-                        "text/xml"), null, true, "", true, false);
+                    //RestResponse<HttpWebResponse> response = await Post<HttpWebResponse>(uri, new StringContent(xmlRequest, Encoding.UTF8, "text/xml"), null, true, "", true, false);
+                    RestResponse<HttpWebResponse> response = await Post<HttpWebResponse>(uri, xmlRequest, RequestDataFormats.XML, true, "", true, false);
+
                     if (response.StatusCode != HttpStatusCode.Created && response.StatusCode != HttpStatusCode.OK)
                     {
                         Log.Error(response.ErrorContent);
@@ -110,7 +111,8 @@ namespace BCM_Migration_Tool.Objects
 
                 try
                 {
-                    var filteredOCMContacts = OCMContacts.Where(contacts => !String.IsNullOrEmpty(contacts.ItemLinkId));
+                    //var filteredOCMContacts = OCMContacts.Where(contacts => !String.IsNullOrEmpty(contacts.ItemLinkId));
+                    var filteredOCMContacts = OCMContacts.Where(contacts => !String.IsNullOrEmpty(contacts.ItemLinkId) && contacts.Linked == false);
                     var filteredOcmContacts = filteredOCMContacts as IList<OCMContact2Value> ?? filteredOCMContacts.ToList();
                     NumberToProcess = filteredOcmContacts.Count();
                     Log.InfoFormat("Linking {0} contacts", NumberToProcess);
@@ -121,9 +123,16 @@ namespace BCM_Migration_Tool.Objects
 
                     foreach (var contact in filteredOcmContacts)
                     {
+                        contact.Linked = true; //Set to true to skip Contacts previously processed in the current migration session
                         linkCount++;
                         try
                         {
+                            if (contact.CompanyName == null || String.IsNullOrEmpty(contact.CompanyName.ToString()))
+                            {
+                                Log.VerboseFormat("No company for Contact '{0}')", contact.DisplayName);
+                                continue;
+                            }
+
                             if (!String.IsNullOrEmpty(contact.ItemLinkId))
                             {
                                 OCMCompany2Value company = AccountsHelper.GetOCMCompany(contact.CompanyName?.ToString(),
@@ -254,9 +263,8 @@ namespace BCM_Migration_Tool.Objects
                         PrepareRequest(RequestDataTypes.EWS, RequestDataFormats.XML);
                         string content = "";
 
-                        //RestResponse<HttpResponseMessage> response = await Post<HttpResponseMessage>(uri, new StringContent(xmlRequest, Encoding.UTF8, "text/xml"));
-                        RestResponse<string> response = await Post<string>(uri,
-    new StringContent(xmlRequest, Encoding.UTF8, "text/xml"));
+                        //RestResponse<string> response = await Post<string>(uri, new StringContent(xmlRequest, Encoding.UTF8, "text/xml"));
+                        RestResponse<string> response = await Post<string>(uri, xmlRequest, RequestDataFormats.XML);
 
                         if (response.StatusCode != HttpStatusCode.Created && response.StatusCode != HttpStatusCode.OK)
                         {
@@ -445,6 +453,12 @@ namespace BCM_Migration_Tool.Objects
             {
                 try
                 {
+                    if (BCMDataLogged)
+                    {
+                        Log.Debug("Previously run - skipping");
+                        return;
+                    }
+
                     OnStart(null, new HelperEventArgs("Getting BCM Contacts data", HelperEventArgs.EventTypes.Status));
 
                     using (var context = new MSSampleBusinessEntities())
@@ -473,16 +487,19 @@ namespace BCM_Migration_Tool.Objects
                     
                         BCMContacts = new List<ContactFullView>();
 
-                        Log.DebugFormat("Found {0} BCM Contacts:", contacts.Count());
+                        Log.InfoFormat("Found {0} BCM Contacts:", contacts.Count());
                         OnGetComplete(null, new HelperEventArgs(String.Format("Found {0} BCM Contacts:", contacts.Count()), HelperEventArgs.EventTypes.Status));
 
                         foreach (var contact in contacts)
-                        {
+                        {                            
                             if (LogRecordNames)
                                 OnGetItemComplete(null, new HelperEventArgs(String.Format(" -{0} (Company: {1})", contact.FullName, contact.CompanyName), HelperEventArgs.EventTypes.Status));
+                            Log.DebugFormat(" -{0} (Company: {1})", contact.FullName, contact.CompanyName);
                             BCMContacts.Add(contact);
                         }
                     }
+
+                    BCMDataLogged = true;
                 }
                 catch (Exception ex)
                 {
@@ -567,6 +584,12 @@ namespace BCM_Migration_Tool.Objects
         {
             using (Log.VerboseCall())
             {
+                if (OCMDataRetrieved)
+                {
+                    Log.Debug("Previously retrieved - skipping");
+                    return;
+                }
+
                 OCMContacts = new List<OCMContact2Value>();
                 await RunGetOCMContactsAsync();
                 bool headerShown = false;
@@ -609,6 +632,8 @@ namespace BCM_Migration_Tool.Objects
                         Log.Error(ex);
                     }
                 }
+
+                OCMDataRetrieved = true;
             }
         }
         private async Task GetOCMContactsAsync(bool getSharedContacts)
@@ -826,9 +851,11 @@ namespace BCM_Migration_Tool.Objects
                         Log.Warn("FieldMappings.BCMBusinessContactFields.BCMFields = null!");
                         goto populateContactDetails;
                     }
-                    if (FieldMappings.BCMBusinessContactFields.BCMFields.MappedFields.Count == 0)
+                    if (FieldMappings.BCMBusinessContactFields.BCMFields.MappedFields.Count == 0 || DisableCustomFields)
                         //Just the BCMID, no custom fields
                     {                        
+                        if (DisableCustomFields)
+                            Log.Info("Custom fields disabled for Contacts");
                         goto populateContactDetails;
                     }
 
@@ -1214,7 +1241,8 @@ namespace BCM_Migration_Tool.Objects
                             Log.VerboseFormat("Posting POST (create) call to {1}:{0}", json, uri);
                             PrepareRequest(RequestDataTypes.Contacts, RequestDataFormats.JSON);
 
-                            RestResponse<OCMContact2Value> newContact = await Post<OCMContact2Value>(uri, new StringContent(json, Encoding.UTF8, "application/json"));
+                            //RestResponse<OCMContact2Value> newContact = await Post<OCMContact2Value>(uri, new StringContent(json, Encoding.UTF8, "application/json"));
+                            RestResponse<OCMContact2Value> newContact = await Post<OCMContact2Value>(uri, json, RequestDataFormats.JSON);
 
                             if (newContact.StatusCode == HttpStatusCode.Created)
                             {
@@ -1242,7 +1270,9 @@ namespace BCM_Migration_Tool.Objects
 
                                 //REVIEW We could gather all these IDs and do the sharing operation all in one call by creating ItemID elements for each contact to put in the ItemIds element
 
-                                RestResponse<HttpWebResponse> copyRequestResponse = await Post<HttpWebResponse>(uri, new StringContent(xmlRequest, Encoding.UTF8, "text/xml"));
+                                //RestResponse<HttpWebResponse> copyRequestResponse = await Post<HttpWebResponse>(uri, new StringContent(xmlRequest, Encoding.UTF8, "text/xml"));
+                                RestResponse<HttpWebResponse> copyRequestResponse = await Post<HttpWebResponse>(uri, xmlRequest,
+    RequestDataFormats.XML);
 
                                 if (copyRequestResponse.StatusCode != HttpStatusCode.Created &&
                                     copyRequestResponse.StatusCode != HttpStatusCode.OK) // Check status code.
@@ -1434,6 +1464,7 @@ namespace BCM_Migration_Tool.Objects
                     {
                         OnHelperComplete(null, new HelperEventArgs(String.Format("Contacts import stopped{0}Created: {1}{0}Errors: {2}", Environment.NewLine, NumberCreated, NumberOfErrors), false));
                     }
+                    Log.InfoFormat("Created {0} OCM Contacts ({1} Errors)", NumberCreated, NumberOfErrors);
                 }
                 catch (Exception ex)
                 {

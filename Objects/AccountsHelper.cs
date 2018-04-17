@@ -47,7 +47,7 @@ namespace BCM_Migration_Tool.Objects
             using (Log.VerboseCall())
             {
                 Cancelled = false;
-                await RunCreateCompanyAsync();
+                await RunCreateCompaniesAsync();
             }
         }
         internal async Task GetBCMAccounts()
@@ -56,6 +56,11 @@ namespace BCM_Migration_Tool.Objects
             {
                 try
                 {
+                    if (BCMDataLogged)
+                    {
+                        Log.Debug("Previously run - skipping");
+                        return;
+                    }
                     OnStart(null, new HelperEventArgs("Getting BCM Account data", HelperEventArgs.EventTypes.Status));
                     using (var context = new MSSampleBusinessEntities())
                     {
@@ -66,14 +71,15 @@ namespace BCM_Migration_Tool.Objects
                         BCMAccountsFullView = companies; //REVIEW BCMAccountsFullView is set but not referenced
                         Log.InfoFormat("Found {0} BCM Accounts: ", companies.Count());
                         OnGetComplete(null, new HelperEventArgs(String.Format("Found {0} BCM Accounts: ", companies.Count()), HelperEventArgs.EventTypes.Status));
-                        if (LogRecordNames)
+
+                        foreach (var company in companies)
                         {
-                            foreach (var company in companies)
-                            {
+                            if (LogRecordNames)
                                 OnGetItemComplete(null, new HelperEventArgs(String.Format(" -{0}", company.FileAs), HelperEventArgs.EventTypes.Status));
-                            }
+                            Log.DebugFormat(" -{0}", company.FileAs);
                         }
                     }
+                    BCMDataLogged = true;
                 }
                 catch (Exception ex)
                 {
@@ -87,33 +93,51 @@ namespace BCM_Migration_Tool.Objects
         {
             using (Log.VerboseCall())
             {
-                OCMCompanies = new List<OCMCompany2Value>();
-                await RunGetOCMCompaniesAsync(); //NOTE: Do NOT use .Wait() unless the caller is an async method, or else it will hang
 
-                //OnGetComplete(null, new HelperEventArgs(String.Format("Found {0} existing OCM Companies (* = previously imported):", OCMAccounts?.Count), HelperEventArgs.EventTypes.Status));
-                Log.InfoFormat("Found {0} existing OCM Companies", OCMCompanies?.Count);
-
-                OnGetComplete(null, new HelperEventArgs(String.Format("Found {0} existing OCM Companies", OCMCompanies?.Count), HelperEventArgs.EventTypes.Status));
-
-                bool headerShown = false;
-                foreach (OCMCompany2Value item in OCMCompanies)
+                try
                 {
-                    if (item.SingleValueExtendedProperties != null)
+                    if (OCMDataRetrieved)
                     {
-                        if (!headerShown)
+                        Log.Debug("Previously retrieved - skipping");
+                        return;
+                    }
+
+                    OCMCompanies = new List<OCMCompany2Value>();
+                    await RunGetOCMCompaniesAsync(); //NOTE: Do NOT use .Wait() unless the caller is an async method, or else it will hang
+
+                    //OnGetComplete(null, new HelperEventArgs(String.Format("Found {0} existing OCM Companies (* = previously imported):", OCMAccounts?.Count), HelperEventArgs.EventTypes.Status));
+                    Log.InfoFormat("Found {0} existing OCM Companies", OCMCompanies?.Count);
+
+                    OnGetComplete(null, new HelperEventArgs(String.Format("Found {0} existing OCM Companies", OCMCompanies?.Count), HelperEventArgs.EventTypes.Status));
+
+                    bool headerShown = false;
+                    foreach (OCMCompany2Value item in OCMCompanies)
+                    {
+                        if (item.SingleValueExtendedProperties != null)
                         {
-                            OnGetComplete(null, new HelperEventArgs("Previously imported companies:", HelperEventArgs.EventTypes.Status));
-                            headerShown = true;
+                            if (!headerShown)
+                            {
+                                OnGetComplete(null, new HelperEventArgs("Previously imported companies:", HelperEventArgs.EventTypes.Status));
+                                headerShown = true;
+                            }
+                            if (LogRecordNames)
+                                OnGetItemComplete(null, new HelperEventArgs(String.Format(" -{0} (BCM ID: {1})", item.DisplayName, item.GetBCMID()), HelperEventArgs.EventTypes.Status));
+                            Log.DebugFormat("{0} (BCMID: {1}; XRMID: {2})", item.DisplayName, item.BCMID, item.XrmId);
                         }
-                        if (LogRecordNames)
-                            OnGetItemComplete(null, new HelperEventArgs(String.Format(" -{0} (BCM ID: {1})", item.DisplayName, item.GetBCMID()), HelperEventArgs.EventTypes.Status));
-                        Log.DebugFormat("{0} (BCMID: {1}; XRMID: {2})", item.DisplayName, item.BCMID, item.XrmId);
+                        else
+                        {
+                            //OnGetItemComplete(null, new HelperEventArgs(String.Format(" -{0}", item.DisplayName), HelperEventArgs.EventTypes.Status));
+                        }
                     }
-                    else
-                    {
-                        //OnGetItemComplete(null, new HelperEventArgs(String.Format(" -{0}", item.DisplayName), HelperEventArgs.EventTypes.Status));
-                    }
+
+                    OCMDataRetrieved = true;
                 }
+                catch (System.Exception ex)
+                {
+                    Log.Error(ex);
+                }
+                finally
+                { }
                 Debug.WriteLine("Leaving GetBCMAccounts");
             }
         }
@@ -355,7 +379,6 @@ namespace BCM_Migration_Tool.Objects
                     //=========================================================================================
 
                     setProperties:
-
                     if (FieldMappings.BCMAccountFields.BCMFields == null) //Why would this be null?
                         goto populateContactDetails;
                     if (FieldMappings.BCMAccountFields.BCMFields.MappedFields.Count == 0) //Just the BCMID, no custom fields
@@ -713,7 +736,9 @@ namespace BCM_Migration_Tool.Objects
                         RestResponse<OCMCompany2Value> result = null;
                         //OCMCompany2Value newOCMCompany = null;
 
-                        result = await Post<OCMCompany2Value>(uri, new StringContent(json, Encoding.UTF8, "application/json"), json, false, null, false, false);
+                        //result = await Post<OCMCompany2Value>(uri, new StringContent(json, Encoding.UTF8, "application/json"), json, false, null, false, false);
+                        result = await Post<OCMCompany2Value>(uri, json, RequestDataFormats.JSON, false, null, false, false);
+
                         //newOCMCompany = result.Content;
                         //newCompany = await Post<OCMCompany2Value>(uri, new StringContent(json, Encoding.UTF8, "application/json"), json, true, 10000, 5, false, null, false, false);
                         if (result.StatusCode == HttpStatusCode.Created)
@@ -743,9 +768,9 @@ namespace BCM_Migration_Tool.Objects
                                 //TESTED Do a COPY for Companies as well instead of a MOVE, like the change to Contacts?? NO - keep as move
                                 string xmlRequest = String.Format(Resources.ShareContactsRequest, MigrationHelper.CompaniesFolderID, id);
                                 
-                                //RestResponse<HttpWebResponse> response = await Post<HttpWebResponse>(uri, new StringContent(xmlRequest, Encoding.UTF8, "text/xml"), null, true, 10000, 5, false, null, false, false);
-
-                                RestResponse<HttpWebResponse> response = await Post<HttpWebResponse>(uri, new StringContent(xmlRequest, Encoding.UTF8, "text/xml"));
+                                //RestResponse<HttpWebResponse> response = await Post<HttpWebResponse>(uri, new StringContent(xmlRequest, Encoding.UTF8, "text/xml"));
+                                RestResponse<HttpWebResponse> response = await Post<HttpWebResponse>(uri, xmlRequest,
+                                    RequestDataFormats.XML);
 
                                 if (response.StatusCode != HttpStatusCode.Created && response.StatusCode != HttpStatusCode.OK)
                                 {                                    
@@ -845,7 +870,7 @@ namespace BCM_Migration_Tool.Objects
                 }
             }
         }      
-        private async Task RunCreateCompanyAsync()
+        private async Task RunCreateCompaniesAsync()
         {
             using (Log.VerboseCall())
             {
@@ -952,7 +977,8 @@ namespace BCM_Migration_Tool.Objects
                         else
                         {
                             OnHelperComplete(null, new HelperEventArgs(String.Format("--Accounts import stopped--{0}Created: {1}{0}Errors: {2}", Environment.NewLine, NumberCreated, NumberOfErrors), false));
-                        }                    
+                        }         
+                        Log.InfoFormat("Created {0} OCM Companies ({1} Errors)", NumberCreated, NumberOfErrors);
 
                     }
                     catch (Exception ex)
