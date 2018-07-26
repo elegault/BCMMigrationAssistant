@@ -32,12 +32,10 @@ namespace BCM_Migration_Tool.Objects
         }
         #endregion
         #region Properties
-        //internal List<string> BCMContacts { get; set; }
-        internal List<ContactFullView> BCMContacts { get; set; }
+        //internal List<ContactFullView> BCMContacts { get; set; }
         internal OCMCompanyTemplate.Rootobject ContactTemplate { get; set; }
         private string LastPageResult { get; set; }
-        internal static List<OCMContact2Value> OCMContacts { get; set; }
-        //internal OCMContact.Rootobject OCMContacts { get; set; }
+        internal static List<OCMContact2Value> OCMContacts { get; set; }        
         #endregion
         #region Methods
         private async Task<bool> CreateCompanyLink(string itemLinkID, string companyXrmID)
@@ -231,7 +229,16 @@ namespace BCM_Migration_Tool.Objects
             using (Log.VerboseCall())
             {
                 Cancelled = false;
-                await RunCreateContactsAsync();
+
+                switch (DBVersion)
+                {
+                    case SupportedDBVersions.V3:
+                        await RunCreateContactsAsyncV3();
+                        break;
+                    case SupportedDBVersions.V4:
+                        await RunCreateContactsAsync();
+                        break;
+                }
             }                
         }
 
@@ -461,42 +468,37 @@ namespace BCM_Migration_Tool.Objects
 
                     OnStart(null, new HelperEventArgs("Getting BCM Contacts data", HelperEventArgs.EventTypes.Status));
 
-                    using (var context = new MSSampleBusinessEntities())
+                    //using (var context = new MSSampleBusinessEntities())
+                    //{
+                    //    //#if !DEBUG
+                    //    //                    context.Database.Connection.ConnectionString = ConnectionString;
+                    //    //#else
+                    //    //                    //NOTE Use this for mounting a LocalDB db during debugging
+                    //    //                    object dbPath = AppDomain.CurrentDomain.GetData("DataDirectory");
+                    //    //                    if (dbPath == null)
+                    //    //                    {
+                    //    //                        string path = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+                    //    //                        if (Environment.MachineName == "PRECISION")
+                    //    //                            path = @"C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Tool";
+                    //    //                        AppDomain.CurrentDomain.SetData("DataDirectory", path);
+                    //    //                        dbPath = AppDomain.CurrentDomain.GetData("DataDirectory");
+                    //    //                    }
+                    //    //#endif
+
+                    //    //NOTE Can also use BCM_BusinessContacts_Core.sql in Resources instead of EF
+                    //    context.Database.Connection.ConnectionString = ConnectionString;
+
+                    //    var contacts = context.ContactFullViews.Where(mycontacts => mycontacts.Type == 1 && mycontacts.IsDeletedLocally == false);
+                    //}
+
+                    switch (DBVersion)
                     {
-                        context.Database.Connection.ConnectionString = ConnectionString;
-
-                        //#if !DEBUG
-                        //                    context.Database.Connection.ConnectionString = ConnectionString;
-                        //#else
-                        //                    //NOTE Use this for mounting a LocalDB db during debugging
-                        //                    object dbPath = AppDomain.CurrentDomain.GetData("DataDirectory");
-                        //                    if (dbPath == null)
-                        //                    {
-                        //                        string path = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-                        //                        if (Environment.MachineName == "PRECISION")
-                        //                            path = @"C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Tool";
-                        //                        AppDomain.CurrentDomain.SetData("DataDirectory", path);
-                        //                        dbPath = AppDomain.CurrentDomain.GetData("DataDirectory");
-                        //                    }
-                        //#endif
-
-                        //TESTED Use LINQ instead
-                        //NOTE Can also use BCM_BusinessContacts_Core.sql in Resources instead of EF
-                                        
-                        var contacts = context.ContactFullViews.Where(mycontacts => mycontacts.Type == 1 && mycontacts.IsDeletedLocally == false);
-                    
-                        BCMContacts = new List<ContactFullView>();
-
-                        Log.InfoFormat("Found {0} BCM Contacts:", contacts.Count());
-                        OnGetComplete(null, new HelperEventArgs(String.Format("Found {0} BCM Contacts:", contacts.Count()), HelperEventArgs.EventTypes.Status));
-
-                        foreach (var contact in contacts)
-                        {                            
-                            if (LogRecordNames)
-                                OnGetItemComplete(null, new HelperEventArgs(String.Format(" -{0} (Company: {1})", contact.FullName, contact.CompanyName), HelperEventArgs.EventTypes.Status));
-                            Log.DebugFormat(" -{0} (Company: {1})", contact.FullName, contact.CompanyName);
-                            BCMContacts.Add(contact);
-                        }
+                        case SupportedDBVersions.V3:
+                            LogBCMContactsV3();
+                            break;
+                        case SupportedDBVersions.V4:
+                            LogBCMContactsV4();
+                            break;
                     }
 
                     BCMDataLogged = true;
@@ -855,7 +857,7 @@ namespace BCM_Migration_Tool.Objects
                         //Just the BCMID, no custom fields
                     {                        
                         if (DisableCustomFields)
-                            Log.Info("Custom fields disabled for Contacts");
+                            Log.Verbose("Custom fields disabled for Contacts");
                         goto populateContactDetails;
                     }
 
@@ -960,7 +962,7 @@ namespace BCM_Migration_Tool.Objects
                                                             }
                                                             else
                                                             {
-                                                                Log.VerboseFormat("Skipping field '{0}'", fieldName);
+                                                                //Log.VerboseFormat("Skipping field '{0}'", fieldName);
                                                             }
                                                         }
                                                         catch (Exception ex)
@@ -1359,6 +1361,121 @@ namespace BCM_Migration_Tool.Objects
             }
         }
 
+        private void LogBCMContactsV3()
+        {
+            int cnt = 0;
+
+            using (SqlConnection con = new SqlConnection(ConnectionString))
+            {                
+                using (SqlCommand com = new SqlCommand(Resources.BCM_Contacts_Simple, con))
+                {
+                    con.Open();
+
+                    using (SqlCommand comA = new SqlCommand(Resources.BCM_ContactFullViewCount_V3, con))
+                    {
+                        //cnt = comA.ExecuteNonQuery();
+                        cnt = Convert.ToInt32(comA.ExecuteScalar());
+                    }
+                    using (DbDataReader reader = com.ExecuteReader())
+                    {
+                        try
+                        {
+                            if (reader.HasRows)
+                            {
+                                Log.InfoFormat("Found {0} BCM Contacts:", cnt); 
+                                OnGetComplete(null, new HelperEventArgs(String.Format("Found {0} BCM Contacts:", cnt), HelperEventArgs.EventTypes.Status));
+
+                                while (reader.Read())
+                                {
+                                    try
+                                    {
+                                        string record = $" -{Convert.ToString(reader["FullName"])} (Company: {Convert.ToString(reader["CompanyName"])})";
+                                        if (LogRecordNames)
+                                            OnGetItemComplete(null, new HelperEventArgs(record, HelperEventArgs.EventTypes.Status));
+                                        Log.Debug(record);
+                                    }
+                                    catch (System.Exception ex)
+                                    {
+                                        Log.Error(ex);
+                                    }
+                                }
+                            }
+                        }
+                        catch (System.Exception ex)
+                        {
+                            Log.Error(ex);
+                        }
+                        finally
+                        { }
+                    }
+                }
+            }
+        }
+        private void LogBCMContactsV4()
+        {
+            try
+            {
+                using (var context = new MSSampleBusinessEntities())
+                {
+                    //#if !DEBUG
+                    //                    context.Database.Connection.ConnectionString = ConnectionString;
+                    //#else
+                    //                    //NOTE Use this for mounting a LocalDB db during debugging
+                    //                    object dbPath = AppDomain.CurrentDomain.GetData("DataDirectory");
+                    //                    if (dbPath == null)
+                    //                    {
+                    //                        string path = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+                    //                        if (Environment.MachineName == "PRECISION")
+                    //                            path = @"C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Tool";
+                    //                        AppDomain.CurrentDomain.SetData("DataDirectory", path);
+                    //                        dbPath = AppDomain.CurrentDomain.GetData("DataDirectory");
+                    //                    }
+                    //#endif
+
+                    //NOTE Can also use BCM_BusinessContacts_Core.sql in Resources instead of EF
+                    try
+                    {
+                        context.Database.Connection.ConnectionString = ConnectionString;
+
+                        var contacts = context.ContactFullViews.Where(mycontacts => mycontacts.Type == 1 && mycontacts.IsDeletedLocally == false);
+
+                        List<ContactFullView> bcmContacts = new List<ContactFullView>();
+
+                        Log.InfoFormat("Found {0} BCM Contacts:", contacts.Count());
+                        OnGetComplete(null, new HelperEventArgs(String.Format("Found {0} BCM Contacts:", contacts.Count()), HelperEventArgs.EventTypes.Status));
+
+                        foreach (var contact in contacts)
+                        {
+                            try
+                            {
+                                if (LogRecordNames)
+                                    OnGetItemComplete(null, new HelperEventArgs(String.Format(" -{0} (Company: {1})", contact.FullName, contact.CompanyName), HelperEventArgs.EventTypes.Status));
+                                Log.DebugFormat(" -{0} (Company: {1})", contact.FullName, contact.CompanyName);
+                                bcmContacts.Add(contact);
+                            }
+                            catch (System.Exception ex)
+                            {
+                                Log.Error(ex);
+                            }
+                            finally
+                            { }
+                        }
+                    }
+                    catch (System.Exception ex)
+                    {
+                        Log.Error(ex);
+                    }
+                    finally
+                    { }
+                }
+            }
+            catch (System.Exception ex)
+            {
+                Log.Error(ex);
+            }
+            finally
+            { }
+        }
         private async Task RunCreateContactsAsync()
         {
             using (var context = new MSSampleBusinessEntities())
@@ -1473,7 +1590,225 @@ namespace BCM_Migration_Tool.Objects
                 }
             }            
         }
+        private async Task RunCreateContactsAsyncV3()
+        {
+            using (Log.VerboseCall())
+            {
+                try
+                {
+                    using (SqlConnection con = new SqlConnection(ConnectionString))
+                    {
+                        con.Open();
 
+                        using (SqlCommand comA = new SqlCommand(Resources.BCM_ContactFullViewCount_V3, con))
+                        {
+                            NumberToProcess = Convert.ToInt32(comA.ExecuteScalar());
+                        }
+
+                        using (SqlCommand comB = new SqlCommand(Resources.BCM_ContactFullView_V3, con))
+                        {
+                            //con.Open();
+                            using (DbDataReader reader = comB.ExecuteReader())
+                            {
+                                if (!reader.HasRows)
+                                {
+                                    Log.Error("Unexpected - no records");
+                                    return;
+                                }
+
+                                if (TestMode)
+                                {
+                                    NumberToProcess = TestingMaximum;
+                                    Log.DebugFormat("Test mode - importing to {0} maximum", TestingMaximum);
+                                    OnStart(null, new HelperEventArgs(String.Format("Importing Contacts (max {0} - TESTING MODE)", TestingMaximum), false));
+                                }
+                                else
+                                {                                    
+                                    OnStart(null, new HelperEventArgs("Importing Contacts...", false));
+                                }
+
+                                while (reader.Read())
+                                {
+                                    int cnt = 0;
+                                    if (TestMode && cnt >= TestingMaximum)
+                                        break;
+                                    if (Cancelled)
+                                    {
+                                        Log.Warn("Cancelled!");
+                                        break;
+                                    }
+
+                                    ContactFullView contact = new ContactFullView();
+                                    ImportModes importMode;
+                                    OCMContact2Value ocmContact = null;
+                                    string bcmID = "";
+
+                                    try
+                                    {
+                                        contact.EntryGUID = Guid.Parse(Convert.ToString(reader["EntryGUID"]));
+                                        if (!DBNull.Value.Equals(reader["ParentEntryID"]))
+                                            contact.ParentEntryID = Guid.Parse(Convert.ToString(reader["ParentEntryID"]));
+
+                                        contact.ContactServiceID = Convert.ToInt32(reader["ContactServiceID"]);
+
+                                        try
+                                        {
+                                            if (!DBNull.Value.Equals(reader["FullName"]))
+                                                contact.FullName = reader["FullName"].ToString();
+                                            if (!DBNull.Value.Equals(reader["FirstName"]))
+                                                contact.FirstName = reader["FirstName"].ToString();
+                                            if (!DBNull.Value.Equals(reader["LastName"]))
+                                                contact.LastName = reader["LastName"].ToString();
+                                        }
+                                        catch (System.Exception ex)
+                                        {
+                                            Log.Error(ex);
+                                        }
+
+                                        try
+                                        {
+                                            if (!DBNull.Value.Equals(reader["Birthday"]))
+                                                contact.Birthday = Convert.ToDateTime(reader["Birthday"]);
+                                            if (!DBNull.Value.Equals(reader["JobTitle"]))
+                                                contact.JobTitle = reader["JobTitle"].ToString();
+                                            if (!DBNull.Value.Equals(reader["ContactNotes"]))
+                                                contact.ContactNotes = reader["ContactNotes"].ToString();
+                                        }
+                                        catch (System.Exception ex)
+                                        {
+                                            Log.Error(ex);
+                                        }
+                                        finally
+                                        { }
+
+                                        try
+                                        {
+                                            if (!DBNull.Value.Equals(reader["Email1Address"]))
+                                                contact.Email1Address = reader["Email1Address"].ToString();
+                                            if (!DBNull.Value.Equals(reader["Email1DisplayAs"]))
+                                                contact.Email1DisplayAs = reader["Email1DisplayAs"].ToString();
+                                        }
+                                        catch (System.Exception ex)
+                                        {
+                                            Log.Error(ex);
+                                        }
+                                        finally
+                                        { }
+
+                                        try
+                                        {
+                                            if (!DBNull.Value.Equals(reader["WorkAddressStreet"]))
+                                                contact.WorkAddressStreet = reader["WorkAddressStreet"].ToString();
+                                            if (!DBNull.Value.Equals(reader["WorkAddressCity"]))
+                                                contact.WorkAddressCity = reader["WorkAddressCity"].ToString();
+                                            if (!DBNull.Value.Equals(reader["WorkAddressCountry"]))
+                                                contact.WorkAddressCountry = reader["WorkAddressCountry"].ToString();
+                                            if (!DBNull.Value.Equals(reader["WorkAddressZip"]))
+                                                contact.WorkAddressZip = reader["WorkAddressZip"].ToString();
+                                            if (!DBNull.Value.Equals(reader["WorkAddressState"]))
+                                                contact.WorkAddressState = reader["WorkAddressState"].ToString();
+                                        }
+                                        catch (System.Exception ex)
+                                        {
+                                            Log.Error(ex);
+                                        }
+                                        finally
+                                        { }
+
+                                        try
+                                        {
+                                            if (!DBNull.Value.Equals(reader["WorkPhoneNum"]))
+                                                contact.WorkPhoneNum = reader["WorkPhoneNum"].ToString();
+                                            if (!DBNull.Value.Equals(reader["HomePhoneNum"]))
+                                                contact.HomePhoneNum = reader["HomePhoneNum"].ToString();
+                                            if (!DBNull.Value.Equals(reader["MobilePhoneNum"]))
+                                                contact.MobilePhoneNum = reader["MobilePhoneNum"].ToString();
+                                        }
+                                        catch (System.Exception ex)
+                                        {
+                                            Log.Error(ex);
+                                        }
+                                        finally
+                                        { }
+                                    }
+                                    catch (System.Exception ex)
+                                    {
+                                        Log.Error(ex);
+                                    }
+
+                                    //Look for a Company with the same BCMID
+                                    ocmContact = GetOCMContact(contact.EntryGUID.ToString(), UpdateKeyTypes.BCMID);
+
+                                    if (ocmContact == null)
+                                    {
+                                        //Look for matching Company on name match
+                                        ocmContact = GetOCMContact(contact.FullName, UpdateKeyTypes.Name);
+                                    }
+
+                                    if (ocmContact != null)
+                                    {
+                                        //TESTED Must distinguish between existing manually created Companies (no BCMID) and those previously imported (with BCMID)
+
+                                        bcmID = ocmContact.GetBCMID();
+                                        if (!String.IsNullOrEmpty(bcmID))
+                                        {
+                                            //Previously imported - IGNORE
+                                            Log.DebugFormat("Contact '{0}' previously imported; skipping", ocmContact.DisplayName);
+                                            OnCreateItemComplete(null, new HelperEventArgs(String.Format("Contact '{0}' previously imported; skipping", ocmContact.DisplayName), false));
+                                            continue;
+                                        }
+                                        else
+                                        {
+                                            //Update existing manually created item
+                                            Log.DebugFormat("Updating Contact '{0}'", ocmContact.DisplayName);
+                                            importMode = ImportModes.Update;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        importMode = ImportModes.Create;
+                                    }
+
+                                    //Get company name by join on Account
+                                    string companyName = "";
+                                    using (var context2 = new MSSampleBusinessEntities())
+                                    {
+                                        context2.Database.Connection.ConnectionString = ConnectionString;
+                                        var account = context2.AccountsFullViews.SingleOrDefault(accounts => accounts.EntryGUID == contact.ParentEntryID);
+                                        //1.0.15 Wasn't checking for null account
+                                        if (account != null)
+                                        {
+                                            companyName = account.FullName;
+                                        }
+                                        else
+                                        {
+                                            Log.VerboseFormat("No company match for contact '{0}' (ParentEntryID: {1}; ContactServiceID: {2})", contact.FullName, contact.ParentEntryID, contact.ContactServiceID);
+                                        }
+                                    }
+
+                                    await ImportContactAsync(contact, companyName, importMode, ocmContact);
+                                    cnt += 1;
+                                }
+                            }
+                        }
+                    }
+
+                    if (!Cancelled)
+                    {
+                        OnHelperComplete(null, new HelperEventArgs(String.Format("Contacts import complete!{0}Created: {1}{0}Errors: {2}", Environment.NewLine, NumberCreated, NumberOfErrors), false));
+                    }
+                    else
+                    {
+                        OnHelperComplete(null, new HelperEventArgs(String.Format("Contacts import stopped{0}Created: {1}{0}Errors: {2}", Environment.NewLine, NumberCreated, NumberOfErrors), false));
+                    }
+                    Log.InfoFormat("Created {0} OCM Contacts ({1} Errors)", NumberCreated, NumberOfErrors);
+                }
+                catch (System.Exception ex)
+                {
+                    OnError(this, new HelperEventArgs(ex.ToString(), HelperEventArgs.EventTypes.FatalError));
+                }
+            }
+        }
         private async Task RunGetOCMContactsAsync()
         {
             using (Log.VerboseCall())

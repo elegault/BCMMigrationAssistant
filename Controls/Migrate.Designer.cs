@@ -100,13 +100,14 @@
             // 
             // lblWarnings
             // 
+            this.lblWarnings.AutoSize = true;
             this.lblWarnings.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblWarnings.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(117)))), ((int)(((byte)(182)))));
-            this.lblWarnings.Location = new System.Drawing.Point(165, 36);
+            this.lblWarnings.Location = new System.Drawing.Point(171, 41);
             this.lblWarnings.Name = "lblWarnings";
-            this.lblWarnings.Size = new System.Drawing.Size(326, 45);
+            this.lblWarnings.Size = new System.Drawing.Size(298, 21);
             this.lblWarnings.TabIndex = 5;
-            this.lblWarnings.Text = "For maximum performance, please don\'t use OCM while running this tool.";
+            this.lblWarnings.Text = "Do NOT use OCM while running this tool!";
             this.lblWarnings.Visible = false;
             // 
             // Migrate

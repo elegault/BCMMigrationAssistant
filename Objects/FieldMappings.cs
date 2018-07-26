@@ -40,11 +40,14 @@ namespace BCM_Migration_Tool.Objects
         #endregion
         #region Properties
         public static string ConnectionString { get; set; }
+        public static bool DisableCustomFields { get; set; }
 #endregion
         #region Methods
-        public static void InitializeFieldMappings(string conn)
+        public static void InitializeFieldMappings(string conn, bool disableCustomFields)
         {
             ConnectionString = conn;
+            DisableCustomFields = disableCustomFields;
+
             BCMAccountFields.BCMFields = new BCMAccountFieldMappings();
             BCMAccountFields.BCMFields.UnMappedFields = BCMAccountFields.ManualFields;
             OCMAccountFields.OCMFields = new OCMAccountFieldMappings();
@@ -259,7 +262,8 @@ namespace BCM_Migration_Tool.Objects
                     List<OCMField> result = new List<OCMField>();
                     //Return all manual fields as default collection of unmapped fields
                     //NOTE Update manual fields here if they change
-                    result.AddRange(GetCustomFields());
+                    if (!DisableCustomFields)
+                        result.AddRange(GetCustomFields());
                     return result;
                 }
             }
@@ -380,7 +384,8 @@ namespace BCM_Migration_Tool.Objects
                     List<OCMField> result = new List<OCMField>();
                     //Return all manual fields as default collection of unmapped fields
                     //NOTE Update manual fields here if they change
-                    result.AddRange(GetCustomFields());
+                    if (!DisableCustomFields)
+                        result.AddRange(GetCustomFields());
                     return result;
                 }
             }
@@ -490,7 +495,8 @@ namespace BCM_Migration_Tool.Objects
                     //Return all manual fields as default collection of unmapped fields
                     //NOTE Update manual fields here if they change
                     //result.Add(Probability);
-                    result.AddRange(GetCustomFields());
+                    if (!DisableCustomFields)
+                        result.AddRange(GetCustomFields());
                     return result;
                 }
             }
@@ -696,7 +702,8 @@ namespace BCM_Migration_Tool.Objects
                     result.Add(DoNotMail);
                     result.Add(BusinessFax);
                     //result.Add(Notes);
-                    result.AddRange(GetCustomFields());
+                    if (!DisableCustomFields)
+                        result.AddRange(GetCustomFields());
                                                              
                     return result;
                 }
@@ -858,7 +865,9 @@ namespace BCM_Migration_Tool.Objects
                     //result.Add(TypeOfEntity);//No longer mapped
                     //result.Add(WebAddress);//No longer mapped
                     result.Add(WeddingAnniversary);//
-                    result.AddRange(GetCustomFields());                    
+
+                    if (!DisableCustomFields)
+                        result.AddRange(GetCustomFields());                    
 
                     return result;
                 }
@@ -1017,7 +1026,9 @@ namespace BCM_Migration_Tool.Objects
                     result.Add(ReferredBy);
                     result.Add(Status);
                     result.Add(TotalDiscount);
-                    result.AddRange(GetCustomFields());
+
+                    if (!DisableCustomFields)
+                        result.AddRange(GetCustomFields());
                     return result;
                 }
             }

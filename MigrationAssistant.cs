@@ -22,6 +22,7 @@ namespace BCM_Migration_Tool
     {
         private static readonly Logger Log = Logger.GetLogger("MigrationAssistant");
         private string _accessToken;
+        private bool _disableCustomContactFields;
         #region Constructors
         public MigrationAssistant()
         {
@@ -65,7 +66,17 @@ namespace BCM_Migration_Tool
         private DealsHelper dealsHelper { get; set; }
         private TesterHelper testerHelper { get; set; }
         private string ConnectionString { get { return connect1.ConnectionString; }}
-        private bool DisableCustomContactFields { get; set; }
+
+        private bool DisableCustomContactFields
+        {
+            get { return _disableCustomContactFields; }
+            set
+            {
+                _disableCustomContactFields = value;
+                tabPageMap.Enabled = !value;
+            }
+        }
+
         private int ImportRepeatCount { get; set; }
         private bool MappingsInitialized { get; set; }
         private bool MigrateClicked { get; set; }        
@@ -105,7 +116,7 @@ namespace BCM_Migration_Tool
                 {
                     accountsHelper = new AccountsHelper(AccessToken, ConnectionString);
                     //MigrationHelper.accountsHelper .AccessToken = AccessToken;
-
+                    accountsHelper.DisableCustomFields = DisableCustomContactFields;
                     accountsHelper.CreateItemComplete += accountsHelper_CreateItemComplete;
                     accountsHelper.GetComplete += accountsHelper_GetComplete;
                     accountsHelper.GetItemComplete += accountsHelper_GetItemComplete;
@@ -133,6 +144,7 @@ namespace BCM_Migration_Tool
                 if (dealsHelper == null)
                 {
                     dealsHelper = new DealsHelper(AccessToken, ConnectionString);
+                    dealsHelper.DisableCustomFields = DisableCustomContactFields;
                     dealsHelper.CreateItemComplete += dealsHelper_CreateItemComplete;
                     dealsHelper.GetComplete += dealsHelper_GetComplete;
                     dealsHelper.GetItemComplete += dealsHelper_GetItemComplete;
@@ -200,6 +212,7 @@ namespace BCM_Migration_Tool
                 if (accountsHelper == null)
                 {
                     accountsHelper = new AccountsHelper(AccessToken, ConnectionString);
+                    accountsHelper.DisableCustomFields = DisableCustomContactFields;
                     accountsHelper.CreateItemComplete += accountsHelper_CreateItemComplete;
                     accountsHelper.GetItemComplete += accountsHelper_GetItemComplete;
                     accountsHelper.GetComplete += accountsHelper_GetComplete;
@@ -245,7 +258,11 @@ namespace BCM_Migration_Tool
                     Debug.WriteLine("CreateCompanies returned; calling CreateCompanyActivities");
 
                     //Import activities from Accounts
-                    await activitiesHelper.CreateCompanyActivities();
+                    if ((chkTestMode.Checked && chkLBDebugMode.CheckedItems.Contains("Account Activities")) ||
+                        !chkTestMode.Checked)
+                    {
+                        await activitiesHelper.CreateCompanyActivities();
+                    }                        
 
                     Debug.WriteLine("CreateCompanyActivities returned");
                 }
@@ -321,8 +338,12 @@ namespace BCM_Migration_Tool
                         migrate1.progressBar1.PerformStep();
 
                         //Create activities
-                        await activitiesHelper.CreateContactActivities();
 
+                        if ((chkTestMode.Checked && chkLBDebugMode.CheckedItems.Contains("Contact Activities")) || !chkTestMode.Checked)
+                        {
+                            await activitiesHelper.CreateContactActivities();
+                        }
+                            
                         migrate1.progressBar1.Value = 0;
                         migrate1.progressBar1.PerformStep();
                         Log.Debug("CreateContactActivities returned; calling CreateCompanyLinks");
@@ -355,6 +376,7 @@ namespace BCM_Migration_Tool
                 if (dealsHelper == null)
                 {
                     dealsHelper = new DealsHelper(AccessToken, ConnectionString);
+                    dealsHelper.DisableCustomFields = DisableCustomContactFields;
                     dealsHelper.CreateItemComplete += dealsHelper_CreateItemComplete;
                     dealsHelper.GetComplete += dealsHelper_GetComplete;
                     dealsHelper.GetItemComplete += dealsHelper_GetItemComplete;
@@ -406,7 +428,10 @@ namespace BCM_Migration_Tool
                     migrate1.progressBar1.Value = 0;
                     migrate1.progressBar1.PerformStep();
                     Debug.WriteLine("CreateDealLinks returned; calling CreateDealActivities");
-                    await activitiesHelper.CreateDealActivities();
+                    if ((chkTestMode.Checked && chkLBDebugMode.CheckedItems.Contains("Oppportunity Activities")) || !chkTestMode.Checked)
+                    {
+                        await activitiesHelper.CreateDealActivities();
+                    }                        
                     Debug.WriteLine("CreateDealActivities returned");
                 }
             }
@@ -535,9 +560,12 @@ namespace BCM_Migration_Tool
                                     else
                                     {
                                         Log.WarnFormat("Unsupported version {0}", version);
-                                        if (MessageBox.Show(
-                                                "Connection successful.  However, this version of Business Contact Manager is not currently supported by the tool. You can download the BCM Database Tool (https://www.microsoft.com/en-ca/download/details.aspx?id=658) to upgrade the database, then try the migration again. If you would like to try testing this version anyway or the database has been upgraded, click Yes and ensure Test mode is enabled (on the settings page) and select 'Get only' with the testing controls. This will verify if the data can be retrieved from the datatbase. Regardless, migrating custom Contact fields is not currently supported for older versions of the database (only for Accounts and Opportunities).",
-                                                "Incompatible Version", MessageBoxButtons.YesNo, MessageBoxIcon.Error) ==
+                                        //BUG custom Contact fields in older versions of the DB cannot be supported even after the upgrade because of an issue with using BCM_CustomFields_Contacts.sql: Msg 8115, Level 16, State 8, Line 1 Arithmetic overflow error converting varbinary to data type numeric.
+                                        string message = "Connection successful.  However, this version of Business Contact Manager is not currently supported by the tool. You can download the BCM Database Tool (https://www.microsoft.com/en-ca/download/details.aspx?id=658) to upgrade the database, then try the migration again. If you would like to try testing this version anyway or the database has been upgraded, click Yes and ensure Test mode is enabled (on the settings page) and select 'Get only' with the testing controls. This will verify if the data can be retrieved from the database. Regardless, migrating custom Contact fields is not currently supported for older versions of the database (only for Accounts and Opportunities).";
+
+                                        message = $"Connection successful.  However, your Business Contact Manager database version ({version}) is not *fully* supported by the tool and any custom field data cannot be migrated.  If you need the custom field data, you can try to upgrade your database with the BCM Database Tool (https://www.microsoft.com/en-ca/download/details.aspx?id=658) and run the migration again.{Environment.NewLine}{Environment.NewLine}Would you like to continue the migration with support for custom fields disabled? {Environment.NewLine}{Environment.NewLine}NOTE: the Map section of the tool will also be disabled.";
+
+                                        if (MessageBox.Show(message, "Database Version Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) ==
                                             DialogResult.Yes)
                                         {
                                             connect1.lblLogin.Enabled = true;
@@ -585,7 +613,23 @@ namespace BCM_Migration_Tool
             //    var contacts2 = (from a in context.ContactFullViews join c in context.AccountsFullViews on a.ParentEntryID equals c.EntryGUID select new { CompanyName = c.FullName, Contact = a });
             //}
         }
-#endregion
+
+        private void ToggleTestModeControls(bool enable)
+        {
+            numericUpDownMaxRecords.Visible = enable;
+            chkGetOnly.Visible = enable;
+            chkLBDebugMode.Visible = enable;
+            chkTestMode.Visible = enable;
+            chkRepeatBatch.Visible = enable;
+            lblMaxRecords.Visible = enable;
+            lblRESTRetries.Visible = enable;
+            lblRetryDelay.Visible = enable;
+            numericUpDownMaxRecords.Visible = enable;
+            numericUpDownRetryDelay.Visible = enable;
+            numericUpDownRetryMax.Visible = enable;
+            numericUpDownRepeatCount.Visible = enable;
+        }
+        #endregion
 #region Control Events
         private void chkEnableTestMode_CheckedChanged(object sender, EventArgs e)
         {
@@ -710,7 +754,13 @@ namespace BCM_Migration_Tool
                 ConnectToDB();
             }
         }
-
+        private void lblHelp_Click(object sender, EventArgs e)
+        {
+            using (Log.InfoCall())
+            {
+                Process.Start("mailto:eric@ericlegault.com?subject=BCM Migration Tool Help Request");
+            }
+        }
         private void lblWebSite_Click(object sender, EventArgs e)
         {
             using (Log.InfoCall())
@@ -736,6 +786,7 @@ namespace BCM_Migration_Tool
                     migrate1.progressBar1.PerformStep();
                     migrate1.UpdateText("Starting import...");
                     migrate1.UpdateStatus("Initializing...");
+                    migrate1.lblWarnings.Visible = false;
 
                     if (MigrationHelper.StartXRMSession(AccessToken) == false)
                     {
@@ -861,22 +912,6 @@ namespace BCM_Migration_Tool
             }
         }
 
-        private void ToggleTestModeControls(bool enable)
-        {
-            numericUpDownMaxRecords.Visible = enable;
-            chkGetOnly.Visible = enable;
-            chkLBDebugMode.Visible = enable;
-            chkTestMode.Visible = enable;
-            chkRepeatBatch.Visible = enable;
-            lblMaxRecords.Visible = enable;
-            lblRESTRetries.Visible = enable;
-            lblRetryDelay.Visible = enable;
-            numericUpDownMaxRecords.Visible = enable;
-            numericUpDownRetryDelay.Visible = enable;
-            numericUpDownRetryMax.Visible = enable;
-            numericUpDownRepeatCount.Visible = enable;
-        }
-
         private async void migrate1_StopClicked(object sender, EventArgs e)
         {
             using (Log.VerboseCall())
@@ -929,7 +964,7 @@ namespace BCM_Migration_Tool
                     //await opp
                     map1.tabControl1.SelectTab(0);
                     map1.ConnectionString = ConnectionString;
-                    map1.InitializeFieldMappings();
+                    map1.InitializeFieldMappings(DisableCustomContactFields);
                     MappingsInitialized = true;
                 }
             }
@@ -1305,18 +1340,5 @@ namespace BCM_Migration_Tool
             }
         }
         #endregion
-
-        private void lblVersion_Click(object sender, EventArgs e)
-        {
-            
-        }
-
-        private void pictureBox1_Click(object sender, EventArgs e)
-        {
-            //testerHelper = new TesterHelper(AccessToken, ConnectionString);
-            //GraphTester graphTester = new GraphTester();
-            //graphTester.TesterHelper = testerHelper;
-            //graphTester.Show();
-        }
     }
 }

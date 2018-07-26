@@ -118,77 +118,38 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="BCMtool_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Graphics\BCMtool_icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="rightbutton" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Graphics\rightbutton.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Deal_Stages" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Graphics\Deal Stages.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="trash" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Graphics\trash.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="upbutton" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Graphics\upbutton.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="plusbutton" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Graphics\plusbutton.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="BCM_ContactFullView_V3" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Scripts\BCM_ContactFullView_V3.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="rightbuttonred" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Graphics\rightbuttonred.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="BCMtool_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Graphics\BCMtool_icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="downbutton" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Graphics\downbutton.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="BCM_CustomFields_Accounts" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Scripts\BCM_CustomFields_Accounts.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
+  <data name="Settings_Gray" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Graphics\Settings_Gray.PNG;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="BCM_CustomFields_Contacts" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Scripts\BCM_CustomFields_Contacts.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
+  <data name="plusbutton" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Graphics\plusbutton.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="BCM_CustomFields_Opportunities" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Scripts\BCM_CustomFields_Opportunities.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
+  <data name="rightbutton" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Graphics\rightbutton.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="BCM_UserFields" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Scripts\BCM_UserFields.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
+  <data name="trash" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Graphics\trash.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="StartXrmSessionXMLRequest" xml:space="preserve">
-    <value>&lt;?xml version="1.0" encoding="utf-8"?&gt;
-&lt;soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:m="http://schemas.microsoft.com/exchange/services/2006/messages" xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"&gt;
-  &lt;soap:Header&gt;
-    &lt;RequestServerVersion Version="V2016_04_13" xmlns="http://schemas.microsoft.com/exchange/services/2006/types" /&gt;
-  &lt;/soap:Header&gt;
-  &lt;soap:Body&gt;
-    &lt;m:StartXrmSession&gt;
-      &lt;m:FailOnError&gt;true&lt;/m:FailOnError&gt;
-      &lt;m:ForcePersonaBackfill&gt;false&lt;/m:ForcePersonaBackfill&gt;
-    &lt;/m:StartXrmSession&gt;
-  &lt;/soap:Body&gt;
-&lt;/soap:Envelope&gt;</value>
+  <data name="BCM_OpportunityFullView_V3" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Scripts\BCM_OpportunityFullView_V3.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
-  <data name="FindPeopleRequest" xml:space="preserve">
-    <value>&lt;?xml version="1.0" encoding="utf-8"?&gt;
-&lt;soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types" xmlns:m="http://schemas.microsoft.com/exchange/services/2006/messages"&gt;
-  &lt;soap:Header&gt;
-    &lt;RequestServerVersion Version="V2016_02_10" xmlns="http://schemas.microsoft.com/exchange/services/2006/types" /&gt;
-  &lt;/soap:Header&gt;
-  &lt;soap:Body&gt;
-    &lt;m:FindPeople&gt;
-      &lt;m:IndexedPageItemView BasePoint="Beginning" MaxEntriesReturned="100" Offset="{OFFSET}" /&gt;
-      &lt;m:ParentFolderId&gt;
-        &lt;t:DistinguishedFolderId Id="contacts" /&gt;
-      &lt;/m:ParentFolderId&gt;
-    &lt;/m:FindPeople&gt;
-  &lt;/soap:Body&gt;
-&lt;/soap:Envelope&gt;</value>
-  </data>
-  <data name="TestAccountCreateJSON" xml:space="preserve">
-    <value>{"Id":null,"DisplayName":"Alpha Corp","BusinessAddress":{"Street":"","City":"","State":"","CountryOrRegion":"","PostalCode":""},"BusinessHomePage":"www.alpha.com","BusinessPhones":[],"EmailAddresses":[],"Manager":null,"Profession":null,"TickerSymbol":null,"Notes":null,"XrmContactType":0,"XrmCompanySize":0,"XrmId":null}</value>
-  </data>
-  <data name="BCM_Activities" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Scripts\BCM_Activities.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
-  </data>
-  <data name="BCM_Opportunity_Core" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Scripts\BCM_Opportunity_Core.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
+  <data name="BCM_Contacts_Simple" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Scripts\BCM_Contacts_Simple.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
   <data name="GetPersonaRequest" xml:space="preserve">
     <value>&lt;?xml version="1.0" encoding="utf-8"?&gt;
@@ -207,7 +168,16 @@
 	&lt;/soap:Body&gt;
 &lt;/soap:Envelope&gt;</value>
   </data>
-  <data name="CreateXrmGraphRelationshipRequest" xml:space="preserve">
+  <data name="BCM_Activities" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Scripts\BCM_Activities.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
+  </data>
+  <data name="BCM_Opportunity_Core_V3" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Scripts\BCM_Opportunity_Core V3.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
+  </data>
+  <data name="BCM_Opportunity_Core" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Scripts\BCM_Opportunity_Core.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
+  </data>
+  <data name="CreateXrmGraphRelationshipRequest2" xml:space="preserve">
     <value>&lt;?xml version="1.0" encoding="utf-8"?&gt;
 &lt;soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:m="http://schemas.microsoft.com/exchange/services/2006/messages" xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"&gt;
   &lt;soap:Header&gt;
@@ -215,14 +185,17 @@
   &lt;/soap:Header&gt;
   &lt;soap:Body&gt;
     &lt;m:CreateXrmGraphRelationship&gt;
-      &lt;m:FromEntityId&gt;{FROMENTITYID}&lt;/m:FromEntityId&gt;
-      &lt;m:FromEntityType&gt;{FROMENTITYTYPE}&lt;/m:FromEntityType&gt;
-      &lt;m:ToEntityId&gt;{TOENTITYID}&lt;/m:ToEntityId&gt;
-      &lt;m:ToEntityType&gt;{TOENTITYTYPE}&lt;/m:ToEntityType&gt;
-      &lt;m:LinkType&gt;{LINKTYPE}&lt;/m:LinkType&gt;
+      &lt;m:FromEntityId&gt;{0}&lt;/m:FromEntityId&gt;
+      &lt;m:FromEntityType&gt;{1}&lt;/m:FromEntityType&gt;
+      &lt;m:ToEntityId&gt;{2}&lt;/m:ToEntityId&gt;
+      &lt;m:ToEntityType&gt;{3}&lt;/m:ToEntityType&gt;
+      &lt;m:LinkType&gt;{4}&lt;/m:LinkType&gt;
     &lt;/m:CreateXrmGraphRelationship&gt;
   &lt;/soap:Body&gt;
 &lt;/soap:Envelope&gt;</value>
+  </data>
+  <data name="BCM_CustomFields_Opportunities" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Scripts\BCM_CustomFields_Opportunities.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
   </data>
   <data name="DeleteXrmGraphRelationshipRequest" xml:space="preserve">
     <value>&lt;?xml version="1.0" encoding="utf-8"?&gt;
@@ -240,6 +213,141 @@
     &lt;/m:DeleteXrmGraphRelationship&gt;
   &lt;/soap:Body&gt;
 &lt;/soap:Envelope&gt;</value>
+  </data>
+  <data name="WizardStep1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Graphics\WizardStep1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="BCM_Accounts_Simple" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Scripts\BCM_Accounts_Simple.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="SetExtendedPropertiesOnContactRequest" xml:space="preserve">
+    <value>&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+xmlns:m="http://schemas.microsoft.com/exchange/services/2006/messages"
+xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types"&gt;
+	&lt;soap:Header&gt;
+		&lt;t:RequestServerVersion Version="V2016_04_13" /&gt;
+	&lt;/soap:Header&gt;
+	&lt;soap:Body&gt;
+		&lt;m:UpdateItem ConflictResolution="AlwaysOverwrite"&gt;
+			&lt;m:ItemChanges&gt;
+				&lt;t:ItemChange&gt;
+					&lt;t:ItemId Id="{0}" ChangeKey="{1}" /&gt;
+					&lt;t:Updates&gt;
+						&lt;t:SetItemField&gt;
+							&lt;t:ExtendedFieldURI PropertySetId="1a417774-4779-47c1-9851-e42057495fca" PropertyName="XrmSharingSourceUser" PropertyType="String" xmlns="http://schemas.microsoft.com/exchange/services/2006/messages" /&gt;
+							&lt;t:Contact&gt;
+								&lt;t:ExtendedProperty&gt;
+									&lt;t:ExtendedFieldURI PropertySetId="1a417774-4779-47c1-9851-e42057495fca" PropertyName="XrmSharingSourceUser" PropertyType="String" xmlns="http://schemas.microsoft.com/exchange/services/2006/messages" /&gt;
+									&lt;t:Value&gt;{2}&lt;/t:Value&gt;
+								&lt;/t:ExtendedProperty&gt;
+							&lt;/t:Contact&gt;
+						&lt;/t:SetItemField&gt;
+						&lt;t:SetItemField&gt;
+							&lt;t:ExtendedFieldURI PropertySetId="1a417774-4779-47c1-9851-e42057495fca" PropertyName="XrmSharingSourceUserDisplayName" PropertyType="String" xmlns="http://schemas.microsoft.com/exchange/services/2006/messages" /&gt;
+							&lt;t:Contact&gt;
+								&lt;t:ExtendedProperty&gt;
+									&lt;t:ExtendedFieldURI PropertySetId="1a417774-4779-47c1-9851-e42057495fca" PropertyName="XrmSharingSourceUserDisplayName" PropertyType="String" xmlns="http://schemas.microsoft.com/exchange/services/2006/messages" /&gt;
+									&lt;t:Value&gt;{3}&lt;/t:Value&gt;
+								&lt;/t:ExtendedProperty&gt;
+							&lt;/t:Contact&gt;
+						&lt;/t:SetItemField&gt;
+						&lt;t:SetItemField&gt;
+							&lt;t:ExtendedFieldURI PropertySetId="bdba944b-fc2b-47a1-8ba4-cafc4ae13ea2" PropertyName="BusinessType" PropertyType="String" xmlns="http://schemas.microsoft.com/exchange/services/2006/messages" /&gt;
+							&lt;t:Contact&gt;
+								&lt;t:ExtendedProperty&gt;
+									&lt;t:ExtendedFieldURI PropertySetId="bdba944b-fc2b-47a1-8ba4-cafc4ae13ea2" PropertyName="BusinessType" PropertyType="String" xmlns="http://schemas.microsoft.com/exchange/services/2006/messages" /&gt;
+									&lt;t:Value&gt;{4}&lt;/t:Value&gt;
+								&lt;/t:ExtendedProperty&gt;
+							&lt;/t:Contact&gt;
+						&lt;/t:SetItemField&gt;
+						&lt;t:SetItemField&gt;
+							&lt;t:ExtendedFieldURI PropertySetId="47ac1412-279b-41cb-891e-58904a94a48b" PropertyName="IsCustomer" PropertyType="Integer" xmlns="http://schemas.microsoft.com/exchange/services/2006/messages" /&gt;
+							&lt;t:Contact&gt;
+								&lt;t:ExtendedProperty&gt;
+									&lt;t:ExtendedFieldURI PropertySetId="47ac1412-279b-41cb-891e-58904a94a48b" PropertyName="IsCustomer" PropertyType="Integer" xmlns="http://schemas.microsoft.com/exchange/services/2006/messages" /&gt;
+									&lt;t:Value&gt;{5}&lt;/t:Value&gt;
+								&lt;/t:ExtendedProperty&gt;
+							&lt;/t:Contact&gt;
+						&lt;/t:SetItemField&gt;						
+					&lt;/t:Updates&gt;
+				&lt;/t:ItemChange&gt;
+			&lt;/m:ItemChanges&gt;
+		&lt;/m:UpdateItem&gt;	
+	&lt;/soap:Body&gt;
+&lt;/soap:Envelope&gt;</value>
+  </data>
+  <data name="WizardStep2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Graphics\WizardStep2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="FindPeopleRequest" xml:space="preserve">
+    <value>&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types" xmlns:m="http://schemas.microsoft.com/exchange/services/2006/messages"&gt;
+  &lt;soap:Header&gt;
+    &lt;RequestServerVersion Version="V2016_02_10" xmlns="http://schemas.microsoft.com/exchange/services/2006/types" /&gt;
+  &lt;/soap:Header&gt;
+  &lt;soap:Body&gt;
+    &lt;m:FindPeople&gt;
+      &lt;m:IndexedPageItemView BasePoint="Beginning" MaxEntriesReturned="100" Offset="{OFFSET}" /&gt;
+      &lt;m:ParentFolderId&gt;
+        &lt;t:DistinguishedFolderId Id="contacts" /&gt;
+      &lt;/m:ParentFolderId&gt;
+    &lt;/m:FindPeople&gt;
+  &lt;/soap:Body&gt;
+&lt;/soap:Envelope&gt;</value>
+  </data>
+  <data name="BCM_Activities_V3" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Scripts\BCM_Activities V3.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="StartXrmSessionXMLRequest" xml:space="preserve">
+    <value>&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:m="http://schemas.microsoft.com/exchange/services/2006/messages" xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"&gt;
+  &lt;soap:Header&gt;
+    &lt;RequestServerVersion Version="V2016_04_13" xmlns="http://schemas.microsoft.com/exchange/services/2006/types" /&gt;
+  &lt;/soap:Header&gt;
+  &lt;soap:Body&gt;
+    &lt;m:StartXrmSession&gt;
+      &lt;m:FailOnError&gt;true&lt;/m:FailOnError&gt;
+      &lt;m:ForcePersonaBackfill&gt;false&lt;/m:ForcePersonaBackfill&gt;
+    &lt;/m:StartXrmSession&gt;
+  &lt;/soap:Body&gt;
+&lt;/soap:Envelope&gt;</value>
+  </data>
+  <data name="WizardStep3" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Graphics\WizardStep3.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ShareContactByCopyingRequest" xml:space="preserve">
+    <value>&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types"&gt;
+  &lt;soap:Header&gt;
+    &lt;t:RequestServerVersion Version="V2016_04_13" /&gt;
+  &lt;/soap:Header&gt;
+  &lt;soap:Body&gt;
+    &lt;CopyItem xmlns="http://schemas.microsoft.com/exchange/services/2006/messages"
+    xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types"&gt;
+      &lt;ToFolderId&gt;
+        &lt;t:FolderId Id="{0}"/&gt;
+      &lt;/ToFolderId&gt;
+      &lt;ItemIds&gt;
+        &lt;t:ItemId Id="{1}"/&gt;
+      &lt;/ItemIds&gt;
+    &lt;/CopyItem&gt;
+  &lt;/soap:Body&gt;
+&lt;/soap:Envelope&gt;</value>
+  </data>
+  <data name="Settings_Blue" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Graphics\Settings_Blue.PNG;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="BCM_ContactFullViewCount_V3" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Scripts\BCM_ContactFullViewCount_V3.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="TestAccountCreateJSON" xml:space="preserve">
+    <value>{"Id":null,"DisplayName":"Alpha Corp","BusinessAddress":{"Street":"","City":"","State":"","CountryOrRegion":"","PostalCode":""},"BusinessHomePage":"www.alpha.com","BusinessPhones":[],"EmailAddresses":[],"Manager":null,"Profession":null,"TickerSymbol":null,"Notes":null,"XrmContactType":0,"XrmCompanySize":0,"XrmId":null}</value>
   </data>
   <data name="FindPeopleRequest2" xml:space="preserve">
     <value>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
@@ -324,6 +432,32 @@
   &lt;/soap:Body&gt;
 &lt;/soap:Envelope&gt;</value>
   </data>
+  <data name="BCM_CustomFields_Contacts" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Scripts\BCM_CustomFields_Contacts.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
+  </data>
+  <data name="BCM_UserFields" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Scripts\BCM_UserFields.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
+  </data>
+  <data name="CreateXrmGraphRelationshipRequest" xml:space="preserve">
+    <value>&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:m="http://schemas.microsoft.com/exchange/services/2006/messages" xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"&gt;
+  &lt;soap:Header&gt;
+    &lt;t:RequestServerVersion Version="V2016_04_13" /&gt;
+  &lt;/soap:Header&gt;
+  &lt;soap:Body&gt;
+    &lt;m:CreateXrmGraphRelationship&gt;
+      &lt;m:FromEntityId&gt;{FROMENTITYID}&lt;/m:FromEntityId&gt;
+      &lt;m:FromEntityType&gt;{FROMENTITYTYPE}&lt;/m:FromEntityType&gt;
+      &lt;m:ToEntityId&gt;{TOENTITYID}&lt;/m:ToEntityId&gt;
+      &lt;m:ToEntityType&gt;{TOENTITYTYPE}&lt;/m:ToEntityType&gt;
+      &lt;m:LinkType&gt;{LINKTYPE}&lt;/m:LinkType&gt;
+    &lt;/m:CreateXrmGraphRelationship&gt;
+  &lt;/soap:Body&gt;
+&lt;/soap:Envelope&gt;</value>
+  </data>
+  <data name="Deal_Stages" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Graphics\Deal Stages.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="ShareContactsRequest" xml:space="preserve">
     <value>&lt;?xml version="1.0" encoding="utf-8"?&gt;
 &lt;soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -346,120 +480,13 @@ xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types"&gt;
   &lt;/soap:Body&gt;
 &lt;/soap:Envelope&gt;</value>
   </data>
-  <data name="WizardStep1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Graphics\WizardStep1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="BCM_CustomFields_Accounts" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Scripts\BCM_CustomFields_Accounts.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
   </data>
-  <data name="WizardStep2" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Graphics\WizardStep2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="BCM_OpportunityFullViewCount_V3" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Scripts\BCM_OpportunityFullViewCount_V3.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
-  <data name="WizardStep3" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Graphics\WizardStep3.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Settings_Blue" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Graphics\Settings_Blue.PNG;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Settings_Gray" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Graphics\Settings_Gray.PNG;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="rightbuttonred" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Graphics\rightbuttonred.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="SetExtendedPropertiesOnContactRequest" xml:space="preserve">
-    <value>&lt;?xml version="1.0" encoding="utf-8"?&gt;
-&lt;soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
-xmlns:m="http://schemas.microsoft.com/exchange/services/2006/messages"
-xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types"&gt;
-	&lt;soap:Header&gt;
-		&lt;t:RequestServerVersion Version="V2016_04_13" /&gt;
-	&lt;/soap:Header&gt;
-	&lt;soap:Body&gt;
-		&lt;m:UpdateItem ConflictResolution="AlwaysOverwrite"&gt;
-			&lt;m:ItemChanges&gt;
-				&lt;t:ItemChange&gt;
-					&lt;t:ItemId Id="{0}" ChangeKey="{1}" /&gt;
-					&lt;t:Updates&gt;
-						&lt;t:SetItemField&gt;
-							&lt;t:ExtendedFieldURI PropertySetId="1a417774-4779-47c1-9851-e42057495fca" PropertyName="XrmSharingSourceUser" PropertyType="String" xmlns="http://schemas.microsoft.com/exchange/services/2006/messages" /&gt;
-							&lt;t:Contact&gt;
-								&lt;t:ExtendedProperty&gt;
-									&lt;t:ExtendedFieldURI PropertySetId="1a417774-4779-47c1-9851-e42057495fca" PropertyName="XrmSharingSourceUser" PropertyType="String" xmlns="http://schemas.microsoft.com/exchange/services/2006/messages" /&gt;
-									&lt;t:Value&gt;{2}&lt;/t:Value&gt;
-								&lt;/t:ExtendedProperty&gt;
-							&lt;/t:Contact&gt;
-						&lt;/t:SetItemField&gt;
-						&lt;t:SetItemField&gt;
-							&lt;t:ExtendedFieldURI PropertySetId="1a417774-4779-47c1-9851-e42057495fca" PropertyName="XrmSharingSourceUserDisplayName" PropertyType="String" xmlns="http://schemas.microsoft.com/exchange/services/2006/messages" /&gt;
-							&lt;t:Contact&gt;
-								&lt;t:ExtendedProperty&gt;
-									&lt;t:ExtendedFieldURI PropertySetId="1a417774-4779-47c1-9851-e42057495fca" PropertyName="XrmSharingSourceUserDisplayName" PropertyType="String" xmlns="http://schemas.microsoft.com/exchange/services/2006/messages" /&gt;
-									&lt;t:Value&gt;{3}&lt;/t:Value&gt;
-								&lt;/t:ExtendedProperty&gt;
-							&lt;/t:Contact&gt;
-						&lt;/t:SetItemField&gt;
-						&lt;t:SetItemField&gt;
-							&lt;t:ExtendedFieldURI PropertySetId="bdba944b-fc2b-47a1-8ba4-cafc4ae13ea2" PropertyName="BusinessType" PropertyType="String" xmlns="http://schemas.microsoft.com/exchange/services/2006/messages" /&gt;
-							&lt;t:Contact&gt;
-								&lt;t:ExtendedProperty&gt;
-									&lt;t:ExtendedFieldURI PropertySetId="bdba944b-fc2b-47a1-8ba4-cafc4ae13ea2" PropertyName="BusinessType" PropertyType="String" xmlns="http://schemas.microsoft.com/exchange/services/2006/messages" /&gt;
-									&lt;t:Value&gt;{4}&lt;/t:Value&gt;
-								&lt;/t:ExtendedProperty&gt;
-							&lt;/t:Contact&gt;
-						&lt;/t:SetItemField&gt;
-						&lt;t:SetItemField&gt;
-							&lt;t:ExtendedFieldURI PropertySetId="47ac1412-279b-41cb-891e-58904a94a48b" PropertyName="IsCustomer" PropertyType="Integer" xmlns="http://schemas.microsoft.com/exchange/services/2006/messages" /&gt;
-							&lt;t:Contact&gt;
-								&lt;t:ExtendedProperty&gt;
-									&lt;t:ExtendedFieldURI PropertySetId="47ac1412-279b-41cb-891e-58904a94a48b" PropertyName="IsCustomer" PropertyType="Integer" xmlns="http://schemas.microsoft.com/exchange/services/2006/messages" /&gt;
-									&lt;t:Value&gt;{5}&lt;/t:Value&gt;
-								&lt;/t:ExtendedProperty&gt;
-							&lt;/t:Contact&gt;
-						&lt;/t:SetItemField&gt;						
-					&lt;/t:Updates&gt;
-				&lt;/t:ItemChange&gt;
-			&lt;/m:ItemChanges&gt;
-		&lt;/m:UpdateItem&gt;	
-	&lt;/soap:Body&gt;
-&lt;/soap:Envelope&gt;</value>
-  </data>
-  <data name="ShareContactByCopyingRequest" xml:space="preserve">
-    <value>&lt;?xml version="1.0" encoding="utf-8"?&gt;
-&lt;soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
-xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types"&gt;
-  &lt;soap:Header&gt;
-    &lt;t:RequestServerVersion Version="V2016_04_13" /&gt;
-  &lt;/soap:Header&gt;
-  &lt;soap:Body&gt;
-    &lt;CopyItem xmlns="http://schemas.microsoft.com/exchange/services/2006/messages"
-    xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types"&gt;
-      &lt;ToFolderId&gt;
-        &lt;t:FolderId Id="{0}"/&gt;
-      &lt;/ToFolderId&gt;
-      &lt;ItemIds&gt;
-        &lt;t:ItemId Id="{1}"/&gt;
-      &lt;/ItemIds&gt;
-    &lt;/CopyItem&gt;
-  &lt;/soap:Body&gt;
-&lt;/soap:Envelope&gt;</value>
-  </data>
-  <data name="CreateXrmGraphRelationshipRequest2" xml:space="preserve">
-    <value>&lt;?xml version="1.0" encoding="utf-8"?&gt;
-&lt;soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:m="http://schemas.microsoft.com/exchange/services/2006/messages" xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"&gt;
-  &lt;soap:Header&gt;
-    &lt;t:RequestServerVersion Version="V2016_04_13" /&gt;
-  &lt;/soap:Header&gt;
-  &lt;soap:Body&gt;
-    &lt;m:CreateXrmGraphRelationship&gt;
-      &lt;m:FromEntityId&gt;{0}&lt;/m:FromEntityId&gt;
-      &lt;m:FromEntityType&gt;{1}&lt;/m:FromEntityType&gt;
-      &lt;m:ToEntityId&gt;{2}&lt;/m:ToEntityId&gt;
-      &lt;m:ToEntityType&gt;{3}&lt;/m:ToEntityType&gt;
-      &lt;m:LinkType&gt;{4}&lt;/m:LinkType&gt;
-    &lt;/m:CreateXrmGraphRelationship&gt;
-  &lt;/soap:Body&gt;
-&lt;/soap:Envelope&gt;</value>
+  <data name="help" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Graphics\help.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

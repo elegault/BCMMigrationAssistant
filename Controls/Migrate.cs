@@ -22,7 +22,7 @@ namespace BCM_Migration_Tool.Controls
         #region Control Events
         private void cmdStart_Click(object sender, EventArgs e)
         {
-            lblWarnings.Visible = false;
+            //lblWarnings.Visible = false;
             StartClicked?.Invoke(this,e);           
         }
 

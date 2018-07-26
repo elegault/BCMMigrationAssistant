@@ -61,6 +61,20 @@ namespace BCM_Migration_Tool.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to SELECT        acct.FileAs, primCt.FileAs AS PrimaryContact, primCt.IsDeletedLocally
+        ///FROM            ContactFullView AS acct LEFT OUTER JOIN
+        ///                         ContactFullView AS primCt ON acct.PrimaryContactGUID = primCt.EntryGUID LEFT OUTER JOIN
+        ///                         ContactPicklistValuesView AS cplv ON acct.ContactServiceID = cplv.ContactServiceID
+        ///WHERE        (acct.Type = 2)
+        ///ORDER BY acct.FileAs.
+        /// </summary>
+        internal static string BCM_Accounts_Simple {
+            get {
+                return ResourceManager.GetString("BCM_Accounts_Simple", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to /*
         ///Use this query to get all activities (across all entities - business contact, accounts, opportunities) in BCM to be migrated as OCM activity post/phone log
         ///*/
@@ -80,6 +94,66 @@ namespace BCM_Migration_Tool.Properties {
         internal static string BCM_Activities {
             get {
                 return ResourceManager.GetString("BCM_Activities", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SELECT        ContactNamesTable.FullName, ContactNamesTable.FirstName, ContactNamesTable.LastName, CMT.CompanyName, AT.Subject, AT.ActivityType, ActivityNotesTable.ActivityNote, AT.ActivityID, AC.ContactID, CMT.EntryGUID, 
+        ///                         AT.ActivityGUID, AT.CreatedOn
+        ///FROM            ActivitiesTable AS AT INNER JOIN
+        ///                         ActivityContacts AS AC ON AT.ActivityID = AC.ActivityID INNER JOIN
+        ///                         ContactMainTable AS CMT ON CMT.ContactServiceID = AC.ContactID I [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string BCM_Activities_V3 {
+            get {
+                return ResourceManager.GetString("BCM_Activities_V3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /*ContactFullView V3*/
+        ///SELECT        cmt.ContactServiceID, cmt.Version, cmt.ContentVersion, cmt.Type, cmt.IsDeletedLocally, cmt.ParentContactServiceID, cmt.EntryGUID, cmt.ParentEntryID, cmt.JobTitle, cmt.Profession, cmt.CompanyName, cmt.Department, 
+        ///                         cmt.Birthday, cmt.WeddingAnniversary, cmt.ManagerName, cmt.AssistantName, cmt.CreatedBy, cmt.CreatedOn, cmt.ModifiedBy, cmt.ModifiedOn, cmt.ModifiedOnUTC, cmt.LastAccessTime, cmt.PrefContactMethod, 
+        ///                         cmt.DoNotE [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string BCM_ContactFullView_V3 {
+            get {
+                return ResourceManager.GetString("BCM_ContactFullView_V3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /*ContactFullView V3*/
+        ///SELECT Count(*)        
+        ///FROM            ContactMainTable AS cmt LEFT OUTER JOIN
+        ///                         ContactNamesTable AS cn ON cmt.ContactServiceID = cn.ContactServiceID LEFT OUTER JOIN
+        ///                         ContactHomeAddressTable AS cht ON cmt.ContactServiceID = cht.ContactServiceID LEFT OUTER JOIN
+        ///                         ContactWorkAddressTable AS cwt ON cmt.ContactServiceID = cwt.ContactServiceID LEFT OUTER JOIN
+        ///                         ContactOtherAddressTable AS c [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string BCM_ContactFullViewCount_V3 {
+            get {
+                return ResourceManager.GetString("BCM_ContactFullViewCount_V3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /*
+        ///Use this query to get the list of business contact, its OOB field values and link to company
+        ///*/
+        ///SELECT 
+        ///      CFV.[Type]
+        ///	  , CFV.[FirstName]					-- [OCM] First Name
+        ///      , CFV.[LastName]					-- [OCM] Last Name
+        ///      , CFV.[MiddleName]				-- [OCM] Middle Name
+        ///      , CFV.[FullName]					-- [OCM] Full Name
+        ///	   , AFV.[FullName]	As CompanyName	-- [OCM] Link to Company Name *** (changed mapping)
+        ///  FROM [dbo].[ContactFullView] CFV
+        ///  LEFT JOIN dbo.AccountsFullView AFV on AFV.EntryGUID = CFV.ParentEn [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string BCM_Contacts_Simple {
+            get {
+                return ResourceManager.GetString("BCM_Contacts_Simple", resourceCulture);
             }
         }
         
@@ -164,6 +238,53 @@ namespace BCM_Migration_Tool.Properties {
         internal static string BCM_Opportunity_Core {
             get {
                 return ResourceManager.GetString("BCM_Opportunity_Core", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /*
+        ///Use this query to get the list of all BCM opportunities, its OOB field values and link to contact/company
+        ///*/
+        ///SELECT  OFV.[ContactServiceID]		
+        ///      ,OFV.[OpportunityType]
+        ///      ,OFV.[OpportunityStage]					-- [BCM] Deal Stage
+        ///      ,OFV.[OpportunityCloseDate]				-- [BCM] Due Date
+        ///      ,OFV.[OpportunityStatus]					
+        ///      ,OFV.[Probability]						 
+        ///      ,OFV.[OpportunityTotal]					-- [BCM] Deal Amount
+        ///      ,OFV.[OpportunityExpectedRevenue]
+        ///      ,OFV.[OpportunityTotalDiscount]
+        ///      ,OFV.[Refe [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string BCM_Opportunity_Core_V3 {
+            get {
+                return ResourceManager.GetString("BCM_Opportunity_Core_V3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to --V3 OpportunityFullView
+        ///SELECT        oat.ContactServiceID, oat.OpportunityType, oat.OpportunityStage, oat.OpportunityCloseDate, oat.OpportunityStatus, oat.Probability, oa.OpportunityTotal, oa.OpportunityExpectedRevenue, oa.OpportunityTotalDiscount, 
+        ///                         clt.ReferredBy, clt.ReferredEntryId, clt.LeadSource, clt.AreaOfInterest, oat.Competition, cnt.Subject AS OpportunityName, cmt.ParentEntryID, cmt.CreatedBy, cmt.CreatedOn, cmt.ModifiedBy, cmt.ModifiedOn, cmt.AssignedTo, 
+        ///             [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string BCM_OpportunityFullView_V3 {
+            get {
+                return ResourceManager.GetString("BCM_OpportunityFullView_V3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to --V3 OpportunityFullView
+        ///SELECT Count(*) FROM OpportunitiesAdditionalTable AS oat INNER JOIN
+        ///                         ContactMainTable AS cmt ON oat.ContactServiceID = cmt.ContactServiceID LEFT OUTER JOIN
+        ///                         ContactLeadInfoTable AS clt ON oat.ContactServiceID = clt.ContactServiceID LEFT OUTER JOIN
+        ///                         ContactNamesTable AS cnt ON cmt.ContactServiceID = cnt.ContactServiceID LEFT OUTER JOIN
+        ///                             (SELECT        ContactServiceID, EntryGUID,  [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string BCM_OpportunityFullViewCount_V3 {
+            get {
+                return ResourceManager.GetString("BCM_OpportunityFullViewCount_V3", resourceCulture);
             }
         }
         
@@ -321,6 +442,16 @@ namespace BCM_Migration_Tool.Properties {
         internal static string GetPersonaRequest {
             get {
                 return ResourceManager.GetString("GetPersonaRequest", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap help {
+            get {
+                object obj = ResourceManager.GetObject("help", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
         

@@ -19,6 +19,7 @@ namespace BCM_Migration_Tool.Objects
     {
         #region Fields
         internal HttpClient _httpClient = new HttpClient();
+        private bool _disableCustomFields;
         private static readonly Logger Log = Logger.GetLogger("HelperBase");
         internal enum ImportModes
         {
@@ -43,6 +44,12 @@ namespace BCM_Migration_Tool.Objects
             EWS,
             Links,
             Templates
+        }
+
+        internal enum SupportedDBVersions
+        {
+            V3,
+            V4
         }
         internal enum UpdateKeyTypes
         {
@@ -125,7 +132,18 @@ namespace BCM_Migration_Tool.Objects
         internal bool BCMDataLogged { get; set; }
         internal bool Cancelled { get; set; }
         internal string ConnectionString { get; private set; }
-        internal bool DisableCustomFields { get; set; }
+        internal SupportedDBVersions DBVersion { get; set; }
+
+        internal bool DisableCustomFields
+        {
+            get { return _disableCustomFields; }
+            set
+            {
+                _disableCustomFields = value;
+                DBVersion = value ? SupportedDBVersions.V3 : SupportedDBVersions.V4; //If disabled, assume V3
+            }
+        }
+
         internal bool FullRESTLogging { get; set; }        
         internal bool LogRecordNames { get; set; }
         internal int NumberCreated { get; set; }

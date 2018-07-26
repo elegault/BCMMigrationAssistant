@@ -31,8 +31,19 @@ namespace BCM_Migration_Tool.Objects
                 int result = 0;
 
                 try
-                {            
-                    string sql = $"{Resources.BCM_Activities} AND CMT.EntryGUID = '{bcmEntityGUID}'";
+                {
+                    string sql = "";
+                    switch (DBVersion)
+                    {
+                        case SupportedDBVersions.V3:
+                            sql = $"{Resources.BCM_Activities_V3} AND CMT.EntryGUID = '{bcmEntityGUID}'";
+                            //sql = $"SELECT        ContactNamesTable.FullName, ContactNamesTable.FirstName, ContactNamesTable.LastName, CMT.CompanyName, AT.Subject, AT.ActivityType, ActivityNotesTable.ActivityNote, AT.ActivityID, AC.ContactID, CMT.EntryGUID, AT.ActivityGUID, AT.CreatedOn FROM            ActivitiesTable AS AT INNER JOIN ActivityContacts AS AC ON AT.ActivityID = AC.ActivityID INNER JOIN ContactMainTable AS CMT ON CMT.ContactServiceID = AC.ContactID INNER JOIN ContactNamesTable ON CMT.ContactServiceID = ContactNamesTable.ContactServiceID INNER JOIN ActivityNotesTable ON AT.ActivityID = ActivityNotesTable.ActivityID WHERE(AT.IsDeletedLocally = 0) AND (AT.ActivityType = 14 OR AT.ActivityType = 15 OR AT.ActivityType = 6) AND CMT.EntryGUID = '{bcmEntityGUID}'";
+                            break;
+                        case SupportedDBVersions.V4:
+                            sql = $"{Resources.BCM_Activities} AND CMT.EntryGUID = '{bcmEntityGUID}'";
+                            break;
+                    }
+                    
                     using (SqlConnection con = new SqlConnection(ConnectionString))
                     {
                         using (SqlCommand com = new SqlCommand(sql, con))
@@ -127,9 +138,11 @@ namespace BCM_Migration_Tool.Objects
                                                 //RestResponse<HttpWebResponse> response = await Post<HttpWebResponse>(uri, new StringContent(json, Encoding.UTF8, "application/json"));
                                                 RestResponse<HttpWebResponse> response = await Post<HttpWebResponse>(uri, json, RequestDataFormats.JSON);
 
-                                                if (response.StatusCode != HttpStatusCode.Created && response.StatusCode != HttpStatusCode.OK)
+                                                //BUG Somehow there's an Object ref not set error here if the Post hits an Unauthorized situation; the POST also gets another Unauthorized when it retries so maybe the error is related to the retry
+
+                                                if (response != null && response.StatusCode != HttpStatusCode.Created && response.StatusCode != HttpStatusCode.OK)
                                                 {
-                                                    Log.ErrorFormat("ERROR creating activity '{1}': {0}", response.Content, ocmActivity.Text);
+                                                    Log.ErrorFormat("ERROR creating activity '{1}': {0}", response.Content, ocmActivity?.Text);
                                                     OnError(null, new HelperEventArgs(String.Format("ERROR creating activity '{1}': {0}", response.Content, ocmActivity.Text.Substring(0, ocmActivity.Text.Length < 25 ? ocmActivity.Text.Length : 25)), HelperEventArgs.EventTypes.Error));
                                                     NumberOfErrors += 1;
                                                 }
@@ -180,7 +193,7 @@ namespace BCM_Migration_Tool.Objects
                                     }
                                     else
                                     {
-                                        Log.VerboseFormat("No results for query: {0}", sql);
+                                        Log.VerboseFormat("No results for entity ID {0}", bcmEntityGUID);
                                         //leave; no activities to create
                                         return 0;
                                     }

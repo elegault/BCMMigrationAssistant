@@ -52,6 +52,8 @@
             this.tabPageConfig = new System.Windows.Forms.TabPage();
             this.configure1 = new BCM_Migration_Tool.Controls.Configure();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.pictureBox2 = new System.Windows.Forms.PictureBox();
+            this.lblHelp = new System.Windows.Forms.Label();
             this.lblWebSite = new System.Windows.Forms.Label();
             this.lblVersion = new System.Windows.Forms.Label();
             this.lblCurrentUser = new System.Windows.Forms.Label();
@@ -68,6 +70,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMaxRecords)).BeginInit();
             this.tabPageConfig.SuspendLayout();
             this.panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -375,6 +378,8 @@
             this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panel1.BackColor = System.Drawing.SystemColors.Control;
+            this.panel1.Controls.Add(this.pictureBox2);
+            this.panel1.Controls.Add(this.lblHelp);
             this.panel1.Controls.Add(this.lblWebSite);
             this.panel1.Controls.Add(this.lblVersion);
             this.panel1.Controls.Add(this.lblCurrentUser);
@@ -384,6 +389,32 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(746, 89);
             this.panel1.TabIndex = 0;
+            // 
+            // pictureBox2
+            // 
+            this.pictureBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.pictureBox2.Image = global::BCM_Migration_Tool.Properties.Resources.help;
+            this.pictureBox2.Location = new System.Drawing.Point(508, 52);
+            this.pictureBox2.Name = "pictureBox2";
+            this.pictureBox2.Size = new System.Drawing.Size(32, 32);
+            this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.pictureBox2.TabIndex = 5;
+            this.pictureBox2.TabStop = false;
+            // 
+            // lblHelp
+            // 
+            this.lblHelp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblHelp.AutoSize = true;
+            this.lblHelp.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.lblHelp.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblHelp.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(117)))), ((int)(((byte)(182)))));
+            this.lblHelp.Location = new System.Drawing.Point(546, 59);
+            this.lblHelp.Margin = new System.Windows.Forms.Padding(3, 10, 3, 0);
+            this.lblHelp.Name = "lblHelp";
+            this.lblHelp.Size = new System.Drawing.Size(188, 17);
+            this.lblHelp.TabIndex = 4;
+            this.lblHelp.Text = "Need help? Click to send email";
+            this.lblHelp.Click += new System.EventHandler(this.lblHelp_Click);
             // 
             // lblWebSite
             // 
@@ -412,7 +443,6 @@
             this.lblVersion.Size = new System.Drawing.Size(72, 17);
             this.lblVersion.TabIndex = 3;
             this.lblVersion.Text = "Version 1.0";
-            this.lblVersion.Click += new System.EventHandler(this.lblVersion_Click);
             // 
             // lblCurrentUser
             // 
@@ -438,7 +468,6 @@
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
             this.pictureBox1.TabIndex = 1;
             this.pictureBox1.TabStop = false;
-            this.pictureBox1.Click += new System.EventHandler(this.pictureBox1_Click);
             // 
             // navigationBar1
             // 
@@ -486,6 +515,7 @@
             this.tabPageConfig.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
 
@@ -494,7 +524,6 @@
         #endregion
 
         private System.Windows.Forms.Label labelApp;
-        private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabPageMap;
         private System.Windows.Forms.TabPage tabPageMigrate;
@@ -521,5 +550,8 @@
         internal System.Windows.Forms.NumericUpDown numericUpDownMaxRecords;
         internal System.Windows.Forms.NumericUpDown numericUpDownRepeatCount;
         private System.Windows.Forms.CheckBox chkRepeatBatch;
+        private System.Windows.Forms.Label lblHelp;
+        private System.Windows.Forms.PictureBox pictureBox2;
+        private System.Windows.Forms.PictureBox pictureBox1;
     }
 }

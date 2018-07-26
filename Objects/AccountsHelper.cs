@@ -35,7 +35,7 @@ namespace BCM_Migration_Tool.Objects
         #endregion
         #region Properties
 
-        internal List<AccountsFullView> BCMAccountsFullView { get; set; }
+        //internal List<AccountsFullView> BCMAccountsFullView { get; set; }
         internal OCMCompanyTemplate.Rootobject CompanyTemplate { get;set; }
         private int PageSkip { get; set; }
         internal static List<OCMCompany2Value> OCMCompanies { get; set; } 
@@ -54,41 +54,27 @@ namespace BCM_Migration_Tool.Objects
         {
             using (Log.VerboseCall())
             {
-                try
+                if (BCMDataLogged)
                 {
-                    if (BCMDataLogged)
-                    {
-                        Log.Debug("Previously run - skipping");
-                        return;
-                    }
-                    OnStart(null, new HelperEventArgs("Getting BCM Account data", HelperEventArgs.EventTypes.Status));
-                    using (var context = new MSSampleBusinessEntities())
-                    {
-                        context.Database.Connection.ConnectionString = ConnectionString;
-
-                        //NOTE Can use BCM_Accounts_Core.sql in Resources instead of Entity Framework, but this is fine
-                        var companies = context.AccountsFullViews.Where(a => (!a.IsDeletedLocally) && (a.AccountActive)).ToList();
-                        BCMAccountsFullView = companies; //REVIEW BCMAccountsFullView is set but not referenced
-                        Log.InfoFormat("Found {0} BCM Accounts: ", companies.Count());
-                        OnGetComplete(null, new HelperEventArgs(String.Format("Found {0} BCM Accounts: ", companies.Count()), HelperEventArgs.EventTypes.Status));
-
-                        foreach (var company in companies)
-                        {
-                            if (LogRecordNames)
-                                OnGetItemComplete(null, new HelperEventArgs(String.Format(" -{0}", company.FileAs), HelperEventArgs.EventTypes.Status));
-                            Log.DebugFormat(" -{0}", company.FileAs);
-                        }
-                    }
-                    BCMDataLogged = true;
+                    Log.Debug("Previously run - skipping");
+                    return;
                 }
-                catch (Exception ex)
-                {
-                    Log.Error(ex);
-                }   
 
-                Debug.WriteLine("Leaving GetBCMAccounts");   
-            }      
-        }
+                OnStart(null, new HelperEventArgs("Getting BCM Account data", HelperEventArgs.EventTypes.Status));
+                LogBCMAccountsV4();
+
+                //Not neededd! AccountsFullView will work in V3
+                //switch (DBVersion)
+                //{
+                //    case SupportedDBVersions.V3:
+                //        LogBCMAccountsV3();
+                //        break;
+                //    case SupportedDBVersions.V4:
+                //        LogBCMAccountsV4();
+                //        break;
+                //}
+            }
+        }        
         internal async Task GetOCMCompanies()
         {
             using (Log.VerboseCall())
@@ -224,7 +210,6 @@ namespace BCM_Migration_Tool.Objects
                 Debug.WriteLine("Leaving GetOCMCompaniesAsync");
             }
         }
-
         internal static OCMCompany2Value GetOCMCompany(string val, UpdateKeyTypes keyType)
         {
             if (OCMCompanies == null)
@@ -379,8 +364,13 @@ namespace BCM_Migration_Tool.Objects
                     //=========================================================================================
 
                     setProperties:
-                    if (FieldMappings.BCMAccountFields.BCMFields == null) //Why would this be null?
+                    if (FieldMappings.BCMAccountFields.BCMFields == null || DisableCustomFields)
+                        //Why would this be null?
+                    {
+                        if (DisableCustomFields)
+                            Log.Verbose("Custom fields disabled for Accounts");
                         goto populateContactDetails;
+                    }
                     if (FieldMappings.BCMAccountFields.BCMFields.MappedFields.Count == 0) //Just the BCMID, no custom fields
                         goto populateContactDetails;
 
@@ -869,7 +859,83 @@ namespace BCM_Migration_Tool.Objects
                     //Debug.WriteLine(ex.ToString());
                 }
             }
-        }      
+        }
+        //private void LogBCMAccountsV3()
+        //{
+        //    using (SqlConnection con = new SqlConnection(ConnectionString))
+        //    {
+        //        using (SqlCommand com = new SqlCommand(Resources.BCM_Contacts_Simple, con)) //NOTE If I need to use this, this is the wrong SQL query...
+        //        {
+        //            con.Open();
+
+        //            using (DbDataReader reader = com.ExecuteReader())
+        //            {
+        //                try
+        //                {
+        //                    if (reader.HasRows)
+        //                    {
+        //                        Log.InfoFormat("Found {0} BCM Contacts:", reader.RecordsAffected); //TEST = RecordsAffected Row count?
+        //                        OnGetComplete(null, new HelperEventArgs(String.Format("Found {0} BCM Contacts:", reader.RecordsAffected), HelperEventArgs.EventTypes.Status));
+
+        //                        while (reader.Read())
+        //                        {
+        //                            try
+        //                            {
+        //                                string record = $" -{Convert.ToString(reader["FullName"])} (Company: {Convert.ToString(reader["CompanyName"])})";
+        //                                if (LogRecordNames)
+        //                                    OnGetItemComplete(null, new HelperEventArgs(record, HelperEventArgs.EventTypes.Status));
+        //                                Log.Debug(record);
+        //                            }
+        //                            catch (System.Exception ex)
+        //                            {
+        //                                Log.Error(ex);
+        //                            }
+        //                        }
+        //                    }
+        //                }
+        //                catch (System.Exception ex)
+        //                {
+        //                    Log.Error(ex);
+        //                }
+        //                finally
+        //                { }
+        //            }
+        //        }
+        //    }
+        //}
+        private void LogBCMAccountsV4()
+        {
+            using (Log.VerboseCall())
+            {
+                try
+                {
+                    using (var context = new MSSampleBusinessEntities())
+                    {
+                        context.Database.Connection.ConnectionString = ConnectionString;
+
+                        //NOTE Can use BCM_Accounts_Core.sql in Resources (now removed in 1.0.21.14) instead of Entity Framework, but this is fine
+                        var companies = context.AccountsFullViews.Where(a => (!a.IsDeletedLocally) && (a.AccountActive)).ToList();
+                        //BCMAccountsFullView = companies; //REVIEW BCMAccountsFullView is set but not referenced
+                        Log.InfoFormat("Found {0} BCM Accounts: ", companies.Count());
+                        OnGetComplete(null, new HelperEventArgs(String.Format("Found {0} BCM Accounts: ", companies.Count()), HelperEventArgs.EventTypes.Status));
+
+                        foreach (var company in companies)
+                        {
+                            if (LogRecordNames)
+                                OnGetItemComplete(null, new HelperEventArgs(String.Format(" -{0}", company.FileAs), HelperEventArgs.EventTypes.Status));
+                            Log.DebugFormat(" -{0}", company.FileAs);
+                        }
+                    }
+                    BCMDataLogged = true;
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex);
+                }
+
+                Debug.WriteLine("Leaving GetBCMAccounts");
+            }
+        }
         private async Task RunCreateCompaniesAsync()
         {
             using (Log.VerboseCall())

@@ -55,9 +55,9 @@ namespace BCM_Migration_Tool.Controls
         }
         #endregion
         #region Methods
-        public void InitializeFieldMappings()
+        public void InitializeFieldMappings(bool disableCustomFields)
         {
-            FieldMappings.InitializeFieldMappings(ConnectionString);
+            FieldMappings.InitializeFieldMappings(ConnectionString, disableCustomFields);
 
             accounts1.AddReadOnlyMappings();
 

@@ -33,9 +33,9 @@ C:\Professional\Projects\Microsoft\BCM Migration Tool\TracerX-Logger\obj\Release
 C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Assistant\TracerX-Logger\bin\Release\TracerX-Logger.xml
 C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Assistant\TracerX-Logger\bin\Release\TracerX-Logger.dll
 C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Assistant\TracerX-Logger\bin\Release\TracerX-Logger.pdb
-C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Assistant\TracerX-Logger\obj\Release\TracerX-Logger.csprojResolveAssemblyReference.cache
 C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Assistant\TracerX-Logger\obj\Release\TracerX.Properties.Resources.resources
 C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Assistant\TracerX-Logger\obj\Release\TracerX-Logger.csproj.GenerateResource.Cache
 C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Assistant\TracerX-Logger\obj\Release\TracerX-Logger.dll
 C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Assistant\TracerX-Logger\obj\Release\TracerX-Logger.pdb
 C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Assistant\TracerX-Logger\obj\Release\TracerX-Logger.csproj.CoreCompileInputs.cache
+C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Assistant\TracerX-Logger\obj\Release\TracerX-Logger.csprojAssemblyReference.cache

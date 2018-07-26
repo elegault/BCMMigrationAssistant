@@ -53,7 +53,6 @@ C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Assistant\bi
 C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Assistant\bin\Debug\EntityFramework.SqlServer.xml
 C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Assistant\bin\Debug\Microsoft.IdentityModel.Clients.ActiveDirectory.xml
 C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Assistant\bin\Debug\Newtonsoft.Json.xml
-C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Assistant\obj\Debug\BCM Migration Tool.csprojResolveAssemblyReference.cache
 C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Assistant\obj\Debug\BCM_Migration_Tool.Controls.Accounts.resources
 C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Assistant\obj\Debug\BCM_Migration_Tool.Controls.BusinessContacts.resources
 C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Assistant\obj\Debug\BCM_Migration_Tool.Controls.Configure.resources
@@ -118,3 +117,5 @@ C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Assistant\bi
 C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Assistant\bin\Debug\Microsoft.VisualStudio.ImageCatalog.xml
 C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Assistant\bin\Debug\Microsoft.VisualStudio.CoreUtility.xml
 C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Assistant\obj\Debug\BCM Migration Tool.csproj.CopyComplete
+C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Assistant\obj\Debug\BCM Migration Tool.csprojAssemblyReference.cache
+C:\Professional\Projects\Microsoft\BCM Migration Tool\BCM Migration Assistant\obj\Debug\BCM_Migration_Tool.Controls.Testing.resources

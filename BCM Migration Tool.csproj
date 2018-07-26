@@ -37,8 +37,8 @@
     <PublisherName>Eric Legault Consulting Inc.</PublisherName>
     <WebPage>publish.htm</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
-    <ApplicationRevision>12</ApplicationRevision>
-    <ApplicationVersion>1.0.21.12</ApplicationVersion>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.22.0</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -67,10 +67,10 @@
     <SignManifests>true</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>EE3FC153AD63D954E8869D50F4D41D2AD1947516</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>C59263196350CA3E62F7A61912D653F2214BE06D</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>Eric Legault Consulting Inc Authenticode Code Signing.p12</ManifestKeyFile>
+    <ManifestKeyFile>Eric Legault Consulting Inc Authenticode Code Signing 2018-2019.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <ManifestTimestampUrl>http://timestamp.digicert.com</ManifestTimestampUrl>
@@ -162,6 +162,12 @@
     </Compile>
     <Compile Include="Controls\Configure.Designer.cs">
       <DependentUpon>Configure.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Testing.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\Testing.Designer.cs">
+      <DependentUpon>Testing.cs</DependentUpon>
     </Compile>
     <Compile Include="Objects\AccountsHelper.cs" />
     <Compile Include="AccountsUnionView.cs">
@@ -355,6 +361,7 @@
     </Compile>
     <Compile Include="Objects\ActivitiesHelper.cs" />
     <Compile Include="Objects\Businessaddress.cs" />
+    <Compile Include="Objects\BCMContactSimple.cs" />
     <Compile Include="Objects\ContactsHelper.cs" />
     <Compile Include="ContactsUnionView.cs">
       <DependentUpon>BCMModel.tt</DependentUpon>
@@ -631,6 +638,7 @@
     <Compile Include="Objects\OCMCompany.cs" />
     <Compile Include="Objects\OCMCompanyTemplate.cs" />
     <Compile Include="Objects\OCMContact.cs" />
+    <Compile Include="Objects\OpportunityFullViewV3.cs" />
     <Compile Include="Objects\Relationship.cs" />
     <Compile Include="Objects\RestResponse.cs" />
     <Compile Include="Objects\SingleValueExtendedProperty1.cs" />
@@ -818,6 +826,9 @@
     <EmbeddedResource Include="Controls\ReadOnlyFieldMapping.resx">
       <DependentUpon>ReadOnlyFieldMapping.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Testing.resx">
+      <DependentUpon>Testing.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="MigrationAssistant.resx">
       <DependentUpon>MigrationAssistant.cs</DependentUpon>
     </EmbeddedResource>
@@ -839,6 +850,7 @@
       <DependentUpon>BCMModel.edmx</DependentUpon>
     </None>
     <None Include="ClassDiagram1.cd" />
+    <None Include="Eric Legault Consulting Inc Authenticode Code Signing 2018-2019.pfx" />
     <None Include="Eric Legault Consulting Inc Authenticode Code Signing.p12" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
@@ -870,6 +882,16 @@
       <DependentUpon>BCMModel.edmx</DependentUpon>
       <LastGenOutput>BCMModel.cs</LastGenOutput>
     </Content>
+    <None Include="Graphics\help.png" />
+    <None Include="Scripts\BCM_OpportunityFullViewCount_V3.sql" />
+    <None Include="Scripts\BCM_ContactFullViewCount_V3.sql" />
+    <None Include="Scripts\BCM_OpportunityFullView_V3.sql" />
+    <None Include="Scripts\BCM_ContactFullView_V3.sql" />
+    <None Include="Scripts\BCM_Accounts_Simple.sql" />
+    <None Include="Scripts\BCM_Contacts_Simple.sql" />
+    <None Include="Scripts\BCM_Activities V3.sql" />
+    <None Include="Scripts\BCM_BusinessContacts_Core V3.sql" />
+    <None Include="Scripts\BCM_Opportunity_Core V3.sql" />
     <None Include="Graphics\WizardStep1.png" />
     <None Include="Graphics\WizardStep2.png" />
     <None Include="Graphics\WizardStep3.png" />

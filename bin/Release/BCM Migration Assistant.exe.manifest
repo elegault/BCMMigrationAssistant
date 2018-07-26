@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <asmv1:assembly xsi:schemaLocation="urn:schemas-microsoft-com:asm.v1 assembly.adaptive.xsd" manifestVersion="1.0" xmlns:asmv1="urn:schemas-microsoft-com:asm.v1" xmlns="urn:schemas-microsoft-com:asm.v2" xmlns:asmv2="urn:schemas-microsoft-com:asm.v2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:co.v1="urn:schemas-microsoft-com:clickonce.v1" xmlns:asmv3="urn:schemas-microsoft-com:asm.v3" xmlns:dsig="http://www.w3.org/2000/09/xmldsig#" xmlns:co.v2="urn:schemas-microsoft-com:clickonce.v2">
-  <asmv1:assemblyIdentity name="BCM Migration Assistant.exe" version="1.0.21.12" publicKeyToken="0000000000000000" language="neutral" processorArchitecture="msil" type="win32" />
+  <asmv1:assemblyIdentity name="BCM Migration Assistant.exe" version="1.0.22.0" publicKeyToken="0000000000000000" language="neutral" processorArchitecture="msil" type="win32" />
   <description asmv2:iconFile="BCMtool.ico" xmlns="urn:schemas-microsoft-com:asm.v1" />
   <application />
   <entryPoint>
-    <assemblyIdentity name="BCM Migration Assistant" version="1.0.21.12" publicKeyToken="368516D1A5B59F01" language="neutral" processorArchitecture="msil" />
+    <assemblyIdentity name="BCM Migration Assistant" version="1.0.22.0" publicKeyToken="368516D1A5B59F01" language="neutral" processorArchitecture="msil" />
     <commandLine file="BCM Migration Assistant.exe" parameters="" />
   </entryPoint>
   <trustInfo>
@@ -43,14 +43,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="BCM Migration Assistant.exe" size="9067672">
-      <assemblyIdentity name="BCM Migration Assistant" version="1.0.21.12" publicKeyToken="368516D1A5B59F01" language="neutral" processorArchitecture="msil" />
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="BCM Migration Assistant.exe" size="9109144">
+      <assemblyIdentity name="BCM Migration Assistant" version="1.0.22.0" publicKeyToken="368516D1A5B59F01" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>xqOMZGsa34WVZCyJxb7/OUkki19yHvSMbwONB4FFvrY=</dsig:DigestValue>
+        <dsig:DigestValue>8FcqFmBntvJX5n1JtsVxVBPAkrhEVoDOVL4TXiHw9+E=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -86,7 +86,7 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>yt6cvYteJyh0cojUqUYZHSn4oX+Kd2JWeN7bulFNQGw=</dsig:DigestValue>
+        <dsig:DigestValue>dhTuDxRisKxcS0bCayRbyTutUx7rtCGU76DuuBUwCto=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -146,7 +146,7 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>KO3XFYhmtiYmjobBZHznXwcHIvU24e134UjlA5WJpFc=</dsig:DigestValue>
+        <dsig:DigestValue>lwLDkVQ2s5RiZj9iQ8ZDM8tQWHGMwo+lKM0m/UaG9sM=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -302,7 +302,7 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>bms1ZlJNmfjfHCM1tIR1R1g2UdaE4NwKNpoa0Q5ccSk=</dsig:DigestValue>
+        <dsig:DigestValue>W0MSMP70ZYRWwF8BcCX7hUGGdfkex7ta10yMZxJRqE4=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -470,7 +470,7 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>HWfdUPgvZEc02+ePmVQx9XvtgGTXIG0sPEG2MGbSKmY=</dsig:DigestValue>
+        <dsig:DigestValue>uZoeA9ac+zMBTSNvwH30gJGpDwmpYEw266FyejKnlA8=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -487,14 +487,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="stdole.dll" size="32384">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="stdole.dll" size="32392">
       <assemblyIdentity name="stdole" version="7.0.3300.0" publicKeyToken="B03F5F7F11D50A3A" language="neutral" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>UHm+1pLFcJFP2uk+Zd3SEHO6G48IUDJNfN7lT6pL780=</dsig:DigestValue>
+        <dsig:DigestValue>MyUruXh3s85LceYvzm1PxnM2yaUdjNWyXpv79xrwD7Q=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -518,7 +518,7 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>/FQeWeakYbbFTRQAKOtbGxi+5VWEmUwGwy+WRedLrEo=</dsig:DigestValue>
+        <dsig:DigestValue>dh3qVxQyaD3MdS/tjqunpHa83/zA4oHzXEvwghUsdnM=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

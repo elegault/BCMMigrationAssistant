@@ -19,6 +19,7 @@ namespace BCM_Migration_Tool.Objects
 {
     class DealsHelper: HelperBase
     {
+        private List<string> _dealStages;
         private static readonly Logger Log = Logger.GetLogger("DealsHelper");
 
         #region Constructors
@@ -54,12 +55,10 @@ namespace BCM_Migration_Tool.Objects
         }
         #endregion
 
-        //MSSampleBusinessEntities db = new MSSampleBusinessEntities();
-        //internal List<PicklistsMasterList> DealStages { get; set; }
         #region Properties
 
         public List<string> BCMOpportunities { get; set; }
-        private List<string> _dealStages;
+
         internal List<string> DealStages
         {
             get
@@ -154,7 +153,18 @@ namespace BCM_Migration_Tool.Objects
 
                         using (SqlConnection con = new SqlConnection(ConnectionString))
                         {
-                            string sql = Resources.BCM_Opportunity_Core;
+                            string sql = "";
+
+                            switch (DBVersion)
+                            {
+                                case SupportedDBVersions.V3:
+                                    sql = Resources.BCM_Opportunity_Core_V3;
+                                    break;
+                                case SupportedDBVersions.V4:
+                                    sql = Resources.BCM_Opportunity_Core;
+                                    break;
+                            }
+
                             sql = sql.Replace("{0}", deal.BCMID);
                             using (SqlCommand com = new SqlCommand(sql, con))
                             {
@@ -172,7 +182,7 @@ namespace BCM_Migration_Tool.Objects
                                                 //entityID = Convert.ToString(reader["EntryGUID"]);
                                                 entityID = Convert.ToString(reader["ParentEntryID"]);
                                                 //contactServiceID = Convert.ToInt32(reader["ContactServiceID"]);
-                                                entityName = Convert.ToString(reader["FullName"]);
+                                                entityName = Convert.ToString(reader["FullName"]); //BUG 7/24/2018 Can be empty string! Maybe only while debugging - names were output to the window and log...
                                                 break;
                                             }
                                         }
@@ -263,7 +273,7 @@ namespace BCM_Migration_Tool.Objects
 
                         if (String.IsNullOrEmpty(itemLinkID))
                         {
-                            Log.ErrorFormat("Could not retrieve OCM entity '{0}' for linking (Type: {1}; ID: {2})", entityName, linkType, entityID);
+                            Log.WarnFormat("Could not retrieve OCM entity '{0}' for linking (Type: {1}; ID: {2})", entityName, linkType, entityID);
                             OnError(null, new HelperEventArgs(String.Format("ERROR: Could not retrieve OCM entity '{0}' for linking (Type: {1})", entityName, linkType), HelperEventArgs.EventTypes.Error));
                             continue;
                         }
@@ -315,7 +325,15 @@ namespace BCM_Migration_Tool.Objects
             using (Log.VerboseCall())
             {
                 Cancelled = false;
-                await RunCreateDealsAsync();
+                switch (DBVersion)
+                {
+                    case SupportedDBVersions.V3:
+                        await RunCreateDealsAsyncV3();
+                        break;
+                    case SupportedDBVersions.V4:
+                        await RunCreateDealsAsync();
+                        break;
+                }
             }
         }
 
@@ -373,18 +391,9 @@ namespace BCM_Migration_Tool.Objects
                 {
                     OCMDeals = null;
                     await GetOCMDealsAsync();
-                    //if (OCMDeals == null)
-                    //{
-                    //    await GetOCMDealsAsync();
-                    //}
 
                     List<Deal> dealsToDelete = null;
-//#if DEBUG
-//                int dayOfYear = 1;
-//                dealsToDelete = OCMDeals.Where(deals => deals.CreationTime.DayOfYear == 0) as List<Deal>;
-//#else
-//                dealsToDelete = OCMDeals;
-//#endif
+
                     if (dealCreatedOn != DateTime.MinValue)
                     {
                         dealsToDelete = new List<Deal>();
@@ -516,8 +525,12 @@ namespace BCM_Migration_Tool.Objects
             //=========================================================================================
             setProperties:
 
-            if (FieldMappings.BCMOpportunityFields.BCMFields == null) //Why would this be null?
+            if (FieldMappings.BCMOpportunityFields.BCMFields == null || DisableCustomFields) //Why would this be null?
+            {
+                if (DisableCustomFields)
+                    Log.Verbose("Custom fields disabled for Opportunities");
                 goto populateDetails;
+            }
             if (FieldMappings.BCMOpportunityFields.BCMFields.MappedFields.Count == 0) //Just the BCMID, no custom fields
                 goto populateDetails;
 
@@ -720,7 +733,16 @@ namespace BCM_Migration_Tool.Objects
                 {
                     using (SqlConnection con = new SqlConnection(ConnectionString))
                     {
-                        string sql = Resources.BCM_Opportunity_Core;
+                        string sql = "";
+                        switch (DBVersion)
+                        {
+                            case SupportedDBVersions.V3:
+                                sql = Resources.BCM_Opportunity_Core_V3;
+                                break;
+                            case SupportedDBVersions.V4:
+                                sql = Resources.BCM_Opportunity_Core;
+                                break;
+                        }                        
                         sql = sql.Replace("{0}", opportunity.EntryGUID.ToString());
                         using (SqlCommand com = new SqlCommand(sql, con))
                         {
@@ -981,24 +1003,14 @@ namespace BCM_Migration_Tool.Objects
 
                     OnStart(null, new HelperEventArgs("Getting BCM Opportunities data", HelperEventArgs.EventTypes.Status));
 
-                    using (var context = new MSSampleBusinessEntities())
+                    switch (DBVersion)
                     {
-                        context.Database.Connection.ConnectionString = ConnectionString;
-
-                        //NOTE Can also use BCM_Opportunity_Core.sql in Resources instead of EF
-                        var opportunities = context.OpportunityFullViews.Where(a => (!a.IsDeletedLocally)).ToList();
-
-                        BCMOpportunities = new List<string>();
-
-                        Log.InfoFormat("Found {0} BCM Opportunities:", opportunities.Count());                  ;
-                        OnGetComplete(null, new HelperEventArgs(String.Format("Found {0} BCM Opportunities:", opportunities.Count()), HelperEventArgs.EventTypes.Status));
-
-                        foreach (var opp in opportunities)
-                        {
-                            Log.InfoFormat("-{0}", opp.OpportunityName);
-                            BCMOpportunities.Add(opp.OpportunityName);
-                            OnGetItemComplete(null, new HelperEventArgs(String.Format(" -'{0}'", opp.OpportunityName), HelperEventArgs.EventTypes.Status));
-                        }
+                        case SupportedDBVersions.V3:
+                            LogBCMOpportunitiesV3();
+                            break;
+                        case SupportedDBVersions.V4:
+                            LogBCMOpportunitiesV4();
+                            break;
                     }
 
                     BCMDataLogged = true;
@@ -1124,6 +1136,8 @@ namespace BCM_Migration_Tool.Objects
                     string request = String.Format("{0}/XrmDeals?%24expand=AppliedHashtags", Settings.Default.BetaEndPoint);
 
                     //Debug.WriteLine("Request to : " + request);
+
+                    //BUG 7/24/2018 Paging isn't working - only first 50 deals are being retrieved? Not sure now...
 
                     if (PageSkip == 0)
                     {
@@ -1277,6 +1291,73 @@ namespace BCM_Migration_Tool.Objects
             }
         }
 
+        private void LogBCMOpportunitiesV3()
+        {
+            int cnt = 0;
+
+            using (SqlConnection con = new SqlConnection(ConnectionString))
+            {
+                using (SqlCommand com = new SqlCommand(Resources.BCM_OpportunityFullView_V3, con))
+                {
+                    con.Open();
+
+                    using (SqlCommand comA = new SqlCommand(Resources.BCM_OpportunityFullViewCount_V3, con))
+                    {
+                        cnt = Convert.ToInt32(comA.ExecuteScalar());
+                    }
+
+                    using (DbDataReader reader = com.ExecuteReader())
+                    {
+                        if (reader.HasRows)
+                        {
+                            BCMOpportunities = new List<string>();
+
+                            Log.InfoFormat("Found {0} BCM Opportunities:", cnt);
+                            OnGetComplete(null,
+                                new HelperEventArgs(
+                                    String.Format("Found {0} BCM Opportunities:", cnt),
+                                    HelperEventArgs.EventTypes.Status));
+
+                            while (reader.Read())
+                            {
+                                try
+                                {
+                                    Log.InfoFormat("-{0}", Convert.ToString(reader["OpportunityName"]));
+                                    BCMOpportunities.Add(Convert.ToString(reader["OpportunityName"]));
+                                    OnGetItemComplete(null, new HelperEventArgs(String.Format(" -'{0}'", Convert.ToString(reader["OpportunityName"])), HelperEventArgs.EventTypes.Status));
+                                }
+                                catch (System.Exception ex)
+                                {
+                                    Log.Error(ex);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        private void LogBCMOpportunitiesV4()
+        {
+            using (var context = new MSSampleBusinessEntities())
+            {
+                context.Database.Connection.ConnectionString = ConnectionString;
+
+                //NOTE Can also use BCM_Opportunity_Core.sql in Resources instead of EF
+                var opportunities = context.OpportunityFullViews.Where(a => (!a.IsDeletedLocally)).ToList();
+
+                BCMOpportunities = new List<string>();
+
+                Log.InfoFormat("Found {0} BCM Opportunities:", opportunities.Count()); ;
+                OnGetComplete(null, new HelperEventArgs(String.Format("Found {0} BCM Opportunities:", opportunities.Count()), HelperEventArgs.EventTypes.Status));
+
+                foreach (var opp in opportunities)
+                {
+                    Log.InfoFormat("-{0}", opp.OpportunityName);
+                    BCMOpportunities.Add(opp.OpportunityName);
+                    OnGetItemComplete(null, new HelperEventArgs(String.Format(" -'{0}'", opp.OpportunityName), HelperEventArgs.EventTypes.Status));
+                }
+            }
+        }
         private async Task PatchDeal(OCMDeal2.Rootobject ocmDeal, string Id, string bcmID)
         {
             try
@@ -1375,7 +1456,7 @@ namespace BCM_Migration_Tool.Objects
                         }
 
                         int cnt = 0;
-                        Log.InfoFormat("Importing {0} Opportunities", deals.Count());
+                        Log.InfoFormat("Importing {0} Opportunities", NumberToProcess);
 
                         foreach (var deal in deals)
                         {
@@ -1475,6 +1556,157 @@ namespace BCM_Migration_Tool.Objects
                         OnError(this, new HelperEventArgs(ex.ToString(), HelperEventArgs.EventTypes.FatalError));
                     }
                 }
+            }
+        }
+        private async Task RunCreateDealsAsyncV3()
+        {
+            using (Log.VerboseCall())
+            {
+                try
+                {
+                    using (SqlConnection con = new SqlConnection(ConnectionString))
+                    {
+                        using (SqlCommand com = new SqlCommand(Resources.BCM_OpportunityFullView_V3, con))
+                        {
+                            con.Open();
+                            using (SqlCommand comA = new SqlCommand(Resources.BCM_OpportunityFullViewCount_V3, con))
+                            {
+                                NumberToProcess = Convert.ToInt32(comA.ExecuteScalar());
+                            }
+
+                            using (DbDataReader reader = com.ExecuteReader())
+                            {
+                                if (!reader.HasRows)
+                                {
+                                    Log.Error("Unexpected - no records");
+                                    return;
+                                }
+
+                                if (TestMode)
+                                {
+                                    NumberToProcess = TestingMaximum;
+                                    Log.DebugFormat("Test mode - importing to {0} maximum", TestingMaximum);
+                                    OnStart(null, new HelperEventArgs(String.Format("Importing Opportunities (max {0} - TESTING MODE)", TestingMaximum), false));
+                                }
+                                else
+                                {
+
+                                    OnStart(null, new HelperEventArgs("Importing Opportunities...", false));
+                                }
+
+                                int cnt = 0;
+
+                                Log.InfoFormat("Importing {0} Opportunities", NumberToProcess);
+
+                                while (reader.Read())
+                                {
+                                    if (TestMode && cnt <= TestingMaximum)
+                                        break;
+                                    if (Cancelled)
+                                    {
+                                        Log.Warn("Cancelled!");
+                                        break;
+                                    }
+
+                                    OpportunityFullView deal = new OpportunityFullView();
+
+                                    try
+                                    {
+                                        deal.EntryGUID = Guid.Parse(Convert.ToString(reader["EntryGUID"]));
+                                        deal.ParentEntryID = Guid.Parse(Convert.ToString(reader["ParentEntryID"]));
+                                        deal.ContactServiceID = Convert.ToInt32(reader["ContactServiceID"]);
+
+                                        if (!DBNull.Value.Equals(reader["OpportunityName"]))
+                                            deal.OpportunityName = reader["OpportunityName"].ToString();
+                                        if (!DBNull.Value.Equals(reader["OpportunityStage"]))
+                                            deal.OpportunityStage = reader["OpportunityStage"].ToString();
+                                        if (!DBNull.Value.Equals(reader["OpportunityTotal"]))
+                                            deal.OpportunityTotal = Convert.ToDecimal(reader["OpportunityTotal"]);
+                                        if (!DBNull.Value.Equals(reader["OpportunityCloseDate"]))
+                                            deal.OpportunityCloseDate = Convert.ToDateTime(reader["OpportunityCloseDate"]);
+                                        if (!DBNull.Value.Equals(reader["Probability"]))
+                                            deal.Probability = Convert.ToDouble(reader["Probability"]);
+
+                                        if (String.IsNullOrEmpty(deal.OpportunityName))
+                                        {
+                                            Log.WarnFormat("Skipping opportunity with blank name (ID: {0})", deal.EntryGUID);
+                                            OnDisplayMessage(null, new HelperEventArgs(String.Format("Skipping opportunity with blank name (ID: {0})", deal.EntryGUID), false));
+                                            continue;
+                                        }
+
+                                        ImportModes importMode;
+                                        Deal ocmDeal = null;
+
+                                        //Look for match on name
+                                        ocmDeal = GetOCMDeal(deal.OpportunityName, UpdateKeyTypes.Name);
+
+                                        if (ocmDeal != null)
+                                        {
+                                            //Must distinguish between existing manually created Companies(no BCMID) and those previously imported (with BCMID)
+                                            string bcmID = ocmDeal.GetBCMID();
+                                            if (!String.IsNullOrEmpty(bcmID))
+                                            {
+                                                importMode = ImportModes.UpdatePreviouslyImportedItem;
+                                                Log.DebugFormat("Updating previously imported deal '{0}'", ocmDeal.Name);
+                                            }
+                                            else
+                                            {
+                                                //Update existing manually created item; NO - ignore non-imported deals
+                                                Log.DebugFormat("Deal '{0}' already exists; skipping", ocmDeal.Name);
+                                                OnCreateItemComplete(null, new HelperEventArgs(String.Format("Deal '{0}' already exists; skipping", ocmDeal.Name), false));
+                                                continue;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            importMode = ImportModes.Create;
+                                        }
+
+                                        await ImportDealAsync(deal, importMode, ocmDeal);
+                                        cnt += 1;
+                                    }
+                                    catch (System.Exception ex)
+                                    {
+                                        Log.Error(ex);
+                                        OnError(null, new HelperEventArgs(String.Format("Unknown error in RunCreateDealAsyncV3: {0})", ex.ToString()), HelperEventArgs.EventTypes.Error));
+                                    }
+                                }
+                            }
+                        }
+
+
+                    }
+                }
+                catch (System.Exception ex)
+                {
+                    Log.Error(ex);
+                    OnError(this, new HelperEventArgs(ex.ToString(), HelperEventArgs.EventTypes.FatalError));
+                }
+                
+                //Log created deals
+                if (OCMDealsCreated != null)
+                {
+                    string[] ids = new string[OCMDealsCreated.Count];
+                    int idx = 0;
+                    Log.DebugFormat("Created {0} deals:", OCMDealsCreated.Count);
+                    foreach (var newDeal in OCMDealsCreated)
+                    {
+                        Log.DebugFormat("{0};{1}", newDeal.Name, newDeal.Id);
+                        ids[idx] = newDeal.Id;
+                        idx += 1;
+                    }
+                    string idsJoined = string.Join(";", ids);
+                    Log.InfoFormat("Created deal IDs: {0}", idsJoined);
+                }
+
+                if (!Cancelled)
+                {
+                    OnHelperComplete(null, new HelperEventArgs(String.Format("Opportunities import complete!{0}Created: {1}{0}Errors: {2}", Environment.NewLine, NumberCreated, NumberOfErrors), false));
+                }
+                else
+                {
+                    OnHelperComplete(null, new HelperEventArgs(String.Format("Opportunities import stopped{0}Created: {1}{0}Errors: {2}", Environment.NewLine, NumberCreated, NumberOfErrors), false));
+                }                
             }
         }
         public async Task RunGetTemplateAsync()
